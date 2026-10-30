@@ -2,6 +2,27 @@
 
 Newest first. Each entry: Completed · Verified · Not verified · Issues · Next.
 
+## 2026-10-30 (5) — Phase 2 drop and claim engine
+
+**Completed**
+- Opened PR #3 (Phase 1). Recorded D-017 (Phase 2 design choices).
+- Built: migration 0002; drop rules and state machine; eligibility; GitHub sign-in with state + PKCE; claimer sessions; drop and claim APIs; revocation; expiry job; rate limits; log redaction of query strings. Commit `33466ef`.
+- Docs: `docs/architecture/API.md`, `docs/architecture/DROP_ENGINE.md`.
+
+**Verified**
+- 108/108 tests including concurrency (re-run 3×), PKCE RFC test vector, replay/expiry/forgery of sign-in state.
+- Manual smoke test on the built server.
+
+**Not verified**
+- Live GitHub sign-in (no OAuth App yet). CI on GitHub for this branch.
+
+**Issues**
+- Tests caught a crash on invalid dates (cross-field check ran on unparsed input); fixed.
+- Fastify request logs included OAuth `code`/`state` in the URL; added a serializer that strips query strings, with a test.
+
+**Next**
+- Dan: Phase 2 exit approval; GitHub OAuth App (T-209).
+
 ## 2026-10-30 (4) — Phase 1 backend foundation
 
 **Completed**

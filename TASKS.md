@@ -42,14 +42,16 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 
 | ID | Task | State | Completion condition |
 | --- | --- | --- | --- |
-| T-201 | Migration: people, identities, drops, claims, claimer sessions, OAuth states | IN PROGRESS | Applies and rolls back; constraints tested |
-| T-202 | Drop rules and state machine (draft → active ⇄ paused → ended) | READY | Invalid drops and transitions rejected; unit and API tests |
-| T-203 | Eligibility evaluation (D-013/D-014 thresholds) | READY | Unit tests for each threshold and boundary |
-| T-204 | GitHub sign-in: state + PKCE, signals, sessions | READY | Replayed, expired or forged `state` rejected; tests with a fake GitHub; real client unit-tested |
-| T-205 | Operator drop API | READY | Create, list, read, activate, pause, resume, end; audited; tests |
-| T-206 | Claim API: one per person, slot limits, attestations, rate limits | READY | 100 concurrent claims on 20 slots → exactly 20; same person concurrently → 1; tests |
-| T-207 | Revocation (operator and self) and drop-end expiry job | READY | State changes audited; tests |
-| T-208 | Docs: `docs/architecture/API.md`, `docs/architecture/DROP_ENGINE.md`; evidence for BP-3, BP-5, BP-6 (slots) | READY | Docs written; evidence recorded |
+| T-201 | Migration: people, identities, drops, claims, claimer sessions, OAuth states | VERIFIED | Applies and rolls back; constraints tested |
+| T-202 | Drop rules and state machine (draft → active ⇄ paused → ended) | VERIFIED | Invalid drops and transitions rejected; unit and API tests |
+| T-203 | Eligibility evaluation (D-013/D-014 thresholds) | VERIFIED | Unit tests for each threshold and boundary |
+| T-204 | GitHub sign-in: state + PKCE, signals, sessions | VERIFIED (live GitHub not yet tested) | Replayed, expired or forged `state` rejected; tests with a fake GitHub; real client unit-tested |
+| T-205 | Operator drop API | VERIFIED | Create, list, read, activate, pause, resume, end; audited; tests |
+| T-206 | Claim API: one per person, slot limits, attestations, rate limits | VERIFIED | 100 concurrent claims on 20 slots → exactly 20; same person concurrently → 1; tests |
+| T-207 | Revocation (operator and self) and drop-end expiry job | VERIFIED | State changes audited; tests |
+| T-208 | Docs: `docs/architecture/API.md`, `docs/architecture/DROP_ENGINE.md`; evidence for BP-3, BP-5, BP-6 (slots) | IN REVIEW (awaiting Phase 2 exit approval) | Docs written; evidence recorded |
+
+| T-209 | Create a GitHub OAuth App and test live sign-in | READY | Dan creates the app (free); live sign-in works end to end | Dan + Claude |
 
 ## Later phases
 

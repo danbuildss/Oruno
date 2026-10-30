@@ -89,6 +89,25 @@ Also record: the per-request fee actually charged, and cap behaviour across a mo
 
 ## Results log
 
+### 2026-10-30 — Phase 2, commit `33466ef`
+
+- `pnpm lint`, `pnpm typecheck`, `pnpm build`: clean.
+- `pnpm test`: **108 passed, 0 failed** (14 files). Concurrency and sign-in files re-run 3 times: 27/27 each time.
+
+| Area | Tests |
+| --- | --- |
+| Drop rules (unit) | valid drop parsed, money → bigint; 13 invalid inputs rejected (decimal/number/zero/negative/over-$1,000 money, bad slug, 0 claims, no models, blank name, date without timezone, end before start, crossing a month); month boundary exact at midnight allowed, +1 ms refused; drop and claim state machines; claimability (active, paused, before start, at end, full) |
+| Eligibility (unit) | repos path; contributions path; exactly 180 days accepted; 179 refused; 2 repos + 19 contributions refused; unknown contributions = 0; multiple reasons |
+| GitHub client (unit) | authorize URL has state + S256 challenge and no scopes; code exchange sends verifier and secret; GitHub error surfaced; profile + contributions parsed with bearer token; contributions failure → null; bad `/user` shape rejected; **RFC 7636 PKCE test vector** |
+| Sign-in (integration) | full flow stores signals and returns a working session; session token, code and state absent from logs and database; replayed state refused; expired state (10 min + 1 ms) refused; forged state refused without calling GitHub; **PKCE mismatch fails sign-in**; repeat sign-in links to same person; **two simultaneous first sign-ins → one person**; session expires after 24 h; sign-out; blocked person refused; 503 when GitHub not configured; 21st sign-in attempt in a minute → 429 |
+| Drop API (integration) | create (money as string), operator key required, invalid input 400, duplicate slug 409; full state machine with audit trail; no activation after window; public view hides drafts and internal ids; **database refuses a drop crossing a month** |
+| Claims (integration) | eligible claim → pending, slot used, audited, second claim refused; sign-in required; each missing attestation 400; outdated terms 409; too-new and inactive accounts 403 with reasons; draft / not started / ended refused; **100 people on 20 slots → exactly 20**; **one person ×10 concurrently → exactly 1**; **database refuses a duplicate claim**; 11th claim request in a minute → 429; self-revoke own claim only, twice refused, slot kept, can't re-claim; operator revoke with reason, audited; expiry job ends drop, expires open claims only, idempotent |
+| Phase 1 suites | unchanged, all passing (migrations now cover both migrations) |
+
+Manual smoke test on the built server (`oruno_dev`): migration 0002 applied; `/v1/auth/github/start` → 503 `github_not_configured`; create drop 201; activate 200; public view 200; claim without sign-in 401; operator key in log 0 times; `drops.expire` schedule present (1 row); graceful shutdown.
+
+Not verified: real GitHub sign-in (needs a GitHub OAuth App); CI on GitHub for this branch.
+
 ### 2026-10-30 — Phase 1, commit `4734e4b`
 
 Environment: local Postgres 16.15, Node 22.22.0, pnpm 10.28.0.
