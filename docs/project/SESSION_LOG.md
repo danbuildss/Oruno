@@ -2,6 +2,24 @@
 
 Newest first. Each entry: Completed · Verified · Not verified · Issues · Next.
 
+## 2026-10-30 (3) — Eligibility approved, name check
+
+**Completed**
+- Recorded D-014: D-013 thresholds approved; Drop #1 uses GitHub sign-in only.
+- T-012: name check for "Oruno".
+
+**Verified**
+- npm package name `oruno` is unpublished (registry 404).
+
+**Not verified**
+- Domains and GitHub org availability (blocked in this session); formal trademark search not done.
+
+**Issues**
+- None blocking.
+
+**Next**
+- Dan's Phase 0 items (T-003, T-004, T-005, T-009 review, T-012 follow-up), then the $20 provider spike when approved.
+
 ## 2026-10-30 (2) — Approvals, sign-in research, claimer terms
 
 **Completed**

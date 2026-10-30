@@ -14,7 +14,7 @@ V1 scope and architecture approved (D-012). Phase 0 research continuing. No prod
 
 ## 3. Last completed task
 
-T-008 — sign-in signal research (IN REVIEW). T-009 — claimer terms drafted (IN REVIEW).
+T-012 — name check (no conflicts found; npm `oruno` available). D-013 thresholds and GitHub-only sign-in approved (D-014).
 
 ## 4. Current implementation state
 
@@ -44,30 +44,30 @@ None (no code).
 See `DECISIONS.md`. Summary:
 - APPROVED: D-001 credit drops first · D-002 Surplus Pattern A · D-006 name Oruno · D-007 Apache-2.0 · D-008 X/GitHub sign-in, wallet optional · D-009 $5 cap · D-010 backend-first process · D-011 funding in USDC on Base.
 - APPROVED (via D-012): D-003 provider caps + our ledger · D-004 no own gateway in V1 · D-005 TypeScript + Postgres monolith · V1 scope.
-- PROPOSED: D-013 eligibility thresholds.
+- APPROVED: D-013 eligibility thresholds · D-014 GitHub-only sign-in for Drop #1.
 
 ## 10. Pending approvals
 
 | Item | Where | Notes |
 | --- | --- | --- |
-| Eligibility thresholds | D-013, T-007 | GitHub: 180+ days and 3+ repos or 20+ contributions; X: 180+ days, 25+ followers, 50+ posts; 18+ |
-| X sign-in for Drop #1 | T-013 | X API reads cost about $0.01 per check and need a funded X developer account; recommend GitHub only for Drop #1 |
 | Claimer terms draft | T-009, `docs/legal/CLAIMER_TERMS.md` | Then a lawyer review |
 | Spending: $20 test key | T-006 | Deferred by Dan ("5 later") |
 
 ## 11. Next recommended task
 
-1. Dan decides D-013 thresholds and T-013 (X sign-in or GitHub only), and reviews the claimer terms.
-2. Dan sends the Surplus questions (T-004) and checks Bankr (T-005).
-3. Claude: trademark, domain, GitHub org and npm scope check for "Oruno" (T-012).
-4. When Dan is ready: Surplus org + admin key (T-003), then the provider spike (T-006).
-5. Phase 0 exit review, then approval to start Phase 1.
+1. Dan: review claimer terms (T-009); send Surplus questions (T-004); check Bankr (T-005); check domains and GitHub org for "Oruno" (T-012).
+2. When Dan is ready: Surplus org + admin key (T-003), $20 USDC deposit, then the provider spike (T-006).
+3. Phase 0 exit review, then approval to start Phase 1.
+
+Claude's own Phase 0 research tasks are complete. Remaining Phase 0 items need Dan or spending approval.
 
 ## 12. Relevant commits
 
 - `5f96e34` Initial commit
 - `ed7936e` First foundation docs (superseded by `c3b2a76`)
 - `c3b2a76` Documentation system and Apache-2.0 license
+- `4d32768` Funding decision D-011
+- `c2ca114` V1 scope and architecture approval; sign-in research; draft claimer terms
 
 ## 13. Important testing results
 

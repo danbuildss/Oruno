@@ -66,6 +66,23 @@ Researched 2026-10-30. The official doc sites (docs.github.com, docs.x.com) were
 - **Assessment:** useful because drops are shared on X, but it adds a paid dependency. For 500 sign-in attempts, about $5.
 - Sources: [X fields](https://docs.x.com/enterprise-api/fundamentals/fields), [X data dictionary](https://docs.x.com/x-api/fundamentals/data-dictionary/reference.md), [X user object](https://developer.x.com/en/docs/x-api/data-dictionary/object-model/user), [X pricing](https://docs.x.com/x-api/getting-started/pricing.md), [pricing overview (third party)](https://postproxy.dev/blog/x-api-pricing-2026/).
 
-### Recommendation (PROPOSED, T-013)
+### Decision (APPROVED, D-014)
 
-Support **GitHub sign-in for Drop #1** (free, best signal for developers). Add X sign-in when an X developer account is funded, since it costs about $0.01 per check. Thresholds are proposed in D-013.
+**GitHub sign-in only for Drop #1** (free, best signal for developers). X sign-in is added later, once an X developer account is funded (about $0.01 per check). Thresholds approved in D-013/D-014.
+
+## Name check: "Oruno" (T-012)
+
+Checked 2026-10-30.
+
+| Check | Result | Status |
+| --- | --- | --- |
+| Web search for companies, apps, brands or trademarks named "Oruno" | None found. Nearby names: Orano (nuclear company; ORANO trademarks in India), Orune (town in Sardinia) | Searched |
+| npm package `oruno` | Not published (registry returns 404) | VERIFIED available today |
+| npm scope `@oruno` | No packages found | Searched |
+| Domains (oruno.com, .ai, .dev, .xyz) | Could not check: blocked from this session | OPEN — Dan to check at a registrar |
+| GitHub organisation `oruno` | Could not check: blocked from this session | OPEN — Dan to check |
+| Formal trademark search (USPTO; Nigeria's trademark registry; classes 9 and 42) | Not done | OPEN — before public launch |
+
+Sources: [search: trademark results](https://www.indiafilings.com/search/orano-tm-1476951), [Orune](https://en.wikipedia.org/wiki/Orune), [app trademark classes](https://www.trademarkengine.com/blog/how-to-trademark-an-app-name/).
+
+Recommendation: register the domain and the npm package name early; they cost little and the name looks clear so far.

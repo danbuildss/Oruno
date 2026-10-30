@@ -57,14 +57,14 @@ Make access to AI programmable, shareable and fundable by anyone, starting with 
 | --- | --- | --- |
 | Funder | Oruno only (Dan) | APPROVED |
 | Cap per claimer | $5 | APPROVED |
-| Claim sign-in | X or GitHub (wallet optional) | APPROVED |
+| Claim sign-in | GitHub only for Drop #1; X later; wallet optional later | APPROVED (D-008, narrowed by D-014) |
 | Provider | Surplus Intelligence, Pattern A (one provisioned key per claimer) | APPROVED |
 | Tool | Claude Code | APPROVED |
 | Number of claims | 20 | APPROVED |
 | Total funding | $100 (+ $20 test key) | APPROVED |
 | Funding method | USDC on Base, deposited to the Surplus account | APPROVED |
 | Duration | 14 days, inside one calendar month | APPROVED |
-| Eligibility thresholds (account age, activity) | Proposed in D-013 | PROPOSED |
+| Eligibility thresholds (account age, activity) | GitHub ≥ 180 days and (≥ 3 public repos or ≥ 20 contributions in 12 months); 18+ | APPROVED (D-013, D-014) |
 | Frontend | Claim page and "my key" page only, after backend proof | APPROVED |
 
 **Not in V1:** drops created by other funders, funder dashboard, organisation accounts, payments by card, public API or SDK, multiple providers, onchain contracts.

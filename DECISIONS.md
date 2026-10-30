@@ -123,7 +123,7 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
 
 ## D-013 — Eligibility thresholds for Drop #1
 
-- **Date:** 2026-10-30 · **Approval:** PROPOSED
+- **Date:** 2026-10-30 · **Approval:** PROPOSED → APPROVED by D-014
 - **Problem:** How to tell a real person from a farmed account at sign-in (TH-1).
 - **Options:** account age only; age plus activity; manual approval of every claim.
 - **Selected (proposed):** age plus activity, checked at sign-in, with manual review for borderline cases.
@@ -133,3 +133,13 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
 - **Reasoning:** Old, active accounts are expensive to fake at scale. GitHub signals fit developers best.
 - **Trade-offs:** Excludes newcomers with new accounts; thresholds may need tuning after Drop #1.
 - **Consequences:** Signals stored at sign-in time in `identities`; thresholds held in drop configuration so they can change per drop.
+
+## D-014 — D-013 approved; GitHub-only sign-in for Drop #1
+
+- **Date:** 2026-10-30 · **Approval:** APPROVED (Dan)
+- **Problem:** Confirm eligibility thresholds and which sign-in Drop #1 supports.
+- **Options:** X and GitHub (X reads cost about $0.01 each and need a funded X developer account); GitHub only.
+- **Selected:** D-013 thresholds approved. Drop #1 uses **GitHub sign-in only**. This narrows D-008 for Drop #1; X sign-in remains the plan for later drops.
+- **Reasoning:** GitHub is free and the best signal for developers; avoids a new paid dependency before the pilot.
+- **Trade-offs:** People without a GitHub account can't claim in Drop #1; X-only users are excluded until X sign-in is added.
+- **Consequences:** Phase 2 builds GitHub OAuth first; X sign-in becomes a later task. Drop #1 thresholds: GitHub account ≥ 180 days old and (≥ 3 public repos or ≥ 20 contributions in the last 12 months); 18+; not in a sanctioned jurisdiction; one claim per person.
