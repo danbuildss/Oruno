@@ -1,69 +1,91 @@
-# Notes
+# NOTES — Project memory
 
-The running log for Oruno. Every working session adds an entry at the top of the log: what was done, what was decided, what was learned, and what comes next. Open questions and open decisions are kept current below.
+**Read this before any task.** Update it after every meaningful session. History lives in `docs/project/SESSION_LOG.md`; don't delete context, move it there.
 
-## Current state
+_Last updated: 2026-10-30_
 
-- **Phase:** 0 — Foundation (planning, no product code)
-- **Next milestone:** Surplus organisation + admin key set up; acceptance tests run on a $20 test key
-- **Branch with these docs:** `docs/foundation` (not pushed yet)
+## 1. Current project status
 
-## Open decisions
+Planning complete enough for review. Documentation system established. No product code. No money spent. Nothing deployed.
 
-| Decision | Options | Leaning | Owner |
-| --- | --- | --- | --- |
-| Final brand name | Oruno (working), others | Keep Oruno until Drop #1 | Dan |
-| Open-source license | Apache-2.0, MIT, AGPL | Apache-2.0 for the core | Dan |
-| Sign-in for Drop #1 | X, GitHub, Base wallet | X + GitHub; wallet optional | Dan + Claude |
-| Default cap for Drop #1 | $5 or $10 per person | $5, or $10 if Surplus's per-request fee applies to API keys | Dan |
-| Use Bankr credit | Split on Bankr vs move to Surplus | Depends on Bankr's key controls | Dan |
+## 2. Current development phase
 
-## Open questions
+**Phase 0 — Research and Architecture** (IN PROGRESS). See `PLAN.md`.
 
-**For Surplus (ask in writing):**
+## 3. Last completed task
 
-- [ ] Is there a lifetime (all-time) budget window, or only day and month?
-- [ ] Does the $0.003 per-request flat fee apply to API-key traffic, or only x402?
-- [ ] Which sellers serve Claude models, and is that supply legitimately sourced under the model providers' terms?
-- [ ] Would a future Oruno gateway that routes across several providers, with Surplus as one, count as a "directly competing routing service" (§8)?
+T-001 — documentation system established (IN REVIEW by Dan).
 
-**For Bankr:**
+## 4. Current implementation state
 
-- [ ] Can Bankr credit be split into extra API keys with spending limits for other people?
-- [ ] Is Bankr open to a partnership (sponsored drops for its community)?
+No code. Repository contains documentation and the Apache-2.0 license only. Branch: `docs/foundation` (local, not pushed).
 
-**For us:**
+## 5. What is working
 
-- [ ] What minimum account age and activity counts as "real" for X and GitHub sign-in?
-- [ ] Who are the first 3 outside funders to approach after Drop #1?
-- [ ] Which lawyer gives the one-hour review before paid or onchain funding?
+Nothing implemented yet.
 
-## Log
+## 6. What is broken
 
-### 2026-10-30 — Foundation docs written
+Nothing implemented yet.
 
-**Done**
-- Researched the idea end to end: competitors, Surplus docs and terms, Anthropic and OpenRouter key controls, market data.
-- Pivoted from "corporate sponsorship pilot" to **credit drops**: anyone funds AI credit, sets a cap per person, posts a link, people claim and use it free.
-- Wrote this repo's documentation set (vision, product, architecture, providers, safety, business model, roadmap, Drop #1, acceptance tests, research, decisions).
+## 7. Known limitations (from research, not yet tested)
 
-**Decided** (see `docs/decisions/`)
-- First product is credit drops shared by link (0001).
-- Surplus Intelligence Pattern A is the first provider (0002).
-- Phase 1 relies on Surplus's native caps and expiry; our own ledger arrives in Phase 2 (0003).
-- USDC on Base, deposited, is the primary funding method (0004).
-- TypeScript + Postgres modular monolith (0005).
-- Oruno is a working name (0006).
+- Surplus budgets have day and month windows only; no lifetime window found. A monthly cap can double if a drop crosses a month boundary.
+- Surplus charges a per-request flat fee ($0.003 per `/x402/info`); unconfirmed whether it applies to API-key traffic. Could take a large share of a $5 cap.
+- On Surplus's Anthropic endpoint, "out of credit" appears as a generic `400 invalid_request_error`. Claimers need clear onboarding text.
+- Surplus verifies seller reachability and health, not model quality (weights, quantization, injected prompts).
 
-**Learned**
-- Surplus already supports per-key hard caps, expiry, model scopes, nested budgets, per-key usage, and no prompt storage. Its terms (§8) allow reselling with conditions.
-- Surplus budgets have day and month windows only (no lifetime window found).
-- Claude models on Surplus: median discounts 17–50%, uptime 62–99%.
-- Anthropic can't create capped keys by API; OpenRouter can.
-- Nobody found offering "anyone funds a capped AI drop by link" as a product. Closest: Hack Club AI (closed community), OpenRouter/Surplus (tools only), Puter (user pays).
+## 8. Outstanding bugs
 
-**Next**
-1. Dan reviews these docs.
-2. Dan creates a Surplus organisation and admin key; checks Bankr key controls.
-3. Send the Surplus questions.
-4. Run acceptance tests on a $20 key.
+None (no code).
+
+## 9. Important architectural decisions
+
+See `DECISIONS.md`. Summary:
+- APPROVED: D-001 credit drops first · D-002 Surplus Pattern A · D-006 name Oruno · D-007 Apache-2.0 · D-008 X/GitHub sign-in, wallet optional · D-009 $5 cap · D-010 backend-first process.
+- PROPOSED: D-003 provider caps + our ledger · D-004 no own gateway in V1 · D-005 TypeScript + Postgres monolith.
+
+## 10. Pending approvals
+
+| Item | Where | Notes |
+| --- | --- | --- |
+| **Funding method for Drop #1** | T-002 | Dan wrote "I will fund it throu…" — message cut off. How: USDC on Base deposited to Surplus, card credit on Surplus, or Bankr? |
+| V1 scope | `PRODUCT.md`, T-010 | 20 claims, $100, 14 days, Claude Code |
+| Architecture | `ARCHITECTURE.md`, T-011 | Includes D-003, D-004, D-005 |
+| Spending: $20 test key | T-006 | Required for the provider spike |
+| Push `docs/foundation` to GitHub | — | Not pushed yet |
+
+## 11. Next recommended task
+
+1. Dan answers the funding method (T-002) and reviews T-010 / T-011.
+2. Dan sends the Surplus questions (T-004) and checks Bankr (T-005).
+3. Claude researches X and GitHub sign-in signals (T-008).
+4. With approval: set up Surplus org + admin key (T-003), then the provider spike (T-006).
+
+## 12. Relevant commits
+
+- `5f96e34` Initial commit
+- `ed7936e` First foundation docs (superseded by the restructure in the next commit)
+
+## 13. Important testing results
+
+None yet.
+
+## 14. Deployment status
+
+Nothing deployed. No environments exist.
+
+## 15. Unresolved technical questions
+
+**Surplus (ask in writing, T-004):**
+1. Is there a lifetime budget window?
+2. Does the per-request flat fee apply to API-key traffic?
+3. Which sellers serve Claude models, and is that supply legitimately sourced under model providers' terms?
+4. Would a future Oruno gateway count as a "directly competing routing service" (§8)?
+
+**Bankr (T-005):** Can credit be split into capped keys for others? Partnership interest?
+
+**Ours:**
+- Eligibility thresholds for X and GitHub (T-007, T-008).
+- How we detect key sharing with only provider usage data (IPs may not be visible).
+- Who does the one-hour legal review of claimer terms (T-009).

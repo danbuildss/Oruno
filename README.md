@@ -2,30 +2,31 @@
 
 **Intelligence should move freely.**
 
-*Oruno is a working name, not the final brand. Built by Somehow Internet.*
+Oruno lets anyone fund AI credit for other people. A funder sets a total amount and a cap per person, shares one link, and people claim a personal key they use in their own AI tools (Claude Code first) for free, until their cap runs out.
 
-Oruno lets anyone fund AI credit for other people. A funder sets a total amount and a cap per person, shares one link, and people claim a personal key they use in their own AI tools (Claude Code, Cursor, OpenCode) for free, until their cap runs out.
+> "I've added $100 of AI credit. $5 each for 20 builders. Claim yours."
 
-> Example: "I've added $200 of AI credit. $5 each for 40 builders. Claim yours."
+Built by Somehow Internet. Licensed under [Apache-2.0](LICENSE).
 
 ## Status
 
-Phase 0 (Foundation). Planning only; no product code yet. See [`docs/ROADMAP.md`](docs/ROADMAP.md) and [`NOTES.md`](NOTES.md).
+**Phase 0 — Research and Architecture.** No product code yet. See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
 
-## Documents
+## Documentation
 
-| File | What it covers |
+| File | Purpose |
 | --- | --- |
-| [`NOTES.md`](NOTES.md) | Running log of everything we do: decisions, findings, open questions, next steps |
-| [`CLAUDE.md`](CLAUDE.md) | Instructions for AI coding sessions working in this repo |
-| [`docs/VISION.md`](docs/VISION.md) | Why Oruno exists, mission, long-term direction |
-| [`docs/PRODUCT.md`](docs/PRODUCT.md) | What we build, who it's for, the core loop, glossary |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Core engine, components, data model, planned repo layout |
-| [`docs/PROVIDERS.md`](docs/PROVIDERS.md) | Surplus Intelligence findings, Bankr, OpenRouter, provider adapter |
-| [`docs/SAFETY.md`](docs/SAFETY.md) | Abuse prevention, money safety, privacy, keys, terms, legal |
-| [`docs/BUSINESS_MODEL.md`](docs/BUSINESS_MODEL.md) | How Oruno makes money, stage by stage |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Phases 0–6, what each builds, and the gate to pass |
-| [`docs/DROP_1.md`](docs/DROP_1.md) | Plan for the first credit drop |
-| [`docs/ACCEPTANCE_TESTS.md`](docs/ACCEPTANCE_TESTS.md) | Tests that must pass before real people get keys |
-| [`docs/RESEARCH.md`](docs/RESEARCH.md) | Competitors, market data, reviewer feedback, sources |
-| [`docs/decisions/`](docs/decisions/) | One short record per major decision |
+| [`CLAUDE.md`](CLAUDE.md) | Operating instructions for AI development sessions |
+| [`NOTES.md`](NOTES.md) | **Project memory:** status, what works, what's broken, approvals, next task |
+| [`PRODUCT.md`](PRODUCT.md) | Product definition, vision, principles, V1 boundaries |
+| [`PLAN.md`](PLAN.md) | Phases with objectives, deliverables, acceptance criteria |
+| [`TASKS.md`](TASKS.md) | Task tracker |
+| [`DECISIONS.md`](DECISIONS.md) | Append-only decision log |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | System overview |
+| [`TESTING.md`](TESTING.md) | Test strategy, cases, commands, results |
+| [`BACKEND_PROOF.md`](BACKEND_PROOF.md) | Evidence required before any frontend work |
+| `docs/research/` | Market research, competitors, validation plan |
+| `docs/architecture/` | Database, providers, threat model |
+| `docs/project/` | Changelog, experiments, session log |
+
+Further documents (API, drop engine, credit ledger, operations) are added when their phase begins.

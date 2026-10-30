@@ -2,6 +2,8 @@
 
 Where the AI comes from, what each provider gives us, and what we still need to confirm. Findings as of 2026-10-30.
 
+**Status:** research findings from docs and live data. Nothing here is VERIFIED by our own tests until the provider spike (T-006) runs.
+
 ## Surplus Intelligence (first provider)
 
 An inference marketplace settling in USDC on Base. One OpenAI-compatible base URL; a router picks the cheapest healthy seller. Docs: `https://www.surplusintelligence.ai/llms.txt`.
@@ -69,7 +71,7 @@ Spend limits are per workspace and set by hand in the Console; API keys cannot b
 
 ## Provider adapter
 
-All provider calls go through one interface in `packages/providers`:
+All provider calls go through one interface in `src/providers/` (PROPOSED):
 
 ```ts
 interface ProviderAdapter {
