@@ -57,7 +57,7 @@ When claiming, the claimer confirms:
 
 ## Not yet
 
-- Funding checks (Σ caps ≤ confirmed funding): Phase 3.
+- Funding: done in Phase 3 — see `CREDIT_LEDGER.md`. A claim allocates its cap in the same transaction; activation requires funding for all open slots.
 - Key issuance: Phase 4.
 - X sign-in: later drops (D-014).
 - Detecting key sharing from usage: Phase 4+.

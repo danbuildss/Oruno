@@ -12,9 +12,9 @@ Funders' money · provider admin key · claimers' personal keys · claimer ident
 | --- | --- | --- | --- | --- |
 | TH-1 | Farming: one person claims many times with fake or bought accounts | High | X/GitHub sign-in with account age and activity thresholds; one claim per person across linked identities; claim rate limits; small caps | Partly VERIFIED (Phase 2): eligibility, one claim per person, rate limits |
 | TH-2 | Key sharing or resale by a claimer | Medium | Personal keys only; usage anomaly flags; revocation; claimer terms | Manual review in pilot |
-| TH-3 | Overspend: total spend exceeds funding | High | Ledger invariant (Σ caps ≤ funding) + provider key caps + workspace budget = funding | Invariant, AT-3, AT-4, AT-8 |
+| TH-3 | Overspend: total spend exceeds funding | High | Ledger invariant (Σ caps ≤ funding) + provider key caps + workspace budget = funding | Ledger part VERIFIED (Phase 3): claims refused beyond funding under concurrency, DB refuses overdrafts; provider part via AT-3/4/8 in Phase 4 |
 | TH-4 | Cap doubling across a month boundary (monthly budget window) | Medium | Drops inside one calendar month, or adjust caps at rollover | AT, month-boundary check |
-| TH-5 | Concurrent claims allocate the same funds | High | Reservation in one database transaction with row locking; unique constraints | Slots VERIFIED (Phase 2); funds in Phase 3 |
+| TH-5 | Concurrent claims allocate the same funds | High | Reservation in one database transaction with row locking; unique constraints | VERIFIED: slots (Phase 2) and funds (Phase 3) |
 | TH-6 | Duplicate key minting on retry | Medium | Idempotency keys on every provider write | Failure recovery |
 | TH-7 | Admin key leak | Critical | Secret store only; never in repo or logs; least access; rotation procedure | Log and repo scan |
 | TH-8 | Key secret leak from Oruno | High | Never stored; shown once over HTTPS to the signed-in claimer | AT-13, BP-13 |

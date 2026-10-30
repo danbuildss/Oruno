@@ -57,15 +57,15 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 
 | ID | Task | State | Completion condition |
 | --- | --- | --- | --- |
-| T-301 | Migration: fundings, ledger accounts, transactions, append-only entries; zero-sum and non-negative balances enforced by the database | IN PROGRESS | Database refuses unbalanced transactions, negative balances, edits and deletes; tests |
-| T-302 | Record confirmed USDC-on-Base funding (operator) | READY | Funding credits the drop; duplicate transaction hash refused; audited; tests |
-| T-303 | Allocate cap on claim; refuse when underfunded | READY | 100 concurrent claims on a drop funded for 10 → exactly 10, unallocated never below 0; tests |
-| T-304 | Activation and resume require funds for all remaining slots | READY | Underfunded activation refused; tests |
-| T-305 | Release unused allocation of ended claims (idempotent, grace period, job) | READY | Concurrent releases release once; tests |
-| T-306 | Record returns of unallocated funds after a drop ends | READY | Can't return more than unallocated, or before the drop ends; tests |
-| T-307 | Invariant checker (job + operator endpoint) | READY | Detects a deliberately corrupted balance; clean ledger reports no violations |
-| T-308 | Randomized sequence test: invariants hold after every step | READY | Hundreds of random operations, invariants checked after each |
-| T-309 | Docs: `docs/architecture/CREDIT_LEDGER.md`, API update; evidence BP-6 (funding), BP-7 | READY | Docs written; evidence recorded |
+| T-301 | Migration: fundings, ledger accounts, transactions, append-only entries; zero-sum and non-negative balances enforced by the database | VERIFIED | Database refuses unbalanced transactions, negative balances, edits and deletes; tests |
+| T-302 | Record confirmed USDC-on-Base funding (operator) | VERIFIED | Funding credits the drop; duplicate transaction hash refused; audited; tests |
+| T-303 | Allocate cap on claim; refuse when underfunded | VERIFIED | 100 concurrent claims on a drop funded for 10 → exactly 10, unallocated never below 0; tests |
+| T-304 | Activation and resume require funds for all remaining slots | VERIFIED | Underfunded activation refused; tests |
+| T-305 | Release unused allocation of ended claims (idempotent, grace period, job) | VERIFIED | Concurrent releases release once; tests |
+| T-306 | Record returns of unallocated funds after a drop ends | VERIFIED | Can't return more than unallocated, or before the drop ends; tests |
+| T-307 | Invariant checker (job + operator endpoint) | VERIFIED | Detects a deliberately corrupted balance; clean ledger reports no violations |
+| T-308 | Randomized sequence test: invariants hold after every step | VERIFIED | Hundreds of random operations, invariants checked after each |
+| T-309 | Docs: `docs/architecture/CREDIT_LEDGER.md`, API update; evidence BP-6 (funding), BP-7 | IN REVIEW (awaiting Phase 3 exit approval) | Docs written; evidence recorded |
 
 ## Later phases
 
