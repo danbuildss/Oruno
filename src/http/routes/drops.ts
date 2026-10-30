@@ -73,7 +73,7 @@ export function registerDropRoutes(
       .where("drop_id", "=", id)
       .orderBy("created_at", "asc")
       .execute();
-    return { claims: claims.map(claimView) };
+    return { claims: claims.map((c) => claimView(c)) };
   });
 
   // --- Public route: what a claim page needs to show ---

@@ -12,6 +12,7 @@ describe("loadConfig", () => {
       logLevel: "info",
       databaseUrl: valid.DATABASE_URL,
       github: null,
+      provider: { kind: "none" },
     });
   });
 
@@ -27,6 +28,25 @@ describe("loadConfig", () => {
       clientSecret: "secret",
       callbackUrl: "https://oruno.example/v1/auth/github/callback",
     });
+  });
+
+  it("selects the fake provider outside production and refuses it in production", () => {
+    expect(loadConfig({ ...valid, PROVIDER: "fake" }).provider).toEqual({ kind: "fake" });
+    expect(() => loadConfig({ ...valid, PROVIDER: "fake", NODE_ENV: "production" })).toThrow(
+      /not allowed in production/,
+    );
+  });
+
+  it("requires the Surplus admin key and workspace for PROVIDER=surplus", () => {
+    expect(() => loadConfig({ ...valid, PROVIDER: "surplus" })).toThrow(/SURPLUS_ADMIN_KEY/);
+    expect(
+      loadConfig({
+        ...valid,
+        PROVIDER: "surplus",
+        SURPLUS_ADMIN_KEY: "inf_admin_x",
+        SURPLUS_WORKSPACE_ID: "ws",
+      }).provider,
+    ).toEqual({ kind: "surplus", adminKey: "inf_admin_x", workspaceId: "ws", baseUrl: null });
   });
 
   it("refuses partial GitHub settings", () => {

@@ -9,12 +9,25 @@ import { allocateForClaim } from "../ledger/ledger.js";
 
 export type ClaimRow = Selectable<ClaimsTable>;
 
-export function claimView(claim: ClaimRow) {
+export function claimView(
+  claim: ClaimRow,
+  extra: { spentMicro?: bigint; keyPrefix?: string | null } = {},
+) {
   return {
     id: claim.id,
     dropId: claim.drop_id,
     status: claim.status,
     capMicro: claim.cap_micro.toString(),
+    ...(extra.spentMicro === undefined
+      ? {}
+      : {
+          spentMicro: extra.spentMicro.toString(),
+          remainingMicro: (claim.cap_micro > extra.spentMicro
+            ? claim.cap_micro - extra.spentMicro
+            : 0n
+          ).toString(),
+        }),
+    ...(extra.keyPrefix === undefined ? {} : { keyPrefix: extra.keyPrefix }),
     createdAt: claim.created_at.toISOString(),
     endedAt: claim.ended_at ? claim.ended_at.toISOString() : null,
     endReason: claim.end_reason,
@@ -69,6 +82,8 @@ export async function createClaim(db: Db, params: CreateClaimParams): Promise<Cl
       .select("id")
       .where("drop_id", "=", drop.id)
       .where("person_id", "=", params.personId)
+      // A failed claim (no key could be issued) doesn't count: the person may try again.
+      .where("status", "<>", "failed")
       .executeTakeFirst();
     if (existing)
       throw new AppError(409, "already_claimed", "You've already claimed from this drop.");

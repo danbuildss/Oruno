@@ -2,6 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { createClaim, expireFinishedDrops } from "../../src/claims/claims.js";
 import type { Db } from "../../src/db/client.js";
 import { AppError } from "../../src/http/errors.js";
+import { FakeProvider } from "../../src/providers/fake.js";
 import { testApp } from "../helpers/app.js";
 import { freshDb } from "../helpers/db.js";
 import { claimBody, NOW, seedClaimer, seedDrop, seedOperator } from "../helpers/seed.js";
@@ -11,19 +12,21 @@ describe("claims", () => {
   let operator: { id: string; key: string };
   let now = NOW;
   const clock = () => now;
+  let provider: FakeProvider;
 
   beforeEach(async () => {
     if (db) await db.destroy();
     db = await freshDb();
     operator = await seedOperator(db);
     now = NOW;
+    provider = new FakeProvider();
   });
   afterAll(async () => {
     await db.destroy();
   });
 
   const claimViaApi = async (slug: string, token: string, body: object = claimBody()) => {
-    const { app } = await testApp(db, { clock });
+    const { app } = await testApp(db, { clock, provider });
     const res = await app.inject({
       method: "POST",
       url: `/v1/drops/${slug}/claims`,
@@ -34,12 +37,16 @@ describe("claims", () => {
     return res;
   };
 
-  it("lets an eligible person claim once: a pending claim, a used slot, an audit entry", async () => {
+  it("lets an eligible person claim once: an active claim with a key, a used slot, an audit entry", async () => {
     const drop = await seedDrop(db, operator.id);
     const claimer = await seedClaimer(db);
     const res = await claimViaApi(drop.slug, claimer.token);
     expect(res.statusCode).toBe(201);
-    expect(res.json()).toMatchObject({ status: "pending", capMicro: "5000000", dropId: drop.id });
+    expect(res.json().claim).toMatchObject({
+      status: "active",
+      capMicro: "5000000",
+      dropId: drop.id,
+    });
 
     const after = await db
       .selectFrom("drops")
@@ -211,7 +218,7 @@ describe("claims", () => {
   it("rate-limits claim attempts per IP", async () => {
     const drop = await seedDrop(db, operator.id);
     const claimer = await seedClaimer(db);
-    const { app } = await testApp(db, { clock });
+    const { app } = await testApp(db, { clock, provider });
     const statuses: number[] = [];
     for (let i = 0; i < 11; i++) {
       const res = await app.inject({
@@ -233,8 +240,8 @@ describe("claims", () => {
       const drop = await seedDrop(db, operator.id);
       const alice = await seedClaimer(db);
       const bob = await seedClaimer(db);
-      const claimId = (await claimViaApi(drop.slug, alice.token)).json().id as string;
-      const { app } = await testApp(db, { clock });
+      const claimId = (await claimViaApi(drop.slug, alice.token)).json().claim.id as string;
+      const { app } = await testApp(db, { clock, provider });
 
       const byBob = await app.inject({
         method: "POST",
@@ -271,8 +278,8 @@ describe("claims", () => {
     it("lets an operator revoke any claim with a reason, and audits it", async () => {
       const drop = await seedDrop(db, operator.id);
       const c = await seedClaimer(db);
-      const claimId = (await claimViaApi(drop.slug, c.token)).json().id as string;
-      const { app } = await testApp(db, { clock });
+      const claimId = (await claimViaApi(drop.slug, c.token)).json().claim.id as string;
+      const { app } = await testApp(db, { clock, provider });
       const res = await app.inject({
         method: "POST",
         url: `/v1/claims/${claimId}/revoke`,
@@ -300,7 +307,7 @@ describe("claims", () => {
       const c1 = await seedClaimer(db);
       const c2 = await seedClaimer(db);
       await claimViaApi(drop.slug, c1.token);
-      const toRevoke = (await claimViaApi(drop.slug, c2.token)).json().id as string;
+      const toRevoke = (await claimViaApi(drop.slug, c2.token)).json().claim.id as string;
       await db
         .updateTable("claims")
         .set({ status: "revoked" })

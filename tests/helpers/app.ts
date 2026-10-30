@@ -4,6 +4,7 @@ import { buildApp } from "../../src/app.js";
 import type { Db } from "../../src/db/client.js";
 import type { GitHubClient } from "../../src/github/client.js";
 import { createLogger } from "../../src/logger.js";
+import type { InferenceProvider } from "../../src/providers/provider.js";
 
 /** Collects every log line the app writes, so tests can inspect them. */
 export class LogCapture extends Writable {
@@ -19,7 +20,11 @@ export class LogCapture extends Writable {
 
 export async function testApp(
   db: Db,
-  options: { github?: GitHubClient | null; clock?: () => Date } = {},
+  options: {
+    github?: GitHubClient | null;
+    clock?: () => Date;
+    provider?: InferenceProvider | null;
+  } = {},
 ): Promise<{ app: FastifyInstance; logs: LogCapture }> {
   const logs = new LogCapture();
   const logger = createLogger({ level: "info" }, logs);
@@ -27,6 +32,7 @@ export async function testApp(
     db,
     logger,
     github: options.github ?? null,
+    provider: options.provider ?? null,
     ...(options.clock ? { clock: options.clock } : {}),
   });
   return { app, logs };
