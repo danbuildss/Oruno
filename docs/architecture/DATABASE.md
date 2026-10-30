@@ -1,6 +1,6 @@
 # Database
 
-**Status: PROPOSED** (T-011). Postgres. Money columns are `bigint` micro-dollars (1 USD = 1,000,000). All timestamps UTC.
+**Status: APPROVED** as the initial design (D-012). Refined in Phases 1–3. Postgres. Money columns are `bigint` micro-dollars (1 USD = 1,000,000). All timestamps UTC.
 
 ## Tables
 

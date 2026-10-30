@@ -6,7 +6,7 @@ _Last updated: 2026-10-30_
 
 ## 1. Current project status
 
-Planning complete enough for review. Documentation system established. No product code. No money spent. Nothing deployed.
+V1 scope and architecture approved (D-012). Phase 0 research continuing. No product code. No money spent. Nothing deployed.
 
 ## 2. Current development phase
 
@@ -14,7 +14,7 @@ Planning complete enough for review. Documentation system established. No produc
 
 ## 3. Last completed task
 
-T-001 — documentation system established (IN REVIEW by Dan).
+T-012 — name check (no conflicts found; npm `oruno` available). D-013 thresholds and GitHub-only sign-in approved (D-014).
 
 ## 4. Current implementation state
 
@@ -43,28 +43,31 @@ None (no code).
 
 See `DECISIONS.md`. Summary:
 - APPROVED: D-001 credit drops first · D-002 Surplus Pattern A · D-006 name Oruno · D-007 Apache-2.0 · D-008 X/GitHub sign-in, wallet optional · D-009 $5 cap · D-010 backend-first process · D-011 funding in USDC on Base.
-- PROPOSED: D-003 provider caps + our ledger · D-004 no own gateway in V1 · D-005 TypeScript + Postgres monolith.
+- APPROVED (via D-012): D-003 provider caps + our ledger · D-004 no own gateway in V1 · D-005 TypeScript + Postgres monolith · V1 scope.
+- APPROVED: D-013 eligibility thresholds · D-014 GitHub-only sign-in for Drop #1.
 
 ## 10. Pending approvals
 
 | Item | Where | Notes |
 | --- | --- | --- |
-| V1 scope | `PRODUCT.md`, T-010 | 20 claims, $100, 14 days, Claude Code |
-| Architecture | `ARCHITECTURE.md`, T-011 | Includes D-003, D-004, D-005 |
-| Spending: $20 test key | T-006 | Required for the provider spike |
+| Claimer terms draft | T-009, `docs/legal/CLAIMER_TERMS.md` | Then a lawyer review |
+| Spending: $20 test key | T-006 | Deferred by Dan ("5 later") |
 
 ## 11. Next recommended task
 
-1. Dan reviews V1 scope and architecture (T-010, T-011).
-2. Dan sends the Surplus questions (T-004) and checks Bankr (T-005).
-3. Claude researches X and GitHub sign-in signals (T-008).
-4. With approval: set up Surplus org + admin key (T-003), then the provider spike (T-006).
+1. Dan: review claimer terms (T-009); send Surplus questions (T-004); check Bankr (T-005); check domains and GitHub org for "Oruno" (T-012).
+2. When Dan is ready: Surplus org + admin key (T-003), $20 USDC deposit, then the provider spike (T-006).
+3. Phase 0 exit review, then approval to start Phase 1.
+
+Claude's own Phase 0 research tasks are complete. Remaining Phase 0 items need Dan or spending approval.
 
 ## 12. Relevant commits
 
 - `5f96e34` Initial commit
 - `ed7936e` First foundation docs (superseded by `c3b2a76`)
 - `c3b2a76` Documentation system and Apache-2.0 license
+- `4d32768` Funding decision D-011
+- `c2ca114` V1 scope and architecture approval; sign-in research; draft claimer terms
 
 ## 13. Important testing results
 
@@ -85,6 +88,6 @@ Nothing deployed. No environments exist.
 **Bankr (T-005):** Can credit be split into capped keys for others? Partnership interest?
 
 **Ours:**
-- Eligibility thresholds for X and GitHub (T-007, T-008).
+- Confirm GitHub and X field names and pricing against the live official docs (blocked in this session) at Phase 2 start.
 - How we detect key sharing with only provider usage data (IPs may not be visible).
 - Who does the one-hour legal review of claimer terms (T-009).

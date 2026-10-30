@@ -28,5 +28,6 @@ Built by Somehow Internet. Licensed under [Apache-2.0](LICENSE).
 | `docs/research/` | Market research, competitors, validation plan |
 | `docs/architecture/` | Database, providers, threat model |
 | `docs/project/` | Changelog, experiments, session log |
+| `docs/legal/` | Claimer terms (draft) |
 
 Further documents (API, drop engine, credit ledger, operations) are added when their phase begins.

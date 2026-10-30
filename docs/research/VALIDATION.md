@@ -15,7 +15,7 @@
 | --- | --- | --- |
 | Funder | Oruno (Dan) | APPROVED |
 | Cap per claimer | $5 | APPROVED |
-| Sign-in | X or GitHub with thresholds | APPROVED (thresholds OPEN) |
+| Sign-in | GitHub only, with D-013 thresholds | APPROVED (D-014) |
 | Claims | 20 | PROPOSED |
 | Total | $100 | PROPOSED |
 | Duration | 14 days within one calendar month | PROPOSED |

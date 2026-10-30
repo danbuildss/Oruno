@@ -40,7 +40,7 @@ Backend first. Each phase needs Dan's approval to start and to exit. All phases 
 ## Phase 2 — Drop and Claim Engine
 
 - **Objective:** drops and claims with eligibility and anti-abuse, without real money.
-- **Scope:** drop model (total, cap, max claims, models, window, status: draft/active/paused/ended); X and GitHub identity verification with account-age and activity thresholds; one claim per person per drop and across linked identities; claim rate limits; claim state transitions (pending, active, exhausted, expired, revoked); revocation; audit history.
+- **Scope:** drop model (total, cap, max claims, models, window, status: draft/active/paused/ended); GitHub identity verification with the D-014 account-age and activity thresholds (X sign-in later); one claim per person per drop and across linked identities; claim rate limits; claim state transitions (pending, active, exhausted, expired, revoked); revocation; audit history.
 - **Dependencies:** Phase 1.
 - **Deliverables:** engine module, API endpoints, `docs/architecture/DROP_ENGINE.md`, `docs/architecture/API.md`.
 - **Acceptance criteria:** duplicate and ineligible claims rejected; claims never exceed max claims under concurrency; all transitions audited.

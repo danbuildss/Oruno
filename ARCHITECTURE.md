@@ -1,6 +1,6 @@
 # Architecture
 
-**Status: PROPOSED** — awaiting approval (T-011). Details: `docs/architecture/DATABASE.md`, `docs/architecture/PROVIDERS.md`, `docs/architecture/THREAT_MODEL.md`.
+**Status: APPROVED** (D-012, 2026-10-30). Stack details (frameworks) are proposed at Phase 1 start. Details: `docs/architecture/DATABASE.md`, `docs/architecture/PROVIDERS.md`, `docs/architecture/THREAT_MODEL.md`.
 
 ## Overview
 
@@ -48,7 +48,7 @@ Oruno **issues and governs keys**; it does not sit in the request path (D-004). 
 1. **Our ledger:** Σ caps allocated ≤ confirmed funding, enforced in a transaction.
 2. **Provider:** each key's hard cap, plus the workspace budget = funding, enforced on every request.
 
-## Proposed stack (D-005, PROPOSED)
+## Stack (D-005, APPROVED)
 
 TypeScript (strict) on Node.js · Postgres · HTTP framework, migration tool and test runner to be proposed at Phase 1 start · Next.js for the Phase 6 claim page.
 

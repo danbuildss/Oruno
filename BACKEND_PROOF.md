@@ -9,7 +9,7 @@ Evidence format: command run, result summary, commit hash, date.
 | BP-1 | Service starts from a clean checkout with documented commands; health check passes | OPEN | — |
 | BP-2 | Migrations apply and roll back on a clean database | OPEN | — |
 | BP-3 | Operator can create, activate, pause and end a drop through the API | OPEN | — |
-| BP-4 | Claimer sign-in via X and GitHub works; ineligible accounts rejected | OPEN | — |
+| BP-4 | Claimer sign-in via GitHub works; ineligible accounts rejected (D-014 thresholds) | OPEN | — |
 | BP-5 | One claim per person per drop, including under concurrent attempts | OPEN | — |
 | BP-6 | Claims never exceed the drop's slots or confirmed funding under concurrency | OPEN | — |
 | BP-7 | Financial invariants hold across the full test suite | OPEN | — |
