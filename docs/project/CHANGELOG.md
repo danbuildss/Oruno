@@ -3,6 +3,7 @@
 Significant changes to the repository, newest first.
 
 ## 2026-10-30
+- **Phase 2 drop and claim engine** (`33466ef`): GitHub sign-in (state + PKCE), eligibility, drops, claims with concurrency safety, revocation, expiry job, rate limits. Docs: API, DROP_ENGINE.
 - **Phase 1 backend foundation** (`4734e4b`): config, Postgres migrations, append-only audit log, logging with redaction, Fastify error handling, health check, operator API keys, pg-boss jobs, Vitest suite, CI.
 - Recorded D-015 and D-016.
 - Recorded D-014 (D-013 approved; GitHub-only sign-in for Drop #1) and the "Oruno" name check.

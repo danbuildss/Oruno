@@ -163,3 +163,18 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
 - **Reasoning:** Control over SQL and locking for money logic; no extra services; few dependencies; tests on a real database.
 - **Trade-offs:** Kysely means writing SQL-shaped queries by hand (more explicit, more code than an ORM).
 - **Consequences:** Phase 1 builds on this stack.
+
+## D-017 — Phase 1 closed; Phase 2 design choices
+
+- **Date:** 2026-10-30 · **Approval:** APPROVED (Dan approved closing Phase 1 and starting Phase 2); design choices below PROPOSED by Claude within that approval, open to change.
+- **Problem:** How Phase 2 implements drops, sign-in and claims before money (Phase 3) and real keys (Phase 4) exist.
+- **Selected:**
+  - **Claims reserve a slot only.** A Phase 2 claim is `pending` (slot reserved, no key yet). Phase 3 adds funding checks; Phase 4 turns `pending` into `active` by minting a key.
+  - **GitHub OAuth with `state` and PKCE (S256).** `state` is single-use and expires after 10 minutes. PKCE is supported by GitHub since July 2025.
+  - **Claimer sessions are bearer tokens** returned by the sign-in callback, stored only as SHA-256 hashes, valid 24 hours. Cookie-based sessions are decided with the Phase 6 frontend.
+  - **Concurrency:** a claim locks its drop row (`SELECT … FOR UPDATE`) and a unique (drop, person) constraint backs up the one-claim rule.
+  - **Age and sanctions:** claimers attest to being 18+ and not in a sanctioned jurisdiction, and accept the terms version, when claiming.
+  - **Drop windows must start and end in the same UTC calendar month** (TH-4: provider monthly budget windows).
+  - **Rate limits** on sign-in and claim routes using the official `@fastify/rate-limit` plugin (in-memory; single instance in V1).
+- **Trade-offs:** In-memory rate limits reset on restart and don't span multiple instances; acceptable for a single-instance V1.
+- **Consequences:** Real GitHub sign-in needs a GitHub OAuth App (free) created by Dan before it can be tested live.

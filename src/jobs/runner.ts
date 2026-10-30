@@ -39,6 +39,12 @@ export class JobRunner {
     });
   }
 
+  /** Runs `queue` on a cron schedule (UTC). Requires a handler registered with `register`. */
+  async schedule(queue: string, cron: string): Promise<void> {
+    await this.boss.createQueue(queue);
+    await this.boss.schedule(queue, cron);
+  }
+
   async send<T extends object>(queue: string, data: T): Promise<string | null> {
     await this.boss.createQueue(queue);
     return this.boss.send(queue, data);

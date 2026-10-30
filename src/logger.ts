@@ -23,9 +23,37 @@ export const REDACTED_PATHS = [
   "*.password",
   "token",
   "*.token",
+  "clientSecret",
+  "*.clientSecret",
+  "sessionToken",
+  "*.sessionToken",
+  "code",
+  "*.code",
+  "state",
+  "*.state",
+  "req.query.code",
+  "req.query.state",
 ];
 
 export const REDACTION_CENSOR = "[REDACTED]";
+
+/** Request URLs are logged without their query string: OAuth callbacks carry one-time secrets there. */
+export function stripQuery(url: string | undefined): string | undefined {
+  if (url === undefined) return undefined;
+  const at = url.indexOf("?");
+  return at === -1 ? url : `${url.slice(0, at)}?[REDACTED]`;
+}
+
+const serializers = {
+  req(req: { method?: string; url?: string; hostname?: string; ip?: string }) {
+    return {
+      method: req.method,
+      url: stripQuery(req.url),
+      host: req.hostname,
+      remoteAddress: req.ip,
+    };
+  },
+};
 
 export function createLogger(
   options: { level: string; pretty?: boolean },
@@ -34,6 +62,7 @@ export function createLogger(
   const base = {
     level: options.level,
     redact: { paths: REDACTED_PATHS, censor: REDACTION_CENSOR },
+    serializers,
   };
   if (destination) return pino(base, destination);
   if (options.pretty) {

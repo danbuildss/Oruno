@@ -13,7 +13,7 @@ describe("GET /health", () => {
   });
 
   it("reports ok when the database is reachable", async () => {
-    const { app } = testApp(db);
+    const { app } = await testApp(db);
     const res = await app.inject({ method: "GET", url: "/health" });
     expect(res.statusCode).toBe(200);
     expect(res.json()).toEqual({ status: "ok", database: "ok" });
@@ -22,7 +22,7 @@ describe("GET /health", () => {
 
   it("reports degraded (503) when the database is unreachable", async () => {
     const deadDb = createDb("postgres://oruno:oruno@127.0.0.1:1/nothing");
-    const { app } = testApp(deadDb);
+    const { app } = await testApp(deadDb);
     const res = await app.inject({ method: "GET", url: "/health" });
     expect(res.statusCode).toBe(503);
     expect(res.json()).toEqual({ status: "degraded", database: "unavailable" });

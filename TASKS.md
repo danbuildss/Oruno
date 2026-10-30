@@ -35,9 +35,24 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 | T-107 | Operator authentication (hashed operator API keys) | VERIFIED | Valid key accepted; missing, wrong and disabled keys rejected; key never stored in plain text; tests |
 | T-108 | Audit events for operator actions | VERIFIED | Operator key creation recorded; tests |
 | T-109 | Background job runner (pg-boss) | VERIFIED | A test job is queued and processed against real Postgres |
-| T-110 | CI (GitHub Actions with Postgres) | IN REVIEW (workflow written; first GitHub run pending) | Workflow file runs lint, typecheck, migrations and tests |
-| T-111 | Phase 1 exit: docs, BP-1 and BP-2 evidence | IN REVIEW (awaiting Dan's Phase 1 exit approval) | `BACKEND_PROOF.md` BP-1 and BP-2 VERIFIED with evidence |
+| T-110 | CI (GitHub Actions with Postgres) | VERIFIED (PR #3 run passed: lint, typecheck, build, tests on Postgres 16) | Workflow file runs lint, typecheck, migrations and tests |
+| T-111 | Phase 1 exit: docs, BP-1 and BP-2 evidence | VERIFIED (Dan approved exit) | `BACKEND_PROOF.md` BP-1 and BP-2 VERIFIED with evidence |
+
+## Phase 2 — Drop and Claim Engine
+
+| ID | Task | State | Completion condition |
+| --- | --- | --- | --- |
+| T-201 | Migration: people, identities, drops, claims, claimer sessions, OAuth states | VERIFIED | Applies and rolls back; constraints tested |
+| T-202 | Drop rules and state machine (draft → active ⇄ paused → ended) | VERIFIED | Invalid drops and transitions rejected; unit and API tests |
+| T-203 | Eligibility evaluation (D-013/D-014 thresholds) | VERIFIED | Unit tests for each threshold and boundary |
+| T-204 | GitHub sign-in: state + PKCE, signals, sessions | VERIFIED (live GitHub not yet tested) | Replayed, expired or forged `state` rejected; tests with a fake GitHub; real client unit-tested |
+| T-205 | Operator drop API | VERIFIED | Create, list, read, activate, pause, resume, end; audited; tests |
+| T-206 | Claim API: one per person, slot limits, attestations, rate limits | VERIFIED | 100 concurrent claims on 20 slots → exactly 20; same person concurrently → 1; tests |
+| T-207 | Revocation (operator and self) and drop-end expiry job | VERIFIED | State changes audited; tests |
+| T-208 | Docs: `docs/architecture/API.md`, `docs/architecture/DROP_ENGINE.md`; evidence for BP-3, BP-5, BP-6 (slots) | IN REVIEW (awaiting Phase 2 exit approval) | Docs written; evidence recorded |
+
+| T-209 | Create a GitHub OAuth App and test live sign-in | READY | Dan creates the app (free); live sign-in works end to end | Dan + Claude |
 
 ## Later phases
 
-Tasks for Phases 2–7 are created when each phase is approved to start. See `PLAN.md`.
+Tasks for Phases 3–7 are created when each phase is approved to start. See `PLAN.md`.

@@ -10,7 +10,7 @@ Built by Somehow Internet. Licensed under [Apache-2.0](LICENSE).
 
 ## Status
 
-**Phase 1 — Backend Foundation** (in review). See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
+**Phase 2 — Drop and Claim Engine** (in review). See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
 
 ## Run it locally
 
@@ -41,7 +41,7 @@ Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test` (wipes the test database), `p
 | [`TESTING.md`](TESTING.md) | Test strategy, cases, commands, results |
 | [`BACKEND_PROOF.md`](BACKEND_PROOF.md) | Evidence required before any frontend work |
 | `docs/research/` | Market research, competitors, validation plan |
-| `docs/architecture/` | Database, providers, threat model |
+| `docs/architecture/` | API, drop engine, database, providers, threat model |
 | `docs/project/` | Changelog, experiments, session log |
 | `docs/legal/` | Claimer terms (draft) |
 

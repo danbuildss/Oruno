@@ -6,6 +6,7 @@ import {
 } from "kysely/migration";
 import type { Db } from "./client.js";
 import * as m0001 from "./migrations/0001_operators_and_audit.js";
+import * as m0002 from "./migrations/0002_drops_and_claims.js";
 
 /**
  * Migrations are listed explicitly (not discovered from the file system) so the same
@@ -13,6 +14,7 @@ import * as m0001 from "./migrations/0001_operators_and_audit.js";
  */
 const migrations: Record<string, Migration> = {
   "0001_operators_and_audit": m0001,
+  "0002_drops_and_claims": m0002,
 };
 
 const provider: MigrationProvider = {
