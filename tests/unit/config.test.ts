@@ -11,7 +11,26 @@ describe("loadConfig", () => {
       port: 3000,
       logLevel: "info",
       databaseUrl: valid.DATABASE_URL,
+      github: null,
     });
+  });
+
+  it("reads GitHub settings when all three are set", () => {
+    const config = loadConfig({
+      ...valid,
+      GITHUB_CLIENT_ID: "id",
+      GITHUB_CLIENT_SECRET: "secret",
+      GITHUB_CALLBACK_URL: "https://oruno.example/v1/auth/github/callback",
+    });
+    expect(config.github).toEqual({
+      clientId: "id",
+      clientSecret: "secret",
+      callbackUrl: "https://oruno.example/v1/auth/github/callback",
+    });
+  });
+
+  it("refuses partial GitHub settings", () => {
+    expect(() => loadConfig({ ...valid, GITHUB_CLIENT_ID: "id" })).toThrow(/set together/);
   });
 
   it("reads explicit values and coerces PORT to a number", () => {

@@ -2,6 +2,7 @@ import { Writable } from "node:stream";
 import type { FastifyInstance } from "fastify";
 import { buildApp } from "../../src/app.js";
 import type { Db } from "../../src/db/client.js";
+import type { GitHubClient } from "../../src/github/client.js";
 import { createLogger } from "../../src/logger.js";
 
 /** Collects every log line the app writes, so tests can inspect them. */
@@ -16,8 +17,17 @@ export class LogCapture extends Writable {
   }
 }
 
-export function testApp(db: Db): { app: FastifyInstance; logs: LogCapture } {
+export async function testApp(
+  db: Db,
+  options: { github?: GitHubClient | null; clock?: () => Date } = {},
+): Promise<{ app: FastifyInstance; logs: LogCapture }> {
   const logs = new LogCapture();
   const logger = createLogger({ level: "info" }, logs);
-  return { app: buildApp({ db, logger }), logs };
+  const app = await buildApp({
+    db,
+    logger,
+    github: options.github ?? null,
+    ...(options.clock ? { clock: options.clock } : {}),
+  });
+  return { app, logs };
 }

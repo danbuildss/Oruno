@@ -6,8 +6,8 @@ import { testApp } from "../helpers/app.js";
 import { freshDb } from "../helpers/db.js";
 
 // These routes exist only in tests, to exercise the shared error handling.
-function appWithTestRoutes(db: Db) {
-  const { app, logs } = testApp(db);
+async function appWithTestRoutes(db: Db) {
+  const { app, logs } = await testApp(db);
   const body = z.object({ name: z.string().min(1), amount: z.number().int().positive() });
   app.post("/test/validate", async (request) => body.parse(request.body));
   app.get("/test/app-error", async () => {
@@ -29,7 +29,7 @@ describe("error handling", () => {
   });
 
   it("returns a structured 404 for unknown routes", async () => {
-    const { app } = appWithTestRoutes(db);
+    const { app } = await appWithTestRoutes(db);
     const res = await app.inject({ method: "GET", url: "/nope" });
     expect(res.statusCode).toBe(404);
     expect(res.json()).toMatchObject({
@@ -40,7 +40,7 @@ describe("error handling", () => {
   });
 
   it("returns 400 with field details for invalid input", async () => {
-    const { app } = appWithTestRoutes(db);
+    const { app } = await appWithTestRoutes(db);
     const res = await app.inject({
       method: "POST",
       url: "/test/validate",
@@ -57,7 +57,7 @@ describe("error handling", () => {
   });
 
   it("returns 400 for malformed JSON", async () => {
-    const { app } = appWithTestRoutes(db);
+    const { app } = await appWithTestRoutes(db);
     const res = await app.inject({
       method: "POST",
       url: "/test/validate",
@@ -70,7 +70,7 @@ describe("error handling", () => {
   });
 
   it("passes through AppError status, code and details", async () => {
-    const { app } = appWithTestRoutes(db);
+    const { app } = await appWithTestRoutes(db);
     const res = await app.inject({ method: "GET", url: "/test/app-error" });
     expect(res.statusCode).toBe(409);
     expect(res.json().error).toEqual({
@@ -82,7 +82,7 @@ describe("error handling", () => {
   });
 
   it("hides internal error details from the caller", async () => {
-    const { app } = appWithTestRoutes(db);
+    const { app } = await appWithTestRoutes(db);
     const res = await app.inject({ method: "GET", url: "/test/crash" });
     expect(res.statusCode).toBe(500);
     expect(res.json().error).toEqual({ code: "internal_error", message: "Something went wrong." });

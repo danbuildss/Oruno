@@ -21,7 +21,7 @@ describe("operator authentication", () => {
   });
 
   const me = async (authorization?: string) => {
-    const { app, logs } = testApp(db);
+    const { app, logs } = await testApp(db);
     const res = await app.inject({
       method: "GET",
       url: "/v1/operator/me",

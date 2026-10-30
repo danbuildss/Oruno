@@ -1,6 +1,8 @@
 import { buildApp } from "./app.js";
+import { expireFinishedDrops } from "./claims/claims.js";
 import { ConfigError, loadConfig } from "./config.js";
 import { createDb } from "./db/client.js";
+import { HttpGitHubClient } from "./github/client.js";
 import { JobRunner } from "./jobs/runner.js";
 import { createLogger } from "./logger.js";
 
@@ -9,9 +11,16 @@ async function main(): Promise<void> {
   const logger = createLogger({ level: config.logLevel, pretty: config.nodeEnv === "development" });
   const db = createDb(config.databaseUrl);
   const jobs = new JobRunner(config.databaseUrl, logger);
-  const app = buildApp({ db, logger });
+  const github = config.github ? new HttpGitHubClient(config.github) : null;
+  if (!github) logger.warn("GitHub sign-in is not configured; sign-in routes will return 503");
+  const app = await buildApp({ db, logger, github });
 
   await jobs.start();
+  await jobs.register("drops.expire", async () => {
+    const result = await expireFinishedDrops(db, new Date());
+    if (result.drops > 0) logger.info(result, "expired finished drops");
+  });
+  await jobs.schedule("drops.expire", "* * * * *");
   await app.listen({ host: config.host, port: config.port });
 
   let shuttingDown = false;

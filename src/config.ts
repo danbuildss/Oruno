@@ -9,6 +9,9 @@ const configSchema = z.object({
     .string()
     .min(1, "is required")
     .refine((value) => /^postgres(ql)?:\/\//.test(value), "must be a postgres:// URL"),
+  GITHUB_CLIENT_ID: z.string().min(1).optional(),
+  GITHUB_CLIENT_SECRET: z.string().min(1).optional(),
+  GITHUB_CALLBACK_URL: z.url().optional(),
 });
 
 export interface Config {
@@ -17,6 +20,8 @@ export interface Config {
   port: number;
   logLevel: "fatal" | "error" | "warn" | "info" | "debug" | "trace" | "silent";
   databaseUrl: string;
+  /** GitHub sign-in. Absent until a GitHub OAuth App is configured; sign-in routes then return 503. */
+  github: { clientId: string; clientSecret: string; callbackUrl: string } | null;
 }
 
 export class ConfigError extends Error {
@@ -39,11 +44,26 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     );
   }
   const c = parsed.data;
+  const githubValues = [c.GITHUB_CLIENT_ID, c.GITHUB_CLIENT_SECRET, c.GITHUB_CALLBACK_URL];
+  const githubSet = githubValues.filter((v) => v !== undefined).length;
+  if (githubSet !== 0 && githubSet !== 3) {
+    throw new ConfigError([
+      "GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET and GITHUB_CALLBACK_URL must be set together",
+    ]);
+  }
   return {
     nodeEnv: c.NODE_ENV,
     host: c.HOST,
     port: c.PORT,
     logLevel: c.LOG_LEVEL,
     databaseUrl: c.DATABASE_URL,
+    github:
+      c.GITHUB_CLIENT_ID && c.GITHUB_CLIENT_SECRET && c.GITHUB_CALLBACK_URL
+        ? {
+            clientId: c.GITHUB_CLIENT_ID,
+            clientSecret: c.GITHUB_CLIENT_SECRET,
+            callbackUrl: c.GITHUB_CALLBACK_URL,
+          }
+        : null,
   };
 }
