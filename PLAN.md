@@ -5,7 +5,7 @@ Backend first. Each phase needs Dan's approval to start and to exit. All phases 
 | Phase | Name | Status |
 | --- | --- | --- |
 | 0 | Research and Architecture | CLOSED (D-015) |
-| 1 | Backend Foundation | IN PROGRESS |
+| 1 | Backend Foundation | IN REVIEW (exit approval pending) |
 | 2 | Drop and Claim Engine | Not started |
 | 3 | Credit Ledger and Funding | Not started |
 | 4 | Provider Integration (key issuance) | Not started |

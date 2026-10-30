@@ -50,7 +50,7 @@ Oruno **issues and governs keys**; it does not sit in the request path (D-004). 
 
 ## Stack (D-005, APPROVED)
 
-TypeScript (strict) on Node.js · Postgres · HTTP framework, migration tool and test runner to be proposed at Phase 1 start · Next.js for the Phase 6 claim page.
+TypeScript (strict) on Node.js 22 · Postgres 16 · Fastify · Zod · Kysely (+ migrations) · pg-boss · pino · Vitest · Biome · pnpm (D-016) · Next.js for the Phase 6 claim page (to be confirmed then).
 
 ## Not in V1
 

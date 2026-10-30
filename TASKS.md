@@ -26,17 +26,17 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 
 | ID | Task | State | Completion condition |
 | --- | --- | --- | --- |
-| T-101 | Project scaffold (pnpm, TypeScript strict, Biome, Vitest) | IN PROGRESS | `pnpm typecheck`, `pnpm lint` and `pnpm test` run clean |
-| T-102 | Configuration loading with validation (`.env.example`) | READY | Invalid or missing config stops startup with a clear error; unit tests |
-| T-103 | Database connection and migrations (Kysely) | READY | Migrations apply and roll back on a clean database; tests |
-| T-104 | Structured logging with secret redaction (pino) | READY | Test proves secrets don't appear in log output |
-| T-105 | HTTP server, error handling, request validation (Fastify, Zod) | READY | Structured errors for validation, not-found and internal errors; tests |
-| T-106 | Health check (process and database) | READY | `GET /health` reports database status; tests |
-| T-107 | Operator authentication (hashed operator API keys) | READY | Valid key accepted; missing, wrong and disabled keys rejected; key never stored in plain text; tests |
-| T-108 | Audit events for operator actions | READY | Operator key creation recorded; tests |
-| T-109 | Background job runner (pg-boss) | READY | A test job is queued and processed against real Postgres |
-| T-110 | CI (GitHub Actions with Postgres) | READY | Workflow file runs lint, typecheck, migrations and tests |
-| T-111 | Phase 1 exit: docs, BP-1 and BP-2 evidence | READY | `BACKEND_PROOF.md` BP-1 and BP-2 VERIFIED with evidence |
+| T-101 | Project scaffold (pnpm, TypeScript strict, Biome, Vitest) | VERIFIED | `pnpm typecheck`, `pnpm lint` and `pnpm test` run clean |
+| T-102 | Configuration loading with validation (`.env.example`) | VERIFIED | Invalid or missing config stops startup with a clear error; unit tests |
+| T-103 | Database connection and migrations (Kysely) | VERIFIED | Migrations apply and roll back on a clean database; tests |
+| T-104 | Structured logging with secret redaction (pino) | VERIFIED | Test proves secrets don't appear in log output |
+| T-105 | HTTP server, error handling, request validation (Fastify, Zod) | VERIFIED | Structured errors for validation, not-found and internal errors; tests |
+| T-106 | Health check (process and database) | VERIFIED | `GET /health` reports database status; tests |
+| T-107 | Operator authentication (hashed operator API keys) | VERIFIED | Valid key accepted; missing, wrong and disabled keys rejected; key never stored in plain text; tests |
+| T-108 | Audit events for operator actions | VERIFIED | Operator key creation recorded; tests |
+| T-109 | Background job runner (pg-boss) | VERIFIED | A test job is queued and processed against real Postgres |
+| T-110 | CI (GitHub Actions with Postgres) | IN REVIEW (workflow written; first GitHub run pending) | Workflow file runs lint, typecheck, migrations and tests |
+| T-111 | Phase 1 exit: docs, BP-1 and BP-2 evidence | IN REVIEW (awaiting Dan's Phase 1 exit approval) | `BACKEND_PROOF.md` BP-1 and BP-2 VERIFIED with evidence |
 
 ## Later phases
 

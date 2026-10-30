@@ -6,27 +6,38 @@ _Last updated: 2026-10-30_
 
 ## 1. Current project status
 
-V1 scope and architecture approved (D-012). Phase 0 research continuing. No product code. No money spent. Nothing deployed.
+Phase 0 closed (D-015). Phase 1 backend foundation built and tested; awaiting Dan's exit approval. No money spent. Nothing deployed.
 
 ## 2. Current development phase
 
-**Phase 0 — Research and Architecture** (IN PROGRESS). See `PLAN.md`.
+**Phase 1 — Backend Foundation** (IN REVIEW, exit approval pending). See `PLAN.md`.
 
 ## 3. Last completed task
 
-T-012 — name check (no conflicts found; npm `oruno` available). D-013 thresholds and GitHub-only sign-in approved (D-014).
+Phase 1 build: T-101 to T-109 VERIFIED (commit `4734e4b`). T-110 (CI) and T-111 (exit) in review.
 
 ## 4. Current implementation state
 
-No code. Repository contains documentation and the Apache-2.0 license only. Branch: `docs/foundation` (pushed to GitHub).
+Backend skeleton in `src/` (branch `phase1/backend-foundation`):
+- config validation (`src/config.ts`);
+- Postgres via Kysely with migrations (`src/db/`); tables `operators`, `audit_events` (append-only);
+- pino logging with secret redaction (`src/logger.ts`);
+- Fastify app with structured errors (`src/app.ts`, `src/http/`);
+- `GET /health`, `GET /v1/operator/me`;
+- hashed operator API keys + `pnpm operator:create` (`src/auth/`, `src/cli/`);
+- pg-boss job runner (`src/jobs/`);
+- tests in `tests/`; CI in `.github/workflows/ci.yml`.
+
+No drops, claims, ledger or provider code yet (Phases 2–4).
 
 ## 5. What is working
 
-Nothing implemented yet.
+Verified on commit `4734e4b` (36/36 tests, lint, typecheck, build; manual start-up check). See `TESTING.md`:
+config validation; migrations up/down; append-only audit log; health check; operator key auth; secret redaction in logs; error responses; background jobs.
 
 ## 6. What is broken
 
-Nothing implemented yet.
+Nothing known.
 
 ## 7. Known limitations (from research, not yet tested)
 
@@ -37,29 +48,28 @@ Nothing implemented yet.
 
 ## 8. Outstanding bugs
 
-None (no code).
+None known.
 
 ## 9. Important architectural decisions
 
 See `DECISIONS.md`. Summary:
 - APPROVED: D-001 credit drops first · D-002 Surplus Pattern A · D-006 name Oruno · D-007 Apache-2.0 · D-008 X/GitHub sign-in, wallet optional · D-009 $5 cap · D-010 backend-first process · D-011 funding in USDC on Base.
 - APPROVED (via D-012): D-003 provider caps + our ledger · D-004 no own gateway in V1 · D-005 TypeScript + Postgres monolith · V1 scope.
-- APPROVED: D-013 eligibility thresholds · D-014 GitHub-only sign-in for Drop #1.
+- APPROVED: D-013 eligibility thresholds · D-014 GitHub-only sign-in for Drop #1 · D-015 Phase 0 closed, Surplus spike moved before Phase 4 · D-016 Phase 1 stack.
 
 ## 10. Pending approvals
 
 | Item | Where | Notes |
 | --- | --- | --- |
+| **Phase 1 exit → start Phase 2** | `PLAN.md`, T-111 | BP-1 and BP-2 VERIFIED; CI to run on the pull request |
 | Claimer terms draft | T-009, `docs/legal/CLAIMER_TERMS.md` | Then a lawyer review |
 | Spending: $20 test key | T-006 | Deferred by Dan ("5 later") |
 
 ## 11. Next recommended task
 
-1. Dan: review claimer terms (T-009); send Surplus questions (T-004). Domain and name registration deferred to public launch (T-012). Bankr checked: not shareable (T-005).
-2. When Dan is ready: Surplus org + admin key (T-003), $20 USDC deposit, then the provider spike (T-006).
-3. Phase 0 exit review, then approval to start Phase 1.
-
-Claude's own Phase 0 research tasks are complete. Remaining Phase 0 items need Dan or spending approval.
+1. Dan: review Phase 1; approve the exit and Phase 2 (Drop and Claim Engine) start.
+2. Open a pull request for `phase1/backend-foundation` so CI runs (T-110).
+3. Carried forward for Phase 4: Surplus answers (T-004, Dan asked), admin key (T-003), $20 spike (T-006), claimer terms legal review (T-009).
 
 ## 12. Relevant commits
 
@@ -68,14 +78,18 @@ Claude's own Phase 0 research tasks are complete. Remaining Phase 0 items need D
 - `c3b2a76` Documentation system and Apache-2.0 license
 - `4d32768` Funding decision D-011
 - `c2ca114` V1 scope and architecture approval; sign-in research; draft claimer terms
+- `121e193` D-014 GitHub-only sign-in; name check
+- `a26e9b9` Bankr answer; name registration deferred
+- `db5af0c` D-015, D-016; Phase 1 tasks
+- `4734e4b` **Phase 1 backend foundation**
 
 ## 13. Important testing results
 
-None yet.
+2026-10-30, `4734e4b`: 36/36 tests pass on real Postgres 16; lint, typecheck and build clean; manual start-up, health, auth, graceful shutdown and migration round trip all as expected. Full log in `TESTING.md`.
 
 ## 14. Deployment status
 
-Nothing deployed. No environments exist.
+Nothing deployed. No environments exist. Local development only (Postgres on the dev machine).
 
 ## 15. Unresolved technical questions
 

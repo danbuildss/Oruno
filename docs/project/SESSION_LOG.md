@@ -2,6 +2,26 @@
 
 Newest first. Each entry: Completed · Verified · Not verified · Issues · Next.
 
+## 2026-10-30 (4) — Phase 1 backend foundation
+
+**Completed**
+- D-015 (Phase 0 closed; Surplus spike before Phase 4) and D-016 (Phase 1 stack) recorded.
+- Built the backend foundation: config, migrations, append-only audit log, logging with redaction, error handling, health check, operator keys, job runner, tests, CI workflow. Commit `4734e4b`.
+
+**Verified**
+- 36/36 tests on real Postgres; lint (rules confirmed active), typecheck, build.
+- Manual start-up from the build: health 200, auth 200/401, key never in logs, graceful shutdown, migration round trip, production rollback guard, bad config refused.
+
+**Not verified**
+- CI on GitHub (no run yet).
+
+**Issues**
+- Typecheck caught a test that built its header before the key existed (it was testing `Basic undefined`); fixed, and a "key without scheme" case added.
+- Biome's automatic config migration set lint rules to "none"; corrected to "recommended" and confirmed rules fire.
+
+**Next**
+- Dan: Phase 1 exit approval; pull request so CI runs.
+
 ## 2026-10-30 (3) — Eligibility approved, name check
 
 **Completed**
