@@ -81,7 +81,7 @@ See `DECISIONS.md`. Summary:
 
 1. Dan: review Phase 2; approve the exit and Phase 3 (Credit Ledger and Funding) start.
 2. Dan: create a GitHub OAuth App (T-209) so live sign-in can be tested.
-3. Merge PR #3 (Phase 1) once CI is green; open the Phase 2 pull request.
+3. PR #3 (Phase 1) CI passed — ready to merge. Then open the Phase 2 pull request.
 3. Carried forward for Phase 4: Surplus answers (T-004, Dan asked), admin key (T-003), $20 spike (T-006), claimer terms legal review (T-009).
 
 ## 12. Relevant commits

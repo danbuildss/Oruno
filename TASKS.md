@@ -35,7 +35,7 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 | T-107 | Operator authentication (hashed operator API keys) | VERIFIED | Valid key accepted; missing, wrong and disabled keys rejected; key never stored in plain text; tests |
 | T-108 | Audit events for operator actions | VERIFIED | Operator key creation recorded; tests |
 | T-109 | Background job runner (pg-boss) | VERIFIED | A test job is queued and processed against real Postgres |
-| T-110 | CI (GitHub Actions with Postgres) | IN REVIEW (first run on PR #3) | Workflow file runs lint, typecheck, migrations and tests |
+| T-110 | CI (GitHub Actions with Postgres) | VERIFIED (PR #3 run passed: lint, typecheck, build, tests on Postgres 16) | Workflow file runs lint, typecheck, migrations and tests |
 | T-111 | Phase 1 exit: docs, BP-1 and BP-2 evidence | VERIFIED (Dan approved exit) | `BACKEND_PROOF.md` BP-1 and BP-2 VERIFIED with evidence |
 
 ## Phase 2 — Drop and Claim Engine

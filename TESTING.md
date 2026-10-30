@@ -106,7 +106,9 @@ Also record: the per-request fee actually charged, and cap behaviour across a mo
 
 Manual smoke test on the built server (`oruno_dev`): migration 0002 applied; `/v1/auth/github/start` → 503 `github_not_configured`; create drop 201; activate 200; public view 200; claim without sign-in 401; operator key in log 0 times; `drops.expire` schedule present (1 row); graceful shutdown.
 
-Not verified: real GitHub sign-in (needs a GitHub OAuth App); CI on GitHub for this branch.
+Not verified: real GitHub sign-in (needs a GitHub OAuth App); CI on GitHub for this branch (runs when its pull request opens).
+
+CI on GitHub for Phase 1 (PR #3): **passed** — https://github.com/danbuildss/Oruno/actions/runs/41118580629
 
 ### 2026-10-30 — Phase 1, commit `4734e4b`
 
