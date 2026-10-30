@@ -10,7 +10,7 @@ Built by Somehow Internet. Licensed under [Apache-2.0](LICENSE).
 
 ## Status
 
-**Phase 3 — Credit Ledger and Funding** (in review). See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
+**Phase 4a — Provider integration with a fake provider** (in review). Real Surplus (Phase 4b) not yet connected. See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
 
 ## Run it locally
 
@@ -22,7 +22,7 @@ cp .env.example .env            # then edit if needed
 docker compose up -d            # or use your own Postgres with oruno_dev and oruno_test databases
 pnpm migrate                    # create tables
 pnpm operator:create "Your name"  # prints an operator API key once
-pnpm dev                        # http://127.0.0.1:3000/health
+pnpm dev                        # http://127.0.0.1:3000/health (PROVIDER=fake: simulated keys)
 ```
 
 Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test` (wipes the test database), `pnpm build`.

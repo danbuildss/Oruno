@@ -2,6 +2,26 @@
 
 Newest first. Each entry: Completed · Verified · Not verified · Issues · Next.
 
+## 2026-10-30 (7) — Phase 4a provider integration (fake provider)
+
+**Completed**
+- Opened PR #5 (Phase 3). Recorded D-019 (split Phase 4; design).
+- Built the provider adapter, fake provider, Surplus client (unverified), key issuance, retries, reveal/rotate, revocation propagation, spend sync with overshoot, spend ceiling, jobs, migration 0004. Commit `1edef71`.
+
+**Verified**
+- 158/158 tests with the fake provider, including crash recovery, concurrency and a randomized test with spend. Smoke test: fake refused in production; jobs scheduled.
+
+**Not verified**
+- Anything against the real Surplus API (Phase 4b).
+
+**Issues**
+- Found: the app's duplicate-claim check still counted failed claims; fixed.
+- Found: rotation on Surplus may reset per-key budgets (new key id); mitigated by capping the successor at the remaining amount; AT-16 added for Phase 4b.
+- The linter suggested Math.min/max for bigint money values, which would throw at runtime; added `minBig`/`maxBig` instead.
+
+**Next**
+- Dan: merge PR #5; Phase 4b prerequisites; optionally approve Phase 5 work with the fake provider meanwhile.
+
 ## 2026-10-30 (6) — Phase 3 credit ledger and funding
 
 **Completed**
