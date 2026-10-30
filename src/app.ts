@@ -8,6 +8,7 @@ import { registerAuthRoutes } from "./http/routes/auth.js";
 import { registerClaimRoutes } from "./http/routes/claims.js";
 import { registerDropRoutes } from "./http/routes/drops.js";
 import { registerHealthRoutes } from "./http/routes/health.js";
+import { registerLedgerRoutes } from "./http/routes/ledger.js";
 import { registerOperatorRoutes } from "./http/routes/operator.js";
 
 export interface AppDeps {
@@ -45,6 +46,7 @@ export async function buildApp({
   registerAuthRoutes(app, { db, github, clock });
   registerDropRoutes(app, { db, clock });
   registerClaimRoutes(app, { db, clock });
+  registerLedgerRoutes(app, { db, clock });
 
   return app;
 }

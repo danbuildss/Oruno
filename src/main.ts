@@ -4,6 +4,7 @@ import { ConfigError, loadConfig } from "./config.js";
 import { createDb } from "./db/client.js";
 import { HttpGitHubClient } from "./github/client.js";
 import { JobRunner } from "./jobs/runner.js";
+import { checkLedgerInvariants, releaseEndedClaims } from "./ledger/ledger.js";
 import { createLogger } from "./logger.js";
 
 async function main(): Promise<void> {
@@ -21,6 +22,22 @@ async function main(): Promise<void> {
     if (result.drops > 0) logger.info(result, "expired finished drops");
   });
   await jobs.schedule("drops.expire", "* * * * *");
+  await jobs.register("claims.release", async () => {
+    const result = await releaseEndedClaims(db, new Date());
+    if (result.claims > 0) {
+      logger.info(
+        { claims: result.claims, releasedMicro: result.releasedMicro.toString() },
+        "released ended claims",
+      );
+    }
+  });
+  await jobs.schedule("claims.release", "*/5 * * * *");
+  await jobs.register("ledger.check", async () => {
+    const violations = await checkLedgerInvariants(db);
+    if (violations.length > 0) logger.error({ violations }, "LEDGER INVARIANT VIOLATION");
+    else logger.info("ledger invariants hold");
+  });
+  await jobs.schedule("ledger.check", "17 * * * *");
   await app.listen({ host: config.host, port: config.port });
 
   let shuttingDown = false;

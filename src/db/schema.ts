@@ -118,6 +118,71 @@ export interface ClaimsTable {
   ended_by: ClaimEndedBy | null;
 }
 
+export interface FundingsTable {
+  id: Generated<string>;
+  drop_id: string;
+  amount_micro: Micro;
+  method: "usdc_base";
+  reference: string;
+  note: string | null;
+  confirmed_by: string;
+  confirmed_at: Timestamp;
+  created_at: Timestamp;
+}
+
+export interface FundReturnsTable {
+  id: Generated<string>;
+  drop_id: string;
+  amount_micro: Micro;
+  reference: string;
+  recorded_by: string;
+  created_at: Timestamp;
+}
+
+export type LedgerAccountKind =
+  | "funding_source"
+  | "drop_unallocated"
+  | "drop_returned"
+  | "claim_allocated"
+  | "claim_spent";
+
+export interface LedgerAccountsTable {
+  id: Generated<string>;
+  kind: LedgerAccountKind;
+  drop_id: string | null;
+  claim_id: string | null;
+  /** Maintained by a database trigger from the entries. Never written by the application. */
+  balance_micro: ColumnType<bigint, never, never>;
+  created_at: Timestamp;
+}
+
+export type LedgerTransactionKind =
+  | "funding"
+  | "claim_allocation"
+  | "claim_release"
+  | "spend"
+  | "return";
+
+export interface LedgerTransactionsTable {
+  id: Generated<string>;
+  kind: LedgerTransactionKind;
+  drop_id: string;
+  claim_id: string | null;
+  idempotency_key: string;
+  memo: string | null;
+  actor_type: AuditActorType;
+  actor_id: string | null;
+  created_at: Timestamp;
+}
+
+export interface LedgerEntriesTable {
+  id: Generated<string>;
+  transaction_id: string;
+  account_id: string;
+  amount_micro: Micro;
+  created_at: Timestamp;
+}
+
 export interface Database {
   operators: OperatorsTable;
   audit_events: AuditEventsTable;
@@ -127,4 +192,9 @@ export interface Database {
   claimer_sessions: ClaimerSessionsTable;
   drops: DropsTable;
   claims: ClaimsTable;
+  fundings: FundingsTable;
+  fund_returns: FundReturnsTable;
+  ledger_accounts: LedgerAccountsTable;
+  ledger_transactions: LedgerTransactionsTable;
+  ledger_entries: LedgerEntriesTable;
 }

@@ -3,6 +3,7 @@ import { recordAudit } from "../audit/audit.js";
 import type { Db } from "../db/client.js";
 import type { DropStatus, DropsTable } from "../db/schema.js";
 import { AppError } from "../http/errors.js";
+import { accountId, balanceOf, requiredForOpenSlots } from "../ledger/ledger.js";
 import { type CreateDropInput, canTransitionDrop } from "./rules.js";
 
 export type DropRow = Selectable<DropsTable>;
@@ -117,6 +118,20 @@ export async function transitionDrop(
     }
     if (params.to === "active" && params.now.getTime() >= drop.ends_at.getTime()) {
       throw new AppError(409, "drop_window_over", "This drop's window has already ended.");
+    }
+    if (params.to === "active") {
+      // A live drop must be able to pay for every slot it still offers.
+      const required = requiredForOpenSlots(drop);
+      const available = await balanceOf(
+        trx,
+        await accountId(trx, "drop_unallocated", { dropId: drop.id }),
+      );
+      if (available < required) {
+        throw new AppError(409, "insufficient_funding", "Fund this drop before opening it.", {
+          requiredMicro: required.toString(),
+          unallocatedMicro: available.toString(),
+        });
+      }
     }
     const updated = await trx
       .updateTable("drops")
