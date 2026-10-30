@@ -4,8 +4,8 @@ Backend first. Each phase needs Dan's approval to start and to exit. All phases 
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 0 | Research and Architecture | IN PROGRESS |
-| 1 | Backend Foundation | Not started |
+| 0 | Research and Architecture | CLOSED (D-015) |
+| 1 | Backend Foundation | IN PROGRESS |
 | 2 | Drop and Claim Engine | Not started |
 | 3 | Credit Ledger and Funding | Not started |
 | 4 | Provider Integration (key issuance) | Not started |
@@ -63,7 +63,7 @@ Backend first. Each phase needs Dan's approval to start and to exit. All phases 
 
 - **Objective:** claims become real, capped provider keys, safely.
 - **Scope:** provider adapter interface; Surplus implementation (create workspace budget, mint key with cap, expiry and scope, update cap, revoke, rotate, read usage); idempotency keys; retries with limits; error mapping; daily usage sync; reconciliation job; a fake provider for tests.
-- **Dependencies:** Phase 3; Surplus admin key (approval).
+- **Dependencies:** Phase 3; Surplus admin key (T-003); Surplus written answers (T-004); provider spike AT-1 to AT-15 passed (T-006) — moved here by D-015.
 - **Deliverables:** `src/providers/`, updated `docs/architecture/PROVIDERS.md`.
 - **Acceptance criteria:** AT-1 to AT-15 pass against a real Surplus key; no secret is ever stored or logged.
 - **Testing:** integration tests against the fake provider; controlled tests against Surplus with the $20 key.

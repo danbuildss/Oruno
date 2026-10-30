@@ -20,6 +20,24 @@ States: **BACKLOG · READY · IN PROGRESS · BLOCKED · IN REVIEW · VERIFIED**.
 | T-013 | Decide whether Drop #1 supports X sign-in (paid X API reads) or GitHub only | VERIFIED (GitHub only, D-014) | Dan decides; recorded in `DECISIONS.md` | Dan |
 | T-012 | Trademark, domain, GitHub org and npm scope check for "Oruno" | BACKLOG (deferred by Dan to public launch; search found no conflicts) | Results recorded; any conflicts flagged | Claude researches |
 
+Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 entry requirements.
+
+## Phase 1 — Backend Foundation
+
+| ID | Task | State | Completion condition |
+| --- | --- | --- | --- |
+| T-101 | Project scaffold (pnpm, TypeScript strict, Biome, Vitest) | IN PROGRESS | `pnpm typecheck`, `pnpm lint` and `pnpm test` run clean |
+| T-102 | Configuration loading with validation (`.env.example`) | READY | Invalid or missing config stops startup with a clear error; unit tests |
+| T-103 | Database connection and migrations (Kysely) | READY | Migrations apply and roll back on a clean database; tests |
+| T-104 | Structured logging with secret redaction (pino) | READY | Test proves secrets don't appear in log output |
+| T-105 | HTTP server, error handling, request validation (Fastify, Zod) | READY | Structured errors for validation, not-found and internal errors; tests |
+| T-106 | Health check (process and database) | READY | `GET /health` reports database status; tests |
+| T-107 | Operator authentication (hashed operator API keys) | READY | Valid key accepted; missing, wrong and disabled keys rejected; key never stored in plain text; tests |
+| T-108 | Audit events for operator actions | READY | Operator key creation recorded; tests |
+| T-109 | Background job runner (pg-boss) | READY | A test job is queued and processed against real Postgres |
+| T-110 | CI (GitHub Actions with Postgres) | READY | Workflow file runs lint, typecheck, migrations and tests |
+| T-111 | Phase 1 exit: docs, BP-1 and BP-2 evidence | READY | `BACKEND_PROOF.md` BP-1 and BP-2 VERIFIED with evidence |
+
 ## Later phases
 
-Tasks for Phases 1–7 are created when each phase is approved to start. See `PLAN.md`.
+Tasks for Phases 2–7 are created when each phase is approved to start. See `PLAN.md`.

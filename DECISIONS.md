@@ -143,3 +143,23 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
 - **Reasoning:** GitHub is free and the best signal for developers; avoids a new paid dependency before the pilot.
 - **Trade-offs:** People without a GitHub account can't claim in Drop #1; X-only users are excluded until X sign-in is added.
 - **Consequences:** Phase 2 builds GitHub OAuth first; X sign-in becomes a later task. Drop #1 thresholds: GitHub account ≥ 180 days old and (≥ 3 public repos or ≥ 20 contributions in the last 12 months); 18+; not in a sanctioned jurisdiction; one claim per person.
+
+## D-015 — Close Phase 0; move the Surplus spike to before Phase 4
+
+- **Date:** 2026-10-30 · **Approval:** APPROVED (Dan)
+- **Problem:** Phase 0 required the $20 Surplus spike before Phase 1, but Phases 1–3 don't touch Surplus.
+- **Options:** (a) wait for the spike before any code; (b) start Phase 1 now with a fake provider and run the spike before Phase 4.
+- **Selected:** (b). Phase 0 is closed. The provider spike (T-006) and Surplus's written answers (T-004) become entry requirements for Phase 4.
+- **Reasoning:** No money or real keys are involved until Phase 4; building the foundation now loses nothing.
+- **Trade-offs:** If the spike reveals a Surplus limitation, Phase 4 design may change; Phases 1–3 are provider-independent, so the impact is contained.
+- **Consequences:** `PLAN.md` updated; T-003, T-004, T-006 and T-009 carry forward.
+
+## D-016 — Phase 1 stack
+
+- **Date:** 2026-10-30 · **Approval:** APPROVED (Dan)
+- **Problem:** Exact tools for the backend (refines D-005).
+- **Selected:** Node.js 22 · TypeScript (strict) · Fastify (HTTP) · Zod (validation) · Postgres 16 · Kysely (typed SQL, explicit transactions and row locks) with Kysely migrations · pg-boss (Postgres-backed jobs, no Redis) · pino (logging with secret redaction) · Vitest against a real Postgres · pnpm · Biome (lint and format) · GitHub Actions (CI).
+- **Options considered:** Hono/Express; TypeBox; Drizzle/Prisma; node-pg-migrate; BullMQ + Redis; Jest; ESLint + Prettier.
+- **Reasoning:** Control over SQL and locking for money logic; no extra services; few dependencies; tests on a real database.
+- **Trade-offs:** Kysely means writing SQL-shaped queries by hand (more explicit, more code than an ORM).
+- **Consequences:** Phase 1 builds on this stack.
