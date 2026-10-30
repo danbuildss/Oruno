@@ -49,10 +49,24 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 | T-205 | Operator drop API | VERIFIED | Create, list, read, activate, pause, resume, end; audited; tests |
 | T-206 | Claim API: one per person, slot limits, attestations, rate limits | VERIFIED | 100 concurrent claims on 20 slots → exactly 20; same person concurrently → 1; tests |
 | T-207 | Revocation (operator and self) and drop-end expiry job | VERIFIED | State changes audited; tests |
-| T-208 | Docs: `docs/architecture/API.md`, `docs/architecture/DROP_ENGINE.md`; evidence for BP-3, BP-5, BP-6 (slots) | IN REVIEW (awaiting Phase 2 exit approval) | Docs written; evidence recorded |
+| T-208 | Docs: `docs/architecture/API.md`, `docs/architecture/DROP_ENGINE.md`; evidence for BP-3, BP-5, BP-6 (slots) | VERIFIED (Dan approved exit) | Docs written; evidence recorded |
 
 | T-209 | Create a GitHub OAuth App and test live sign-in | READY | Dan creates the app (free); live sign-in works end to end | Dan + Claude |
 
+## Phase 3 — Credit Ledger and Funding
+
+| ID | Task | State | Completion condition |
+| --- | --- | --- | --- |
+| T-301 | Migration: fundings, ledger accounts, transactions, append-only entries; zero-sum and non-negative balances enforced by the database | IN PROGRESS | Database refuses unbalanced transactions, negative balances, edits and deletes; tests |
+| T-302 | Record confirmed USDC-on-Base funding (operator) | READY | Funding credits the drop; duplicate transaction hash refused; audited; tests |
+| T-303 | Allocate cap on claim; refuse when underfunded | READY | 100 concurrent claims on a drop funded for 10 → exactly 10, unallocated never below 0; tests |
+| T-304 | Activation and resume require funds for all remaining slots | READY | Underfunded activation refused; tests |
+| T-305 | Release unused allocation of ended claims (idempotent, grace period, job) | READY | Concurrent releases release once; tests |
+| T-306 | Record returns of unallocated funds after a drop ends | READY | Can't return more than unallocated, or before the drop ends; tests |
+| T-307 | Invariant checker (job + operator endpoint) | READY | Detects a deliberately corrupted balance; clean ledger reports no violations |
+| T-308 | Randomized sequence test: invariants hold after every step | READY | Hundreds of random operations, invariants checked after each |
+| T-309 | Docs: `docs/architecture/CREDIT_LEDGER.md`, API update; evidence BP-6 (funding), BP-7 | READY | Docs written; evidence recorded |
+
 ## Later phases
 
-Tasks for Phases 3–7 are created when each phase is approved to start. See `PLAN.md`.
+Tasks for Phases 4–7 are created when each phase is approved to start. See `PLAN.md`.

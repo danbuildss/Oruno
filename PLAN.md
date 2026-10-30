@@ -6,8 +6,8 @@ Backend first. Each phase needs Dan's approval to start and to exit. All phases 
 | --- | --- | --- |
 | 0 | Research and Architecture | CLOSED (D-015) |
 | 1 | Backend Foundation | CLOSED (approved 2026-10-30) |
-| 2 | Drop and Claim Engine | IN REVIEW (exit approval pending) |
-| 3 | Credit Ledger and Funding | Not started |
+| 2 | Drop and Claim Engine | CLOSED (approved 2026-10-30) |
+| 3 | Credit Ledger and Funding | IN PROGRESS |
 | 4 | Provider Integration (key issuance) | Not started |
 | 5 | Backend Reliability and Verification | Not started |
 | 6 | Claim Frontend | Not started |
