@@ -3,6 +3,8 @@
 Significant changes to the repository, newest first.
 
 ## 2026-10-30
+- **Phase 1 backend foundation** (`4734e4b`): config, Postgres migrations, append-only audit log, logging with redaction, Fastify error handling, health check, operator API keys, pg-boss jobs, Vitest suite, CI.
+- Recorded D-015 and D-016.
 - Recorded D-014 (D-013 approved; GitHub-only sign-in for Drop #1) and the "Oruno" name check.
 - Recorded approvals D-011 (USDC on Base) and D-012 (V1 scope and architecture); proposed D-013 (eligibility thresholds).
 - Added sign-in signal research to `docs/research/MARKET_RESEARCH.md`.

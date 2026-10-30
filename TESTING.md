@@ -4,7 +4,15 @@ Strategy, required cases, commands and results. Nothing is VERIFIED without a re
 
 ## Commands
 
-OPEN — defined at Phase 1 start when the stack is approved.
+| Command | What it does |
+| --- | --- |
+| `pnpm test` | All tests (unit + integration on real Postgres at `TEST_DATABASE_URL`; the test database is wiped) |
+| `pnpm lint` | Biome lint and format check (recommended rules) |
+| `pnpm typecheck` | TypeScript strict check of sources and tests |
+| `pnpm build` | Compile to `dist/` |
+| `pnpm migrate` / `pnpm migrate down` | Apply / roll back migrations on `DATABASE_URL` (rollback refused in production) |
+
+CI (`.github/workflows/ci.yml`) runs lint, typecheck, build and tests against Postgres 16 on every pull request and push to `main`.
 
 ## Test categories and required cases
 
@@ -81,4 +89,34 @@ Also record: the per-request fee actually charged, and cap behaviour across a mo
 
 ## Results log
 
-None yet.
+### 2026-10-30 — Phase 1, commit `4734e4b`
+
+Environment: local Postgres 16.15, Node 22.22.0, pnpm 10.28.0.
+
+- `pnpm lint` — clean (34 files). Lint rules confirmed active by a deliberate bad file (noDebugger, noDoubleEquals, noExplicitAny fired).
+- `pnpm typecheck` — clean.
+- `pnpm build` — clean.
+- `pnpm test` — **36 passed, 0 failed** (8 files):
+
+| Area | Tests |
+| --- | --- |
+| Config (unit) | defaults; explicit values and PORT coercion; missing DATABASE_URL; non-postgres URL; invalid PORT and NODE_ENV listed; DATABASE_URL value never in error message |
+| Operator keys (unit) | format; hash deterministic and not the key; 1,000 keys all unique; malformed keys rejected |
+| Logger (unit) | 10 secret values across authorization headers, cookie, x-api-key, apiKey, databaseUrl, secret, password, token, key all redacted |
+| Migrations (integration) | apply on clean DB; idempotent; full rollback; re-apply; audit log refuses UPDATE and DELETE; constraints reject empty name, non-hex hash, unknown actor type |
+| Health (integration) | 200 ok with database; 503 degraded when database unreachable |
+| Operator auth (integration) | valid key 200; missing header, wrong scheme, key without scheme, malformed key, unknown key all 401; key absent from operators and audit tables; key absent from logs; creation audited; disabled key 401 and disabling audited; empty name refused |
+| Errors (integration) | structured 404; validation 400 with field paths; malformed JSON 400; AppError passthrough; internal error message hidden |
+| Jobs (integration) | pg-boss job queued and processed exactly once on real Postgres |
+
+Manual start-up check (BP-1, BP-2) on `oruno_dev`, from the built app:
+- `pnpm migrate` → `Up 0001_operators_and_audit: Success`; again → `Nothing to do.`
+- `pnpm operator:create "Dan"` → operator created; key printed once.
+- `node dist/main.js` (NODE_ENV=production) → `GET /health` 200 `{"status":"ok","database":"ok"}`; `GET /v1/operator/me` 200 with key, 401 without.
+- Server log contains the key 0 times.
+- SIGTERM → "shutting down" logged; process exited.
+- `pnpm migrate down` → `Down 0001_operators_and_audit: Success`; `pnpm migrate` → `Up … Success`.
+- `NODE_ENV=production pnpm migrate down` → refused, exit 1.
+- Missing DATABASE_URL → clear config error, exit 1.
+
+Not yet verified: CI on GitHub (runs when the branch's pull request opens).

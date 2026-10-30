@@ -10,7 +10,22 @@ Built by Somehow Internet. Licensed under [Apache-2.0](LICENSE).
 
 ## Status
 
-**Phase 0 — Research and Architecture.** No product code yet. See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
+**Phase 1 — Backend Foundation** (in review). See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
+
+## Run it locally
+
+Requires Node.js 22, pnpm and Postgres 16 (or Docker).
+
+```bash
+pnpm install
+cp .env.example .env            # then edit if needed
+docker compose up -d            # or use your own Postgres with oruno_dev and oruno_test databases
+pnpm migrate                    # create tables
+pnpm operator:create "Your name"  # prints an operator API key once
+pnpm dev                        # http://127.0.0.1:3000/health
+```
+
+Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test` (wipes the test database), `pnpm build`.
 
 ## Documentation
 

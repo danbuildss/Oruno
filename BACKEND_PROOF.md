@@ -6,8 +6,8 @@ Evidence format: command run, result summary, commit hash, date.
 
 | # | Criterion | Status | Evidence |
 | --- | --- | --- | --- |
-| BP-1 | Service starts from a clean checkout with documented commands; health check passes | OPEN | — |
-| BP-2 | Migrations apply and roll back on a clean database | OPEN | — |
+| BP-1 | Service starts from a clean checkout with documented commands; health check passes | VERIFIED | 2026-10-30, `4734e4b`: `pnpm install`, `pnpm build`, `pnpm migrate`, `node dist/main.js` → `GET /health` 200; graceful SIGTERM shutdown. See `TESTING.md` results log |
+| BP-2 | Migrations apply and roll back on a clean database | VERIFIED | 2026-10-30, `4734e4b`: `tests/integration/migrations.test.ts` (6 tests) and manual `pnpm migrate` / `pnpm migrate down` round trip |
 | BP-3 | Operator can create, activate, pause and end a drop through the API | OPEN | — |
 | BP-4 | Claimer sign-in via GitHub works; ineligible accounts rejected (D-014 thresholds) | OPEN | — |
 | BP-5 | One claim per person per drop, including under concurrent attempts | OPEN | — |

@@ -57,7 +57,7 @@ Best-offer discounts reach 85–99%, but median is the realistic figure. Re-chec
 
 Runs an LLM gateway that is a major Surplus customer (about 401K requests in 30 days, 98.4% success, per Bankr's page). Builds on Base.
 
-- **Unknown:** whether Bankr credit can be split into capped keys for other people. Owner to check the dashboard.
+- **Checked (2026-10-30, Dan):** Bankr credit cannot be shared or split into keys for other people. Bankr is not a supply option for drops.
 - **Role:** partner and distribution channel first; possible provider later; also the closest potential competitor.
 
 ## OpenRouter (fallback)
