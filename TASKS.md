@@ -65,8 +65,29 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 | T-306 | Record returns of unallocated funds after a drop ends | VERIFIED | Can't return more than unallocated, or before the drop ends; tests |
 | T-307 | Invariant checker (job + operator endpoint) | VERIFIED | Detects a deliberately corrupted balance; clean ledger reports no violations |
 | T-308 | Randomized sequence test: invariants hold after every step | VERIFIED | Hundreds of random operations, invariants checked after each |
-| T-309 | Docs: `docs/architecture/CREDIT_LEDGER.md`, API update; evidence BP-6 (funding), BP-7 | IN REVIEW (awaiting Phase 3 exit approval) | Docs written; evidence recorded |
+| T-309 | Docs: `docs/architecture/CREDIT_LEDGER.md`, API update; evidence BP-6 (funding), BP-7 | VERIFIED (Dan approved exit) | Docs written; evidence recorded |
+
+## Phase 4a — Provider integration with a fake provider
+
+| ID | Task | State | Completion condition |
+| --- | --- | --- | --- |
+| T-401 | Provider adapter interface + fake provider (caps, expiry, scope, idempotency, revoke, usage, failure injection) | IN PROGRESS | Unit tests for each behaviour |
+| T-402 | Surplus HTTP client from the documentation (UNVERIFIED until 4b) | READY | Request shapes tested with simulated HTTP; marked unverified |
+| T-403 | Migration 0004: key fields on claims; one-claim rule ignores failed claims | READY | Applies and rolls back; tests |
+| T-404 | Key issuance on claim; secret shown once, never stored | READY | Claim becomes active with a capped, expiring, scoped key; secret absent from DB and logs |
+| T-405 | Pending-issuance retry job; failure after 5 attempts frees the slot | READY | Simulated outages recover; permanent failure releases funds and slot |
+| T-406 | Reveal/rotate key (max 3) | READY | New secret works, old one doesn't; limit enforced |
+| T-407 | Revocation reaches the provider, with retry | READY | Revoked/expired/failed keys revoked at provider even after transient failures |
+| T-408 | Spend sync into the ledger; exhausted at cap; overshoot flagged | READY | Idempotent; concurrent syncs record once; invariants hold |
+| T-409 | Workspace spend ceiling = funds held | READY | Ceiling follows funding and returns |
+| T-410 | Docs and evidence (PROVIDERS, API, CREDIT_LEDGER, BACKEND_PROOF BP-9/10/11/12 for fake) | READY | Docs written; evidence recorded |
+
+## Phase 4b — Real Surplus (blocked)
+
+| ID | Task | State | Completion condition |
+| --- | --- | --- | --- |
+| T-411 | Connect real Surplus; run AT-1 to AT-15 with $20 | BLOCKED (T-003, T-004, T-006) | Acceptance tests VERIFIED with evidence |
 
 ## Later phases
 
-Tasks for Phases 4–7 are created when each phase is approved to start. See `PLAN.md`.
+Tasks for Phases 5–7 are created when each phase is approved to start. See `PLAN.md`.
