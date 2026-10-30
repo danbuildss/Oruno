@@ -12,11 +12,12 @@ States: **BACKLOG · READY · IN PROGRESS · BLOCKED · IN REVIEW · VERIFIED**.
 | T-004 | Ask Surplus the four open questions in writing | READY | Written answers recorded in `docs/architecture/PROVIDERS.md` | Dan |
 | T-005 | Check whether Bankr credit can be split into capped keys | READY | Answer recorded in `docs/architecture/PROVIDERS.md` | Dan |
 | T-006 | Provider spike: run AT-1 to AT-15 on a $20 Surplus key | BLOCKED (needs T-003 and spending approval) | Results with evidence in `TESTING.md` | Claude |
-| T-007 | Decide eligibility thresholds (account age, activity) for X and GitHub | BACKLOG | Thresholds approved and recorded in `DECISIONS.md` | Claude proposes, Dan approves |
-| T-008 | Check X and GitHub OAuth: which account-age and activity signals are available, at what cost | READY | Findings with sources in `docs/research/MARKET_RESEARCH.md` | Claude |
-| T-009 | Draft claimer terms meeting Surplus §8 conditions | BACKLOG | Draft reviewed by Dan; legal review scheduled | Claude drafts |
-| T-010 | Approve V1 scope (`PRODUCT.md` → V1 boundaries) | IN REVIEW | Dan approves or edits | Dan |
-| T-011 | Approve architecture (`ARCHITECTURE.md`, DATABASE, THREAT_MODEL) | IN REVIEW | Dan approves or edits | Dan |
+| T-007 | Decide eligibility thresholds (account age, activity) for X and GitHub | IN REVIEW (D-013 proposed) | Thresholds approved and recorded in `DECISIONS.md` | Claude proposes, Dan approves |
+| T-008 | Check X and GitHub OAuth: which account-age and activity signals are available, at what cost | IN REVIEW | Findings with sources in `docs/research/MARKET_RESEARCH.md` | Claude |
+| T-009 | Draft claimer terms meeting Surplus §8 conditions | IN REVIEW (draft in `docs/legal/CLAIMER_TERMS.md`) | Draft reviewed by Dan; legal review scheduled | Claude drafts |
+| T-010 | Approve V1 scope (`PRODUCT.md` → V1 boundaries) | VERIFIED | Approved by Dan (D-012) | Dan |
+| T-011 | Approve architecture (`ARCHITECTURE.md`, DATABASE, THREAT_MODEL) | VERIFIED | Approved by Dan (D-012) | Dan |
+| T-013 | Decide whether Drop #1 supports X sign-in (paid X API reads) or GitHub only | IN REVIEW | Dan decides; recorded in `DECISIONS.md` | Dan |
 | T-012 | Trademark, domain, GitHub org and npm scope check for "Oruno" | BACKLOG | Results recorded; any conflicts flagged | Claude researches |
 
 ## Later phases

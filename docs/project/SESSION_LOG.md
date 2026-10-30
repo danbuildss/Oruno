@@ -2,6 +2,27 @@
 
 Newest first. Each entry: Completed · Verified · Not verified · Issues · Next.
 
+## 2026-10-30 (2) — Approvals, sign-in research, claimer terms
+
+**Completed**
+- Recorded Dan's approvals: V1 scope and architecture (D-012), funding in USDC on Base (D-011).
+- T-008: researched GitHub and X sign-in signals and costs.
+- Proposed eligibility thresholds (D-013) and a GitHub-only option for Drop #1 (T-013).
+- T-009: drafted claimer terms (`docs/legal/CLAIMER_TERMS.md`).
+
+**Verified**
+- Surplus Terms §2 eligibility (13+, under-18 needs permission, sanctions exclusions) read from the live terms page.
+
+**Not verified**
+- GitHub and X field names and X pricing: taken from search results quoting official docs; docs.github.com and docs.x.com were blocked in this session.
+
+**Issues**
+- None blocking.
+
+**Next**
+- Dan: decide D-013 and T-013; review claimer terms.
+- Claude: T-012 name checks.
+
 ## 2026-10-30 — Research, pivot, documentation system
 
 **Completed**

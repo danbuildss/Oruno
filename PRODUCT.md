@@ -59,13 +59,13 @@ Make access to AI programmable, shareable and fundable by anyone, starting with 
 | Cap per claimer | $5 | APPROVED |
 | Claim sign-in | X or GitHub (wallet optional) | APPROVED |
 | Provider | Surplus Intelligence, Pattern A (one provisioned key per claimer) | APPROVED |
-| Tool | Claude Code | PROPOSED |
-| Number of claims | 20 | PROPOSED |
-| Total funding | $100 (+ $20 test key) | PROPOSED |
+| Tool | Claude Code | APPROVED |
+| Number of claims | 20 | APPROVED |
+| Total funding | $100 (+ $20 test key) | APPROVED |
 | Funding method | USDC on Base, deposited to the Surplus account | APPROVED |
-| Duration | 14 days, inside one calendar month | PROPOSED |
-| Eligibility thresholds (account age, activity) | Values to be set | OPEN |
-| Frontend | Claim page and "my key" page only, after backend proof | PROPOSED |
+| Duration | 14 days, inside one calendar month | APPROVED |
+| Eligibility thresholds (account age, activity) | Proposed in D-013 | PROPOSED |
+| Frontend | Claim page and "my key" page only, after backend proof | APPROVED |
 
 **Not in V1:** drops created by other funders, funder dashboard, organisation accounts, payments by card, public API or SDK, multiple providers, onchain contracts.
 

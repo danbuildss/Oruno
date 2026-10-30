@@ -113,3 +113,23 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
 - **Reasoning:** Base-native; on Surplus, deposited USDC is withdrawable, while card credit is not and is refundable only within 24 hours.
 - **Trade-offs:** Requires a funded Base wallet and an on-chain deposit; Surplus account must accept the deposit before keys can be issued.
 - **Consequences:** A funding record stores the deposit transaction hash; keys are issued only after the deposit is confirmed. Card funding stays out of V1.
+
+## D-012 — V1 scope and architecture approved
+
+- **Date:** 2026-10-30 · **Approval:** APPROVED (Dan)
+- **Problem:** Phase 0 needs an approved V1 scope and architecture before Phase 1.
+- **Selected:** V1 scope in `PRODUCT.md` (Drop #1: 20 claims, $5 each, $100, 14 days inside one calendar month, Claude Code, Surplus, claim page after backend proof). Architecture in `ARCHITECTURE.md`, `docs/architecture/DATABASE.md` and `docs/architecture/THREAT_MODEL.md`.
+- **Consequences:** D-003 (provider caps plus our ledger), D-004 (no own gateway in V1) and D-005 (TypeScript and Postgres monolith) move from PROPOSED to APPROVED. Exact frameworks are still proposed at Phase 1 start.
+
+## D-013 — Eligibility thresholds for Drop #1
+
+- **Date:** 2026-10-30 · **Approval:** PROPOSED
+- **Problem:** How to tell a real person from a farmed account at sign-in (TH-1).
+- **Options:** account age only; age plus activity; manual approval of every claim.
+- **Selected (proposed):** age plus activity, checked at sign-in, with manual review for borderline cases.
+  - **GitHub:** account created ≥ 180 days ago, and at least one of: ≥ 3 public repositories, or ≥ 20 contributions in the last 12 months.
+  - **X:** account created ≥ 180 days ago, ≥ 25 followers, and ≥ 50 posts.
+  - Plus: one claim per person per drop; identities linked to a person can't claim twice; claimers must be 18 or older and not in a sanctioned jurisdiction (Surplus Terms §2).
+- **Reasoning:** Old, active accounts are expensive to fake at scale. GitHub signals fit developers best.
+- **Trade-offs:** Excludes newcomers with new accounts; thresholds may need tuning after Drop #1.
+- **Consequences:** Signals stored at sign-in time in `identities`; thresholds held in drop configuration so they can change per drop.

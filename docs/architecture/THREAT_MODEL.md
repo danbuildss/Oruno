@@ -1,6 +1,6 @@
 # Threat model
 
-**Status: PROPOSED** (T-011). Every high-severity threat needs a tested mitigation before launch (BP-15).
+**Status: APPROVED** as the initial model (D-012). Reviewed again before launch (BP-15). Every high-severity threat needs a tested mitigation before launch (BP-15).
 
 ## Assets
 
