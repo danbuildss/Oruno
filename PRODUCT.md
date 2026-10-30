@@ -62,7 +62,7 @@ Make access to AI programmable, shareable and fundable by anyone, starting with 
 | Tool | Claude Code | PROPOSED |
 | Number of claims | 20 | PROPOSED |
 | Total funding | $100 (+ $20 test key) | PROPOSED |
-| Funding method | OPEN — see `NOTES.md` | OPEN |
+| Funding method | USDC on Base, deposited to the Surplus account | APPROVED |
 | Duration | 14 days, inside one calendar month | PROPOSED |
 | Eligibility thresholds (account age, activity) | Values to be set | OPEN |
 | Frontend | Claim page and "my key" page only, after backend proof | PROPOSED |

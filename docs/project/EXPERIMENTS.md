@@ -14,6 +14,6 @@ Each experiment: ID, hypothesis, setup, status, results, decision.
 
 - **Hypothesis:** Surplus's per-key caps, workspace budget and expiry hold under real use, and Claude Code works through the Anthropic endpoint.
 - **Setup:** AT-1 to AT-15 in `TESTING.md` on a $20 key.
-- **Status:** BLOCKED (T-002 funding method, T-003 admin key, spending approval).
+- **Status:** BLOCKED (T-003 admin key, spending approval).
 - **Results:** —
 - **Decision:** —

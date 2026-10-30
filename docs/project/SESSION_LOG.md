@@ -20,8 +20,8 @@ Newest first. Each entry: Completed · Verified · Not verified · Issues · Nex
 - X and GitHub eligibility signals.
 
 **Issues**
-- Funding method message cut off ("I will fund it throu…"); needs Dan's answer.
+- None open. Funding method confirmed later in the session: USDC on Base (D-011).
 
 **Next**
-- Dan: funding method, review V1 scope and architecture, send Surplus questions, check Bankr.
+- Dan: review V1 scope and architecture, send Surplus questions, check Bankr.
 - Claude: research X and GitHub sign-in signals (T-008).

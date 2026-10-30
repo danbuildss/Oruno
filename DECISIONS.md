@@ -103,3 +103,13 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
 - **Reasoning:** Oruno moves money and access to paid resources; correctness first.
 - **Trade-offs:** Drop #1 launches later than a quick-build approach would.
 - **Consequences:** Documentation system per `CLAUDE.md`; status labels OPEN / PROPOSED / APPROVED / VERIFIED.
+
+## D-011 — Funding in USDC on Base
+
+- **Date:** 2026-10-30 · **Approval:** APPROVED (Dan)
+- **Problem:** How Drop #1 ($100) and the provider spike ($20) are funded.
+- **Options:** USDC on Base deposited to Surplus; card credit on Surplus; Bankr credit.
+- **Selected:** USDC on Base, deposited to Oruno's Surplus account.
+- **Reasoning:** Base-native; on Surplus, deposited USDC is withdrawable, while card credit is not and is refundable only within 24 hours.
+- **Trade-offs:** Requires a funded Base wallet and an on-chain deposit; Surplus account must accept the deposit before keys can be issued.
+- **Consequences:** A funding record stores the deposit transaction hash; keys are issued only after the deposit is confirmed. Card funding stays out of V1.
