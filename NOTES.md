@@ -55,7 +55,7 @@ See `DECISIONS.md`. Summary:
 
 ## 11. Next recommended task
 
-1. Dan: review claimer terms (T-009); send Surplus questions (T-004); check Bankr (T-005); check domains and GitHub org for "Oruno" (T-012).
+1. Dan: review claimer terms (T-009); send Surplus questions (T-004). Domain and name registration deferred to public launch (T-012). Bankr checked: not shareable (T-005).
 2. When Dan is ready: Surplus org + admin key (T-003), $20 USDC deposit, then the provider spike (T-006).
 3. Phase 0 exit review, then approval to start Phase 1.
 
@@ -85,7 +85,7 @@ Nothing deployed. No environments exist.
 3. Which sellers serve Claude models, and is that supply legitimately sourced under model providers' terms?
 4. Would a future Oruno gateway count as a "directly competing routing service" (§8)?
 
-**Bankr (T-005):** Can credit be split into capped keys for others? Partnership interest?
+**Bankr (T-005):** answered — credit can't be shared. Partnership interest still open for later.
 
 **Ours:**
 - Confirm GitHub and X field names and pricing against the live official docs (blocked in this session) at Phase 2 start.
