@@ -1,9 +1,10 @@
-import { randomUUID } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import { createOperator } from "../../src/auth/operator-keys.js";
 import { randomToken, sha256Hex } from "../../src/auth/tokens.js";
 import type { Db } from "../../src/db/client.js";
 import { createDrop, transitionDrop } from "../../src/drops/drops.js";
 import { createDropSchema } from "../../src/drops/rules.js";
+import { recordFunding } from "../../src/ledger/ledger.js";
 
 export const NOW = new Date("2026-11-05T12:00:00Z");
 
@@ -24,14 +25,33 @@ export const dropInput = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-/** Creates a drop and (by default) activates it. */
+/** A unique, valid-looking Base transaction hash. */
+export function txHash(): string {
+  return `0x${randomBytes(32).toString("hex")}`;
+}
+
+/**
+ * Creates a drop, funds it (by default: enough for every slot) and activates it.
+ * `fundMicro: 0n` skips funding.
+ */
 export async function seedDrop(
   db: Db,
   operatorId: string,
   overrides: Record<string, unknown> = {},
-  options: { activate?: boolean } = {},
+  options: { activate?: boolean; fundMicro?: bigint } = {},
 ) {
   const drop = await createDrop(db, createDropSchema.parse(dropInput(overrides)), operatorId);
+  const fund = options.fundMicro ?? drop.cap_micro * BigInt(drop.max_claims);
+  if (fund > 0n) {
+    await recordFunding(db, {
+      dropId: drop.id,
+      amountMicro: fund,
+      reference: txHash(),
+      note: null,
+      operatorId,
+      now: NOW,
+    });
+  }
   if (options.activate === false) return drop;
   return transitionDrop(db, {
     dropId: drop.id,

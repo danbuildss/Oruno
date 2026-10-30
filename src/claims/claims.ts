@@ -5,6 +5,7 @@ import type { ClaimEndedBy, ClaimsTable } from "../db/schema.js";
 import { canTransitionClaim, claimabilityProblem } from "../drops/rules.js";
 import { evaluateEligibility } from "../eligibility/eligibility.js";
 import { AppError } from "../http/errors.js";
+import { allocateForClaim } from "../ledger/ledger.js";
 
 export type ClaimRow = Selectable<ClaimsTable>;
 
@@ -41,7 +42,8 @@ export interface CreateClaimParams {
  * Safety: the drop row is locked (`FOR UPDATE`) for the whole transaction, so concurrent claims
  * are serialised per drop and can't exceed `max_claims`. The unique (drop_id, person_id)
  * constraint is a second, database-level guarantee of one claim per person.
- * In Phase 2 the claim stays `pending`; key issuance comes in Phase 4.
+ * The claim's cap is allocated from the drop's funding in the same transaction (Phase 3).
+ * The claim stays `pending`; key issuance comes in Phase 4.
  */
 export async function createClaim(db: Db, params: CreateClaimParams): Promise<ClaimRow> {
   return db.transaction().execute(async (trx) => {
@@ -118,6 +120,15 @@ export async function createClaim(db: Db, params: CreateClaimParams): Promise<Cl
       })
       .returningAll()
       .executeTakeFirstOrThrow();
+
+    // Reserve the claim's cap from the drop's funding. Refused if the drop can't cover it;
+    // the whole transaction (claim included) then rolls back.
+    await allocateForClaim(trx, {
+      dropId: drop.id,
+      claimId: claim.id,
+      capMicro: claim.cap_micro,
+      actor: { type: "claimer", id: params.personId },
+    });
 
     await trx
       .updateTable("drops")

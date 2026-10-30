@@ -89,6 +89,27 @@ Also record: the per-request fee actually charged, and cap behaviour across a mo
 
 ## Results log
 
+### 2026-10-30 — Phase 3, commit `2f6d4db`
+
+- `pnpm lint`, `pnpm typecheck`, `pnpm build`: clean.
+- `pnpm test`: **127 passed, 0 failed** (15 files). Ledger and claims suites re-run twice more: 35/35 each time.
+
+| Area | Tests |
+| --- | --- |
+| Database rules | **unbalanced transaction refused at commit**; transaction with < 2 entries refused; **overdraft refused** (`ledger_accounts_non_negative`); ledger entries, transactions and fundings refuse UPDATE/DELETE; same idempotency key posts once |
+| Funding | API records deposit and shows balances; duplicate tx hash 409; decimal, numeric, short and uppercase inputs 400; operator key required; ended drop refuses funding |
+| Activation | unfunded/partly funded drop refused with required vs available amounts; opens once fully funded; resume needs only open slots |
+| Allocation | claim moves cap from drop to claim; **100 concurrent claims on a drop funded for 10 (20 slots) → exactly 10; unallocated ends at 0, never below**; invariants clean |
+| Release | open claim refused; revoked claim released once even with **5 concurrent releases** (one ledger transaction); job waits the 1-hour grace (59 min: nothing; 60 min: released; 61 min: nothing more); claims expired at drop end are released |
+| Returns | refused before the drop ends; can't exceed unallocated; returns all unallocated by default; duplicate hash 409; nothing left → 409 |
+| Invariant checker | healthy ledger → no violations (also via API); **a balance tampered with directly in SQL is detected** (`account_balance_matches_entries`, `drop_funds_conserved`) |
+| **Randomized** | 250 random steps (claim, fund, revoke, release, transitions, returns, time passing, expiry) for each of 3 seeds; **all invariants checked after every step**; asserts the run exercised claims, funding, revocations and releases |
+| Earlier suites | all passing; drops are now funded before activation in test helpers |
+
+Manual smoke test (built server, `oruno_dev`): activate unfunded → 409 with required $100 vs $0; fund $100 → 201 with balances; activate → 200; balances correct; `/v1/ledger/check` → ok; schedules `claims.release`, `drops.expire`, `ledger.check` present; graceful shutdown.
+
+Found and fixed during testing: recording a return with an already-used hash after the funds were gone reported `insufficient_funding` instead of `duplicate_reference`; duplicates are now checked first.
+
 ### 2026-10-30 — Phase 2, commit `33466ef`
 
 - `pnpm lint`, `pnpm typecheck`, `pnpm build`: clean.

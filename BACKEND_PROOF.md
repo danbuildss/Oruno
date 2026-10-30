@@ -11,8 +11,8 @@ Evidence format: command run, result summary, commit hash, date.
 | BP-3 | Operator can create, activate, pause and end a drop through the API | VERIFIED | 2026-10-30, `33466ef`: `tests/integration/drops-api.test.ts`; manual smoke test |
 | BP-4 | Claimer sign-in via GitHub works; ineligible accounts rejected (D-014 thresholds) | PARTIAL | 2026-10-30, `33466ef`: full flow verified with a fake GitHub that enforces PKCE (`sign-in.test.ts`); real client unit-tested; eligibility tested. **Live GitHub sign-in not yet tested** (needs a GitHub OAuth App) |
 | BP-5 | One claim per person per drop, including under concurrent attempts | VERIFIED | 2026-10-30, `33466ef`: one person ×10 concurrent → 1; database unique constraint test (`claims.test.ts`) |
-| BP-6 | Claims never exceed the drop's slots or confirmed funding under concurrency | PARTIAL | Slots VERIFIED 2026-10-30, `33466ef`: 100 people on 20 slots → exactly 20. **Funding** part comes with Phase 3 |
-| BP-7 | Financial invariants hold across the full test suite | OPEN | — |
+| BP-6 | Claims never exceed the drop's slots or confirmed funding under concurrency | VERIFIED | Slots: `33466ef`, 100 people on 20 slots → 20. Funding: `2f6d4db`, 100 claims on a drop funded for 10 → 10, unallocated never below 0 (`ledger.test.ts`) |
+| BP-7 | Financial invariants hold across the full test suite | VERIFIED (Phase 3 scope) | 2026-10-30, `2f6d4db`: invariant checker after every step of 3×250 randomized operations; database refuses unbalanced, edited and overdrawn records. Re-verify in Phase 4 once spend is recorded |
 | BP-8 | Claim issues a real Surplus key with the correct cap, expiry and scope; secret shown once and never stored | OPEN | — |
 | BP-9 | Provider failures (timeout, error, duplicate request) never create duplicate keys or lose reservations | OPEN | — |
 | BP-10 | Revocation (operator and self) stops the key at the provider | OPEN | — |

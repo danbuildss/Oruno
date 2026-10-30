@@ -26,6 +26,7 @@ describe("migrations", () => {
     expect(steps).toEqual([
       "Up 0001_operators_and_audit: Success",
       "Up 0002_drops_and_claims: Success",
+      "Up 0003_credit_ledger: Success",
     ]);
     expect(await tableNames(db)).toEqual(
       expect.arrayContaining([
@@ -44,6 +45,7 @@ describe("migrations", () => {
   it("roll back completely", async () => {
     const steps = await migrateAllDown(db);
     expect(steps).toEqual([
+      "Down 0003_credit_ledger: Success",
       "Down 0002_drops_and_claims: Success",
       "Down 0001_operators_and_audit: Success",
     ]);
@@ -53,7 +55,7 @@ describe("migrations", () => {
   });
 
   it("re-apply after a full rollback", async () => {
-    expect(await migrateToLatest(db)).toHaveLength(2);
+    expect(await migrateToLatest(db)).toHaveLength(3);
   });
 
   it("enforce an append-only audit log", async () => {

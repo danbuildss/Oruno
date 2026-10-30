@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Db } from "../../src/db/client.js";
 import { testApp } from "../helpers/app.js";
 import { freshDb } from "../helpers/db.js";
-import { dropInput, NOW, seedOperator } from "../helpers/seed.js";
+import { dropInput, NOW, seedOperator, txHash } from "../helpers/seed.js";
 
 describe("operator drop API", () => {
   let db: Db;
@@ -26,6 +26,17 @@ describe("operator drop API", () => {
       url: "/v1/drops",
       headers,
       payload: dropInput(overrides),
+    });
+    await app.close();
+    return res;
+  };
+  const fund = async (id: string, amountMicro = "100000000") => {
+    const { app } = await testApp(db, { clock });
+    const res = await app.inject({
+      method: "POST",
+      url: `/v1/drops/${id}/fundings`,
+      headers: auth,
+      payload: { amountMicro, reference: txHash() },
     });
     await app.close();
     return res;
@@ -64,6 +75,7 @@ describe("operator drop API", () => {
 
   it("follows the drop state machine and audits each change", async () => {
     const id = (await create()).json().id as string;
+    expect((await fund(id)).statusCode).toBe(201);
     expect((await action(id, "resume")).statusCode).toBe(409); // draft can't resume
     expect((await action(id, "activate")).json().status).toBe("active");
     expect((await action(id, "activate")).statusCode).toBe(409); // already active
@@ -80,6 +92,7 @@ describe("operator drop API", () => {
       .execute();
     expect(audit.map((a) => a.action)).toEqual([
       "drop.created",
+      "drop.funded",
       "drop.active",
       "drop.paused",
       "drop.active",
@@ -99,6 +112,7 @@ describe("operator drop API", () => {
   it("shows active drops publicly but hides drafts", async () => {
     const draft = (await create({ slug: "hidden-draft" })).json();
     const live = (await create({ slug: "live-drop" })).json();
+    await fund(live.id);
     await action(live.id, "activate");
     const { app } = await testApp(db, { clock });
     expect(

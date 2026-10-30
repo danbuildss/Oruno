@@ -2,6 +2,27 @@
 
 Newest first. Each entry: Completed · Verified · Not verified · Issues · Next.
 
+## 2026-10-30 (6) — Phase 3 credit ledger and funding
+
+**Completed**
+- Opened PR #4 (Phase 2). Recorded D-018 (ledger design).
+- Built the double-entry ledger with database-enforced rules, funding records, allocation on claim, funding check on activation, releases (job), returns, invariant checker (job + endpoint). Commit `2f6d4db`.
+- Docs: `docs/architecture/CREDIT_LEDGER.md`; API and database docs updated.
+
+**Verified**
+- 127/127 tests, including concurrency (funding-limited claims, concurrent releases) and a randomized invariant test over 3 seeds.
+- Manual smoke test on the built server.
+
+**Not verified**
+- On-chain verification of deposits (not built; operator-attested by design for now).
+
+**Issues**
+- Duplicate return hash was reported as `insufficient_funding` when funds were already gone; fixed by checking duplicates first.
+- First randomized run ended drops too fast to exercise much; rebalanced and added coverage assertions so a weak run fails.
+
+**Next**
+- Dan: Phase 3 exit approval; Phase 4 entry requirements (Surplus answers, admin key, $20 test deposit).
+
 ## 2026-10-30 (5) — Phase 2 drop and claim engine
 
 **Completed**

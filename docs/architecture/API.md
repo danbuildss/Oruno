@@ -1,6 +1,6 @@
 # API
 
-**Status: VERIFIED for Phase 2 routes** (commit `33466ef`, see `TESTING.md`). Base path `/`. JSON in and out.
+**Status: VERIFIED through Phase 3** (commits `33466ef`, `2f6d4db`; see `TESTING.md`). Base path `/`. JSON in and out.
 
 ## Conventions
 
@@ -39,7 +39,17 @@
 | GET | `/v1/drops/:id/claims` | Claims on a drop |
 | POST | `/v1/claims/:id/revoke` | Body `{reason}`. Revoke any claim |
 
-Invalid transitions return `409 invalid_transition`.
+Invalid transitions return `409 invalid_transition`. Activate and resume return `409 insufficient_funding` (with `requiredMicro` and `unallocatedMicro`) unless the drop's unallocated funds cover cap × open slots.
+
+### Funding and ledger (operator)
+
+| Method | Path | Body / result |
+| --- | --- | --- |
+| POST | `/v1/drops/:id/fundings` | Record a confirmed USDC-on-Base deposit: `{amountMicro, reference: "0x…64 hex", note?}`. `201 {funding, balances}`. Errors: `duplicate_reference`, `drop_ended` |
+| GET | `/v1/drops/:id/balances` | `{fundedMicro, unallocatedMicro, allocatedMicro, spentMicro, returnedMicro}` |
+| POST | `/v1/drops/:id/returns` | After the drop ends: `{amountMicro?, reference}` (defaults to all unallocated). Errors: `drop_not_ended`, `insufficient_funding`, `nothing_to_return`, `duplicate_reference` |
+| POST | `/v1/claims/:id/release` | Release an ended claim's unused allocation now. `{releasedMicro}`. Error: `claim_still_open` |
+| GET | `/v1/ledger/check` | `{ok, violations[]}` from the invariant checker |
 
 ### Drops (public)
 
@@ -61,7 +71,7 @@ Returns `503 github_not_configured` until a GitHub OAuth App is configured (`GIT
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| POST | `/v1/drops/:slug/claims` | Body `{termsVersion, acceptTerms: true, confirmAdult: true, confirmNotSanctioned: true}`. `201` claim (`status: "pending"`). Errors: `terms_outdated`, `drop_not_active`, `drop_not_started`, `drop_ended`, `drop_full`, `already_claimed`, `not_eligible` (with `details.reasons`). Rate-limited 10/min/IP |
+| POST | `/v1/drops/:slug/claims` | Body `{termsVersion, acceptTerms: true, confirmAdult: true, confirmNotSanctioned: true}`. `201` claim (`status: "pending"`, cap allocated from the drop's funding). Errors: `terms_outdated`, `drop_not_active`, `drop_not_started`, `drop_ended`, `drop_full`, `already_claimed`, `not_eligible` (with `details.reasons`), `insufficient_funding`. Rate-limited 10/min/IP |
 | GET | `/v1/me/claims` | The caller's claims |
 | POST | `/v1/me/claims/:id/revoke` | Revoke one's own claim |
 
@@ -69,4 +79,4 @@ Rate-limited requests return `429 rate_limited`.
 
 ## Not yet available
 
-Key issuance (claims becoming `active` with a usable key) is Phase 4. Funding checks are Phase 3.
+Key issuance (claims becoming `active` with a usable key) and usage/spend recording are Phase 4.

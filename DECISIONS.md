@@ -178,3 +178,19 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
   - **Rate limits** on sign-in and claim routes using the official `@fastify/rate-limit` plugin (in-memory; single instance in V1).
 - **Trade-offs:** In-memory rate limits reset on restart and don't span multiple instances; acceptable for a single-instance V1.
 - **Consequences:** Real GitHub sign-in needs a GitHub OAuth App (free) created by Dan before it can be tested live.
+
+## D-018 — Phase 2 closed; credit ledger design
+
+- **Date:** 2026-10-30 · **Approval:** APPROVED (Dan approved closing Phase 2 and starting Phase 3); design below PROPOSED by Claude within that approval.
+- **Problem:** Track every micro-dollar and guarantee Oruno never promises more credit than was funded.
+- **Selected:**
+  - **Double-entry ledger.** Each money movement is a ledger transaction whose entries sum to zero. Entries are append-only. Account balances are maintained by the database from the entries, and **the database refuses any balance below zero** (except the external funding-source account, which records money coming in).
+  - **Accounts per drop:** `drop_unallocated` (funded, not yet given to a claim), `claim_allocated` (reserved for one claim), `claim_spent` (used, Phase 4), `drop_returned` (sent back to the funder), and one `funding_source` account.
+  - **Funding** is recorded by an operator after a USDC-on-Base deposit is confirmed, with its transaction hash (unique, so a deposit can't be counted twice). On-chain verification of the hash is a later improvement.
+  - **A claim allocates its cap** from `drop_unallocated` in the same transaction that creates it, under the drop row lock. Not enough unallocated funds → `409 insufficient_funding`.
+  - **Activating or resuming a drop requires** unallocated funds ≥ cap × slots left, so a live drop never shows slots it can't pay for.
+  - **Releasing an ended claim's unused allocation** back to the drop is a separate, idempotent step, run by a job after a grace period (1 hour), so Phase 4 can record final usage first.
+  - **Returns:** after a drop ends, an operator can record unallocated funds sent back to the funder (with the outgoing transaction hash).
+  - **Invariant checker** runs as a job and on demand; any violation is logged as an error.
+- **Trade-offs:** Funding confirmation is manual (operator attests) until on-chain verification is built.
+- **Consequences:** Existing drops must be funded before activation; tests updated accordingly.

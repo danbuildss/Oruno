@@ -6,15 +6,15 @@ _Last updated: 2026-10-30_
 
 ## 1. Current project status
 
-Phases 0–1 closed. Phase 2 (Drop and Claim Engine) built and tested; awaiting Dan's exit approval. No money spent. Nothing deployed.
+Phases 0–2 closed. Phase 3 (Credit Ledger and Funding) built and tested; awaiting Dan's exit approval. No money spent. Nothing deployed.
 
 ## 2. Current development phase
 
-**Phase 2 — Drop and Claim Engine** (IN REVIEW, exit approval pending). See `PLAN.md`.
+**Phase 3 — Credit Ledger and Funding** (IN REVIEW, exit approval pending). See `PLAN.md`.
 
 ## 3. Last completed task
 
-Phase 2 build: T-201 to T-207 VERIFIED (commit `33466ef`); T-208 docs in review. Live GitHub sign-in (T-209) needs a GitHub OAuth App.
+Phase 3 build: T-301 to T-308 VERIFIED (commit `2f6d4db`); T-309 docs in review. Live GitHub sign-in (T-209) still needs a GitHub OAuth App.
 
 ## 4. Current implementation state
 
@@ -37,7 +37,9 @@ Phase 2 adds (branch `phase2/drop-claim-engine`):
 - rate limits;
 - migration 0002.
 
-Claims stay `pending` (no keys yet). No ledger or provider code yet (Phases 3–4). API reference: `docs/architecture/API.md`; design: `docs/architecture/DROP_ENGINE.md`.
+Claims stay `pending` (no keys yet). API reference: `docs/architecture/API.md`; design: `docs/architecture/DROP_ENGINE.md`.
+
+Phase 3 adds (branch `phase3/credit-ledger`): double-entry ledger with database-enforced rules (`src/ledger/`, migration 0003), funding records, allocation on claim, funding check on activation, releases, returns, invariant checker, jobs `claims.release` and `ledger.check`. Design: `docs/architecture/CREDIT_LEDGER.md`. No provider code yet (Phase 4).
 
 ## 5. What is working
 
@@ -45,6 +47,8 @@ Verified on commit `4734e4b` (36/36 tests, lint, typecheck, build; manual start-
 config validation; migrations up/down; append-only audit log; health check; operator key auth; secret redaction in logs; error responses; background jobs.
 
 Verified on commit `33466ef` (108/108 tests): drops and state machine; GitHub sign-in flow (fake GitHub with PKCE); eligibility; claims with concurrency safety; revocation; expiry job; rate limits.
+
+Verified on commit `2f6d4db` (127/127 tests): ledger rules in the database; funding; allocation under concurrency; activation funding check; releases; returns; invariant checker; randomized invariant test.
 
 ## 6. What is broken
 
@@ -72,16 +76,16 @@ See `DECISIONS.md`. Summary:
 
 | Item | Where | Notes |
 | --- | --- | --- |
-| **Phase 2 exit → start Phase 3 (Credit Ledger and Funding)** | `PLAN.md`, T-208 | BP-3, BP-5 VERIFIED; BP-4, BP-6 partial (live GitHub; funding) |
+| **Phase 3 exit → start Phase 4 (Provider Integration)** | `PLAN.md`, T-309 | BP-6, BP-7 VERIFIED. Phase 4 needs: Surplus answers (T-004), admin key (T-003), **$20 USDC test deposit** (T-006) |
 | GitHub OAuth App | T-209 | Free; needed to test live sign-in |
 | Claimer terms draft | T-009, `docs/legal/CLAIMER_TERMS.md` | Then a lawyer review |
 | Spending: $20 test key | T-006 | Deferred by Dan ("5 later") |
 
 ## 11. Next recommended task
 
-1. Dan: review Phase 2; approve the exit and Phase 3 (Credit Ledger and Funding) start.
-2. Dan: create a GitHub OAuth App (T-209) so live sign-in can be tested.
-3. PR #3 (Phase 1) CI passed — ready to merge. Then open the Phase 2 pull request.
+1. Dan: merge PR #4 (Phase 2); review Phase 3; approve its exit.
+2. Phase 4 entry requirements (D-015): Surplus written answers (T-004), Surplus org + admin key (T-003), $20 USDC deposit and spending approval (T-006).
+3. Dan: GitHub OAuth App (T-209) for live sign-in.
 3. Carried forward for Phase 4: Surplus answers (T-004, Dan asked), admin key (T-003), $20 spike (T-006), claimer terms legal review (T-009).
 
 ## 12. Relevant commits
@@ -98,12 +102,17 @@ See `DECISIONS.md`. Summary:
 - `8977919` Phase 1 evidence
 - `8586a33` D-017; Phase 2 tasks
 - `33466ef` **Phase 2 drop and claim engine**
+- `4adb20f` Phase 2 evidence; `27349b9` CI pass on PR #3
+- `80d7efc` D-018; Phase 3 tasks
+- `2f6d4db` **Phase 3 credit ledger and funding**
 
 ## 13. Important testing results
 
 2026-10-30, `4734e4b`: 36/36 tests pass on real Postgres 16; lint, typecheck and build clean; manual start-up, health, auth, graceful shutdown and migration round trip all as expected.
 
-2026-10-30, `33466ef`: 108/108 tests; 100 concurrent claims on 20 slots → exactly 20; one person ×10 → 1; replayed, expired and forged sign-in state refused; PKCE mismatch refused. Full log in `TESTING.md`.
+2026-10-30, `33466ef`: 108/108 tests; 100 concurrent claims on 20 slots → exactly 20; one person ×10 → 1; replayed, expired and forged sign-in state refused; PKCE mismatch refused.
+
+2026-10-30, `2f6d4db`: 127/127 tests; 100 concurrent claims on a drop funded for 10 → exactly 10, never negative; database refuses unbalanced, edited and overdrawn ledger records; tampering detected; invariants hold after every step of 3×250 randomized operations. Full log in `TESTING.md`.
 
 ## 14. Deployment status
 
@@ -124,4 +133,6 @@ Nothing deployed. No environments exist. Local development only (Postgres on the
 - How we detect key sharing with only provider usage data (IPs may not be visible).
 - Cookie vs bearer session for the Phase 6 claim page (D-017 uses bearer tokens for now).
 - Rate limits are in-memory (single instance); revisit if Oruno runs more than one instance.
+- Funding is operator-attested; add on-chain verification of the Base transaction hash later.
+- Phase 4 must handle usage reported after a claim's allocation was released (see `CREDIT_LEDGER.md` known limits).
 - Who does the one-hour legal review of claimer terms (T-009).
