@@ -1,6 +1,6 @@
 # 001 — Say "pool", not "drop", in errors a claimer can see
 
-- **Status:** PROPOSED (awaiting Dan's approval)
+- **Status:** DONE (approved by Dan 2026-11-02)
 - **Written against commit:** 97683d5
 - **Finding:** Error messages shown on the pool page say "drop", against the approved rule that people see "pool".
 

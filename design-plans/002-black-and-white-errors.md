@@ -1,6 +1,6 @@
 # 002 — Remove red from the website (black and white only)
 
-- **Status:** PROPOSED (awaiting Dan's approval)
+- **Status:** DONE (approved by Dan 2026-11-02)
 - **Written against commit:** 97683d5
 - **Finding:** The website uses a red colour for error text and the "Yes, stop it" button, against the black-and-white design.
 

@@ -226,7 +226,7 @@ export async function allocateForClaim(
   const unallocatedId = await accountId(trx, "drop_unallocated", { dropId: params.dropId });
   const available = await balanceOf(trx, unallocatedId);
   if (available < params.capMicro) {
-    throw new AppError(409, "insufficient_funding", "This drop doesn't have enough funding left.");
+    throw new AppError(409, "insufficient_funding", "This pool doesn't have enough credit left.");
   }
   await postTransaction(trx, {
     kind: "claim_allocation",

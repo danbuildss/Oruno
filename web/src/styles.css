@@ -5,7 +5,6 @@
   --muted: #5c5c5c;
   --line: #d9d9d9;
   --soft: #f4f4f4;
-  --danger: #b00020;
   --radius: 10px;
   color-scheme: light;
 }
@@ -16,7 +15,6 @@
     --muted: #a3a3a3;
     --line: #333333;
     --soft: #141414;
-    --danger: #ff6b81;
     color-scheme: dark;
   }
 }
@@ -184,11 +182,6 @@ main {
 .button-ghost {
   border-color: var(--line);
 }
-.button-danger {
-  background: var(--danger);
-  border-color: var(--danger);
-  color: #fff;
-}
 .button-small {
   width: auto;
   min-height: 2.25rem;
@@ -225,7 +218,7 @@ main {
   margin-bottom: 0;
 }
 .error {
-  color: var(--danger);
+  color: var(--fg);
   font-weight: 600;
 }
 

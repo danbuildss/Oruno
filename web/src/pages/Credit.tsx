@@ -195,7 +195,7 @@ function ClaimCard({
               </p>
               <button
                 type="button"
-                className="button button-danger"
+                className="button"
                 disabled={busy}
                 onClick={() =>
                   act(async () => {

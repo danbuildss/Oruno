@@ -9,7 +9,7 @@
 - **Errors** share one shape:
 
 ```json
-{ "error": { "code": "drop_full", "message": "All slots in this drop have been claimed.", "details": {} }, "requestId": "req-1" }
+{ "error": { "code": "drop_full", "message": "All the credit in this pool has been claimed.", "details": {} }, "requestId": "req-1" }
 ```
 
 - **Auth:**

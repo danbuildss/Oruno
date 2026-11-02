@@ -181,6 +181,7 @@ describe("claim website end to end (fake GitHub, fake provider)", () => {
 
     // Stop the key for good.
     await page.getByRole("button", { name: "Stop this key" }).click();
+    await shot(page, "05a-stop-confirm-mobile");
     await page.getByRole("button", { name: "Yes, stop it" }).click();
     await card.getByText("Stopped").waitFor();
     expect(harness.provider.accepts(second, MODEL, NOW)).toBe(false);
