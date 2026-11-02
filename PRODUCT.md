@@ -2,6 +2,10 @@
 
 Approved product direction for Oruno. Changes require Dan's approval and an entry in `DECISIONS.md`.
 
+## Naming — APPROVED (D-022)
+
+People see **pool** (a funder's pool of AI credit, e.g. "Dan's AI pool") and **credit** (what each claimer gets). Engineering code and docs keep the older name **drop**; they mean the same thing.
+
 ## Definition — APPROVED
 
 Oruno lets anyone fund AI credit for other people. A funder sets a total amount and a cap per person, shares one link, and people sign in to claim a personal capped key that works in their own AI tools. Claimers never pay. When a cap or end date is reached, access stops.
@@ -25,14 +29,14 @@ Make access to AI programmable, shareable and fundable by anyone, starting with 
 | --- | --- | --- |
 | Funder | Individuals with spare credit, creators, communities, companies, DAOs, Base projects, schools | Give AI access safely, with a cap, and see the impact |
 | Claimer | Developers and learners, especially those who can't afford subscriptions | Free, simple access in tools they already use |
-| Operator | Oruno team | Run drops, handle abuse, reconcile money |
+| Operator | Oruno team | Run pools, handle abuse, reconcile money |
 | App developer *(future)* | Builders of AI apps | Let users spend sponsor-funded AI without building billing |
 | Agent *(future)* | AI agents | A safe, capped budget |
 
 ## Core loop — APPROVED
 
 1. **Fund** — the funder adds credit.
-2. **Create a drop** — total, cap per person, number of claims, eligibility, models, end date.
+2. **Create a pool** — total, cap per person, number of claims, eligibility, models, end date.
 3. **Share** — one link, posted anywhere (X first).
 4. **Claim** — sign in, pass eligibility and anti-abuse checks, receive a personal capped key (shown once).
 5. **Use** — paste the key into Claude Code and build.
@@ -77,16 +81,16 @@ A model, a chatbot, a Claude Code competitor, a token, NFTs, a marketplace for t
 
 Each stage requires proof from the previous one; none is promised.
 
-1. Credit drops (V1).
-2. Anyone can fund a drop (funder pages, USDC funding, ledger).
-3. Organisations (branded drops, eligibility lists, reports, paid plans).
+1. Credit pools (V1).
+2. Anyone can fund a pool (funder pages, USDC funding, ledger).
+3. Organisations (branded pools, eligibility lists, reports, paid plans).
 4. Infrastructure for apps (public API, SDK, second provider, open-source release).
 5. Onchain programmable funding on Base (funding pools, transparency).
 6. Open network and agents (portable grants, agent budgets, community pools).
 
 ## Business model — PROPOSED
 
-Free during V1. Later: drop fees, organisation plans, API usage pricing, a limited supply margin (never the core model), enterprise contracts. Claimers never pay.
+Free during V1. Later: pool fees, organisation plans, API usage pricing, a limited supply margin (never the core model), enterprise contracts. Claimers never pay.
 
 ## Open product decisions
 

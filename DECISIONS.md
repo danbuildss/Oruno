@@ -231,3 +231,23 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
   - **Orphan key cleanup:** a job lists Oruno keys at the provider and revokes any it doesn't know (e.g. created just before a crash). The Surplus listing call is UNVERIFIED until Phase 4b.
   - **Failure tests:** transaction failure mid-claim and mid-funding, database connections killed mid-run, provider timeouts, restart with queued jobs, worker crash with retry, lock contention.
 - **Consequences:** BACKEND_PROOF BP-9, BP-12, BP-13, BP-15 targeted (fake provider); real-provider items stay with Phase 4b.
+
+## D-022 — User-facing word is "Pool"; code names stay `drops`
+
+- **Date:** 2026-11-02 · **Approval:** APPROVED (Dan: "pool is good, keep code names")
+- **Problem:** "Drop" doesn't work well in marketing copy.
+- **Selected:** Everything people see says **pool** ("Dan's AI pool", "Claim your credit"). What a claimer gets is **credit**. Internal code, database tables and current API paths keep the name `drops`; public API paths may move to `/v1/pools` before any public API is published (not scheduled).
+- **Consequences:** No migration. A pool's display name comes from the existing `name` field (e.g. "Dan's AI pool"). Docs written for people (PRODUCT, website copy) use "pool"; engineering docs keep "drop".
+
+## D-023 — Phase 6 (claim website) design
+
+- **Date:** 2026-11-02 · **Approval:** APPROVED (Dan: "go with option A"); details PROPOSED by Claude within that approval.
+- **Problem:** Claimers need a website to sign in, claim, see their key once, and manage their credit. BACKEND_PROOF items that need real Surplus are still PARTIAL; Dan approved starting the frontend with the fake provider anyway.
+- **Selected:**
+  - **Vite + React + TypeScript** single-page app in `web/`, built to `web/dist` and **served by the same Fastify server** (one origin, one deploy).
+  - **Sessions in a cookie:** after GitHub sign-in the server sets an `HttpOnly; Secure (in production); SameSite=Lax; Path=/` cookie holding the session token and redirects back to the pool page. JavaScript never sees the token. Bearer tokens keep working for the API and tests.
+  - **CSRF guard:** a cookie-authenticated request that changes anything must carry `X-Requested-With: oruno`, which a cross-site form can't send; SameSite=Lax is the second layer.
+  - **The key secret lives only in page memory** while shown, and is never written to storage. Leaving the page loses it; the claimer can get a new one by rotation (max 3).
+  - **Design:** black and white, mobile first, no tracking, no third-party scripts or fonts.
+  - **End-to-end tests** with Playwright against the real server, fake GitHub and the fake provider.
+- **Consequences:** New dependencies `@fastify/cookie`, `@fastify/static`; web dev dependencies `vite`, `react`, `react-dom`, `@vitejs/plugin-react`. New config `PUBLIC_BASE_URL`. Not a staging test: Phase 6 acceptance "end-to-end claim works in a staging environment" needs a deployment (Phase 7 approval).
