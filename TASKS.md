@@ -115,8 +115,16 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 | T-607 | Playwright end-to-end tests (mobile and desktop) with fake GitHub and fake provider | VERIFIED (`275c057`) | `pnpm e2e` passes; screenshots |
 | T-608 | Docs and evidence (API, NOTES, TESTING, session log, changelog) | VERIFIED | Docs updated |
 | T-609 | Staging end-to-end claim | BLOCKED (Phase 7 deployment approval; hosting plan D-024 OPEN) | Claim works on a deployed staging site |
-| T-610 | Hosting plan on Vercel (D-024) | OPEN (Dan to choose) | Option chosen and recorded |
+| T-610 | Hosting plan on Vercel (D-024) | VERIFIED (D-025: option B) | Option chosen and recorded |
 
-## Later phases
+## Phase 7 — Preparation (D-025; no deploy, no spending)
 
-Tasks for Phase 7 are created when it is approved to start. See `PLAN.md`.
+| ID | Task | State | Completion condition |
+| --- | --- | --- | --- |
+| T-701 | Browser tests (`pnpm e2e`) in CI | OPEN | CI job runs them on every PR |
+| T-702 | `TRUST_PROXY` setting so rate limits use the real client IP | OPEN | Integration test: separate clients behind a proxy get separate limits |
+| T-703 | `vercel.json`: static site, `/v1` rewrite to the API host, security headers identical to the server's | OPEN | Unit test compares headers |
+| T-704 | Dockerfile for API + jobs; release step runs migrations | OPEN | Image builds; container starts and passes `/health` against Postgres |
+| T-705 | Deployment checklist and runbook update | OPEN | `docs/operations/DEPLOYMENT.md` |
+| T-706 | Choose API host, managed Postgres, domain; approve spending | OPEN (Dan) | Recorded decision |
+| T-707 | Staging deployment and staging claim (closes T-609) | BLOCKED (T-706, T-209, deploy approval) | Claim works on staging |
