@@ -9,7 +9,7 @@ Backend first. Each phase needs Dan's approval to start and to exit. All phases 
 | 2 | Drop and Claim Engine | CLOSED (approved 2026-10-30) |
 | 3 | Credit Ledger and Funding | CLOSED (approved 2026-10-30) |
 | 4 | Provider Integration (key issuance) | 4a CLOSED (approved 2026-11-02); 4b waiting on T-003/T-004/T-006 |
-| 5 | Backend Reliability and Verification | IN PROGRESS (fake provider) |
+| 5 | Backend Reliability and Verification | IN REVIEW (fake provider done; real-provider items wait for 4b) |
 | 6 | Claim Frontend | Not started |
 | 7 | Controlled Pilot — Drop #1 | Not started |
 

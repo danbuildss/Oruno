@@ -2,6 +2,10 @@
 
 Significant changes to the repository, newest first.
 
+## 2026-11-02
+- **Phase 5 reliability** (`9a892fe`): timeouts, crash-safe connections, job retries, startup migration check, orphan key cleanup, failure tests. Runbook draft.
+- Research recorded as proposed future directions (D-020).
+
 ## 2026-10-30
 - **Phase 4a provider integration (fake provider)** (`1edef71`): provider adapter, fake provider, Surplus client (unverified), key issuance and recovery, rotation, revocation at the provider, spend sync, overshoot flagging, spend ceiling.
 - **Phase 3 credit ledger and funding** (`2f6d4db`): double-entry ledger with database-enforced rules, USDC-on-Base funding records, allocation on claim, activation funding check, releases, returns, invariant checker. Docs: CREDIT_LEDGER.

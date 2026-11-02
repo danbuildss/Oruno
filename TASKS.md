@@ -92,15 +92,15 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 
 | ID | Task | State | Completion condition |
 | --- | --- | --- | --- |
-| T-501 | Database statement and lock timeouts; lock timeout → 503 | IN PROGRESS | A stuck lock can't hang a request; test |
-| T-502 | Job retry policy (backoff, 5 attempts) on every queue | READY | A crashed job is retried and completes; test |
-| T-503 | Refuse to start with pending migrations | READY | Clear error and exit; test |
-| T-504 | HTTP request and connection timeouts | READY | Configured; documented |
-| T-505 | Orphan provider key cleanup job | READY | Unknown Oruno keys at the provider are revoked; known ones untouched; test |
-| T-506 | Failure tests: transaction failure mid-claim / mid-funding leaves nothing partial | READY | No partial rows; invariants clean |
-| T-507 | Failure tests: database connections killed mid-run; recovery | READY | Requests fail cleanly, then succeed after reconnect |
-| T-508 | Failure tests: provider timeout; restart with queued jobs | READY | Retryable error; jobs processed after restart |
-| T-509 | Backend proof review: BP-9, BP-12, BP-13, BP-15; threat model review; runbook draft | READY | Evidence recorded |
+| T-501 | Database statement and lock timeouts; lock timeout → 503 | VERIFIED | A stuck lock can't hang a request; test |
+| T-502 | Job retry policy (backoff, 5 attempts) on every queue | VERIFIED | A crashed job is retried and completes; test |
+| T-503 | Refuse to start with pending migrations | VERIFIED | Clear error and exit; test |
+| T-504 | HTTP request and connection timeouts | VERIFIED | Configured; documented |
+| T-505 | Orphan provider key cleanup job | VERIFIED | Unknown Oruno keys at the provider are revoked; known ones untouched; test |
+| T-506 | Failure tests: transaction failure mid-claim / mid-funding leaves nothing partial | VERIFIED | No partial rows; invariants clean |
+| T-507 | Failure tests: database connections killed mid-run; recovery | VERIFIED | Requests fail cleanly, then succeed after reconnect |
+| T-508 | Failure tests: provider timeout; restart with queued jobs | VERIFIED | Retryable error; jobs processed after restart |
+| T-509 | Backend proof review: BP-9, BP-12, BP-13, BP-15; threat model review; runbook draft | IN REVIEW (awaiting Dan) | Evidence recorded |
 
 ## Later phases
 
