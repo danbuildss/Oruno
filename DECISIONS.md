@@ -251,3 +251,13 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
   - **Design:** black and white, mobile first, no tracking, no third-party scripts or fonts.
   - **End-to-end tests** with Playwright against the real server, fake GitHub and the fake provider.
 - **Consequences:** New dependencies `@fastify/cookie`, `@fastify/static`; web dev dependencies `vite`, `react`, `react-dom`, `@vitejs/plugin-react`. New optional config `WEB_DIST_DIR` (defaults to `web/dist` when built). Not a staging test: Phase 6 acceptance "end-to-end claim works in a staging environment" needs a deployment (Phase 7 approval).
+
+## D-024 — Hosting on Vercel
+
+- **Date:** 2026-11-02 · **Approval:** Vercel APPROVED as the host (Dan: "we are hosting with Vercel"); **how the backend runs there is OPEN**. Nothing deployed.
+- **Problem:** The website is static and fits Vercel as is. The backend has two parts: the HTTP API (fits Vercel Functions) and background jobs (pg-boss worker running every minute: key retries, spend sync, revocations, expiry, ledger checks, orphan key cleanup), which need an always-on process. Vercel Functions don't run continuously.
+- **Options (PROPOSED by Claude, for Dan to choose):**
+  - **A. All on Vercel.** Website as static files; API as a Vercel Function (Fastify is supported); jobs rewritten as protected endpoints called by **Vercel Cron**. Per-minute cron needs the **Vercel Pro plan** (Hobby allows daily only — to confirm against current Vercel docs). Postgres from a managed provider through the Vercel Marketplace (e.g. Neon) with a pooled connection string. Most work: replace pg-boss with cron-driven jobs and make each job finish within the function time limit.
+  - **B. Website on Vercel, API and worker on a small always-on host** (e.g. Railway, Fly.io or Render), with a Vercel rewrite of `/v1/*` to the API so the site stays same-origin (the cookie and CSP design is unchanged). Least code change; one extra service to pay for and run.
+- **Recommendation:** B for Drop #1 (no rewrite of the tested job system, same-origin kept by the rewrite). Revisit A later.
+- **Consequences:** Either option costs money (Vercel Pro or a second host, plus managed Postgres): needs Dan's spending approval. Vercel's plan limits must be confirmed against current docs before choosing.

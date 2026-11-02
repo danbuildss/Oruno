@@ -10,7 +10,7 @@ Built by Somehow Internet. Licensed under [Apache-2.0](LICENSE).
 
 ## Status
 
-**Phase 5 — Backend reliability** (in review). Real Surplus (Phase 4b) not yet connected. See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
+**Phase 6 — Claim website** (in review). Real Surplus (Phase 4b) not yet connected. Hosting: Vercel (D-024). See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
 
 ## Run it locally
 
@@ -22,10 +22,13 @@ cp .env.example .env            # then edit if needed
 docker compose up -d            # or use your own Postgres with oruno_dev and oruno_test databases
 pnpm migrate                    # create tables
 pnpm operator:create "Your name"  # prints an operator API key once
-pnpm dev                        # http://127.0.0.1:3000/health (PROVIDER=fake: simulated keys)
+pnpm web:build                  # build the claim website into web/dist
+pnpm dev                        # http://127.0.0.1:3000/ (PROVIDER=fake: simulated keys)
 ```
 
-Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test` (wipes the test database), `pnpm build`.
+Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test` (wipes the test database), `pnpm e2e` (browser tests; also uses the test database, so don't run both at once), `pnpm build`.
+
+Website development: run `pnpm dev` and `pnpm web:dev` together (Vite forwards `/v1` to port 3000).
 
 ## Documentation
 

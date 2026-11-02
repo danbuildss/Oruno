@@ -2,19 +2,21 @@
 
 **Read this before any task.** Update it after every meaningful session. History lives in `docs/project/SESSION_LOG.md`; don't delete context, move it there.
 
-_Last updated: 2026-10-30_
+_Last updated: 2026-11-02_
 
 ## 1. Current project status
 
-Phases 0–4a closed. Phase 5 (reliability) built and tested with the fake provider. Phase 4b (real Surplus) blocked on T-003/T-004/T-006. No money spent. Nothing deployed.
+Phases 0–5 closed (5 for the fake provider). Phase 6 (claim website) built and tested locally, in review. Phase 4b (real Surplus) blocked on T-003/T-004/T-006. Hosting will be Vercel (D-024); how the backend runs there is OPEN. No money spent. Nothing deployed.
+
+Naming (D-022): people see **pool** and **credit**; code and engineering docs keep **drop**.
 
 ## 2. Current development phase
 
-**Phase 5 — Backend Reliability** (IN REVIEW). Phase 4b blocked. See `PLAN.md`.
+**Phase 6 — Claim website** (IN REVIEW). Phase 4b blocked. See `PLAN.md`.
 
 ## 3. Last completed task
 
-Phase 5: T-501 to T-508 VERIFIED (commit `9a892fe`); T-509 backend proof review in review. Live GitHub sign-in (T-209) still needs a GitHub OAuth App.
+Phase 6: T-601 to T-608 VERIFIED (commits `965d04b`, `275c057`). T-609 (staging) waits for Phase 7 and D-024. Live GitHub sign-in (T-209) still needs a GitHub OAuth App.
 
 ## 4. Current implementation state
 
@@ -43,6 +45,8 @@ Phase 3 adds (branch `phase3/credit-ledger`): double-entry ledger with database-
 
 Phase 4a adds (branch `phase4/provider-integration`): provider adapter, fake provider, Surplus client (UNVERIFIED), key issuance with secret shown once, retries, reveal/rotate (remaining-cap successor), revocation at the provider, spend sync with overshoot flagging, spend ceiling, 4 new jobs, migration 0004. Config `PROVIDER=none|fake|surplus` (fake refused in production).
 
+Phase 6 adds (branch `phase6/claim-frontend`): cookie sessions with CSRF guard, browser sign-in redirects, `/v1/me`, `/v1/drops/:slug/eligibility`, website serving with security headers; the React site in `web/` (pool page, claim, key shown once, My credit); Playwright tests in `e2e/` (`pnpm e2e`).
+
 Phase 5 adds (branch `phase5/reliability`): database statement/lock timeouts with retryable 503s, per-connection error listeners, job retries with backoff, startup refusal with pending migrations, HTTP timeouts, orphan provider key reconciliation (`keys.reconcile`), failure tests. Runbook draft: `docs/operations/RUNBOOK.md`. 
 
 ## 5. What is working
@@ -55,6 +59,8 @@ Verified on commit `33466ef` (108/108 tests): drops and state machine; GitHub si
 Verified on commit `2f6d4db` (127/127 tests): ledger rules in the database; funding; allocation under concurrency; activation funding check; releases; returns; invariant checker; randomized invariant test.
 
 Verified on commit `1edef71` (158/158 tests) **with the fake provider only**: key issuance, outages and retries, crash recovery, rotation, revocation, spend sync, overshoot, ceiling, randomized test with spend.
+
+Verified on commits `965d04b`/`275c057` (180/180 tests + 7/7 browser tests): cookie and CSRF rules; the whole claim flow in a real browser on mobile and desktop; secret never stored by the browser; no CSP violations.
 
 Verified on commit `9a892fe` (171/171 tests): partial-transaction failures leave nothing behind; lock/statement timeouts and database outages return retryable 503s; killed connections recover without a crash; job retries and restarts; orphan key cleanup; `kill -9` restart.
 
@@ -84,7 +90,8 @@ See `DECISIONS.md`. Summary:
 
 | Item | Where | Notes |
 | --- | --- | --- |
-| **Phase 5 exit → start Phase 6 (claim frontend)?** | T-509, `BACKEND_PROOF.md` | Backend proof is VERIFIED or PARTIAL; every PARTIAL item is a real-Surplus check (Phase 4b) or an operations item (Phase 7). Dan decides whether the frontend may start before 4b |
+| **Vercel backend option (A all-Vercel with cron, or B website on Vercel + small always-on API host)** | D-024, T-610 | Recommended B. Either costs money (Vercel Pro or a second host + managed Postgres) |
+| Phase 6 review (website screenshots, wording) | PR for `phase6/claim-frontend` | Exit needs a staging run (Phase 7) |
 | **Phase 4b (real Surplus)** | T-003, T-004, T-006, T-411 | Surplus answers; Surplus org + admin key + workspace id; **$20 USDC test deposit**; then AT-1 to AT-18 |
 | GitHub OAuth App | T-209 | Free; needed to test live sign-in |
 | Claimer terms draft | T-009, `docs/legal/CLAIMER_TERMS.md` | Then a lawyer review |
@@ -92,11 +99,11 @@ See `DECISIONS.md`. Summary:
 
 ## 11. Next recommended task
 
-1. Dan: merge PR #6 (Phase 4a); review Phase 5.
-2. Decide: start Phase 6 (claim frontend) now with the fake provider, or finish Phase 4b (real Surplus) first.
+1. Dan: choose the Vercel backend option (D-024); review the website.
+2. Dan: GitHub OAuth App (T-209) for live sign-in.
 3. Phase 4b: Surplus answers (T-004), Surplus org + admin key + workspace id (T-003), $20 USDC deposit approval (T-006).
-4. Dan: GitHub OAuth App (T-209) for live sign-in.
-3. Carried forward for Phase 4: Surplus answers (T-004, Dan asked), admin key (T-003), $20 spike (T-006), claimer terms legal review (T-009).
+4. Claimer terms legal review (T-009); the website links the DRAFT terms.
+5. Then Phase 7 (deployment) with approval.
 
 ## 12. Relevant commits
 
@@ -121,6 +128,9 @@ See `DECISIONS.md`. Summary:
 - `fb8eb75` Phase 4a evidence
 - `d65cb26` D-020 research directions; D-021 Phase 5
 - `9a892fe` **Phase 5 reliability**
+- `453bd98` D-022, D-023; Phase 6 tasks
+- `965d04b` **Website backend** (cookies, CSRF, eligibility, static)
+- `275c057` **Claim website and browser tests**
 
 ## 13. Important testing results
 
@@ -132,6 +142,8 @@ See `DECISIONS.md`. Summary:
 
 2026-10-30, `1edef71`: 158/158 tests with the fake provider; secret never stored or logged; one key under crash recovery and concurrent attempts; rotation can't reset a cap; overshoot capped and flagged; invariants hold over 200 randomized steps with spend.
 
+2026-11-02, `275c057`: 180/180 tests; 7/7 browser tests (Chromium, mobile and desktop). Full log in `TESTING.md`.
+
 2026-11-02, `9a892fe`: 171/171 tests; found and fixed a crash on dropped database connections; restarts and crashes recover cleanly. Full log in `TESTING.md`.
 
 ## 13b. Environment note
@@ -140,7 +152,7 @@ The local Postgres stops when the cloud environment restarts. If tests fail at s
 
 ## 14. Deployment status
 
-Nothing deployed. No environments exist. Local development only (Postgres on the dev machine).
+Nothing deployed. No environments exist. Local development only. Host chosen: Vercel (D-024); backend arrangement OPEN.
 
 ## 15. Unresolved technical questions
 
@@ -155,7 +167,8 @@ Nothing deployed. No environments exist. Local development only (Postgres on the
 **Ours:**
 - Confirm GitHub and X field names and pricing against the live official docs (blocked in this session) at Phase 2 start.
 - How we detect key sharing with only provider usage data (IPs may not be visible).
-- Cookie vs bearer session for the Phase 6 claim page (D-017 uses bearer tokens for now).
+- Running background jobs on Vercel (D-024): Vercel Functions aren't always-on; cron limits by plan to confirm in current Vercel docs.
+- Rate limits and the CSRF/cookie design assume one origin; keep `/v1` same-origin on Vercel (rewrite) or revisit.
 - Rate limits are in-memory (single instance); revisit if Oruno runs more than one instance.
 - Funding is operator-attested; add on-chain verification of the Base transaction hash later.
 - Surplus `GET /v1/budgets/spend` response shape (AT-17) and whether rotation resets key budgets (AT-16) — Phase 4b.
