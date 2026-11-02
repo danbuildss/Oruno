@@ -1,7 +1,9 @@
 import type { FastifyInstance } from "fastify";
+import type { Logger } from "pino";
 import { z } from "zod";
 import type { Db } from "../../db/client.js";
 import { getDrop } from "../../drops/drops.js";
+import { syncSpendCeiling } from "../../keys/keys.js";
 import {
   balancesView,
   checkLedgerInvariants,
@@ -10,6 +12,7 @@ import {
   recordReturn,
   releaseClaim,
 } from "../../ledger/ledger.js";
+import type { InferenceProvider } from "../../providers/provider.js";
 import { AppError } from "../errors.js";
 import { requireOperator } from "../operator-auth.js";
 
@@ -31,8 +34,20 @@ const returnBody = z.object({ amountMicro: micro.optional(), reference: txHash }
 
 export function registerLedgerRoutes(
   app: FastifyInstance,
-  deps: { db: Db; clock: () => Date },
+  deps: { db: Db; clock: () => Date; provider: InferenceProvider | null; logger: Logger },
 ): void {
+  /** Keep the provider-side ceiling equal to funds held; a failure is retried by the hourly job. */
+  const updateCeiling = async (): Promise<void> => {
+    if (!deps.provider) return;
+    try {
+      await syncSpendCeiling(deps.db, deps.provider);
+    } catch (error) {
+      deps.logger.warn(
+        { err: error instanceof Error ? error.message : error },
+        "spend ceiling update failed",
+      );
+    }
+  };
   const auth = requireOperator(deps.db);
   const operatorId = (request: { operator?: { id: string } }): string => {
     if (!request.operator)
@@ -51,6 +66,7 @@ export function registerLedgerRoutes(
       operatorId: operatorId(request),
       now: deps.clock(),
     });
+    await updateCeiling();
     return reply.status(201).send({
       funding: {
         id: result.funding.id,
@@ -77,6 +93,7 @@ export function registerLedgerRoutes(
       reference: body.reference,
       operatorId: operatorId(request),
     });
+    await updateCeiling();
     return reply.status(201).send({
       return: { id: result.fundReturn.id, amountMicro: result.fundReturn.amount_micro.toString() },
       balances: balancesView(result.balances),

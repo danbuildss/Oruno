@@ -31,6 +31,10 @@ export const REDACTED_PATHS = [
   "*.code",
   "state",
   "*.state",
+  "adminKey",
+  "*.adminKey",
+  "setup.ANTHROPIC_AUTH_TOKEN",
+  "*.ANTHROPIC_AUTH_TOKEN",
   "req.query.code",
   "req.query.state",
 ];

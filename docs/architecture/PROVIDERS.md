@@ -69,18 +69,37 @@ Runs an LLM gateway that is a major Surplus customer (about 401K requests in 30 
 
 Spend limits are per workspace and set by hand in the Console; API keys cannot be created by API. Not suitable for drops at scale.
 
-## Provider adapter
+## Provider adapter (Phase 4a — VERIFIED with the fake provider, commit `1edef71`)
 
-All provider calls go through one interface in `src/providers/` (PROPOSED):
+All provider calls go through `src/providers/provider.ts` (`InferenceProvider`):
 
-```ts
-interface ProviderAdapter {
-  createKey(input: { name: string; capMicro: bigint; expiresAt: Date; models: string[] }): Promise<{ keyId: string; secret: string }>
-  updateCap(keyId: string, capMicro: bigint): Promise<void>
-  revokeKey(keyId: string): Promise<void>
-  usage(keyId: string, since: Date): Promise<{ spentMicro: bigint; requests: number; activeDays: number }>
-  setDropBudget(workspaceId: string, limitMicro: bigint): Promise<void>
-}
-```
+| Method | Purpose |
+| --- | --- |
+| `createKey` | Mint a capped, expiring, model-scoped key (idempotency key `oruno:claim:<id>:create`) |
+| `rotateKey` | New secret under a new key id; old key retired; **new key capped at what's left** |
+| `revokeKey` | Revoke; already-revoked or unknown counts as done |
+| `getKeySpend` | Cumulative spend of one key |
+| `setSpendCeiling` | Provider-side ceiling on total Oruno spend = funds held (funded − returned) |
 
-Surplus is the first implementation; OpenRouter or Bankr can be added without touching the rest of the system.
+Implementations:
+
+| Provider | File | Status |
+| --- | --- | --- |
+| Fake | `src/providers/fake.ts` | VERIFIED: models caps (hard stop), expiry, model scope, idempotency, rotation, revocation, cumulative spend; injects retryable and permanent failures; can overshoot on purpose. `PROVIDER=fake` is refused in production |
+| Surplus | `src/providers/surplus.ts` | **UNVERIFIED.** Written from the docs; request shapes tested with simulated HTTP only. Must pass Phase 4b before use |
+
+### Surplus design notes (to confirm in Phase 4b)
+
+- **One workspace.** An admin key mints keys only in its own workspace, so Oruno uses one Surplus workspace. Per-key caps isolate claims; the workspace ceiling bounds total spend.
+- **Rotation can't reset a cap.** On Surplus, rotation creates a new key id that inherits the old budget. Its spend counter may start from zero, so Oruno sets the successor's budget to the remaining amount right after rotating.
+- **Per-key budget uses `limit_month_micro`.** Drops stay inside one UTC month (TH-4).
+- **Spend reading is OPEN.** `GET /v1/budgets/spend` is documented to return spend per budget, but its exact response shape isn't; the client parses `scope_type` / `scope_id` / `spent_micro` defensively.
+- **HTTP 200 with an error body** is treated as a failure.
+
+### Additional acceptance tests for Phase 4b
+
+| # | Test | Pass condition |
+| --- | --- | --- |
+| AT-16 | Rotate a key that has spent part of its cap, then spend | Total spend across both keys ≤ original cap |
+| AT-17 | Read `GET /v1/budgets/spend` for a key with known spend | Response shape matches the client's parsing; amount correct |
+| AT-18 | Workspace ceiling below current key caps | Spend stops at the ceiling |

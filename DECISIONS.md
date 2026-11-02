@@ -194,3 +194,19 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
   - **Invariant checker** runs as a job and on demand; any violation is logged as an error.
 - **Trade-offs:** Funding confirmation is manual (operator attests) until on-chain verification is built.
 - **Consequences:** Existing drops must be funded before activation; tests updated accordingly.
+
+## D-019 — Phase 3 closed; Phase 4 split into 4a (fake provider) and 4b (real Surplus)
+
+- **Date:** 2026-10-30 · **Approval:** APPROVED (Dan: "start Phase 4 with the fake Surplus"); design below PROPOSED by Claude within that approval.
+- **Problem:** Phase 4 needs Surplus's answers, an admin key and $20 of real USDC, which aren't ready. Most of the work doesn't need them.
+- **Selected:**
+  - **Phase 4a (now):** everything built and tested against a **fake provider** that behaves like Surplus Pattern A (caps, expiry, model scope, idempotency, revocation, usage). No real money, no real keys. A real Surplus HTTP client is written from Surplus's documentation and tested with simulated HTTP, but is **UNVERIFIED** until 4b.
+  - **Phase 4b (later):** connect the real Surplus account and run AT-1 to AT-15 with the $20 test deposit. Still gated by T-003, T-004 and T-006.
+  - **One Surplus workspace for Oruno.** Surplus admin keys mint keys only in their own workspace, so per-drop workspaces aren't available to an admin key. Isolation comes from per-key caps. The second safety layer is a **workspace spend ceiling = total funds currently held for drops** (funded − returned).
+  - **Key issuance** happens right after the claim is reserved. The secret is shown once and never stored. If the provider fails, the claim stays `pending`; a job retries (same idempotency key) up to 5 times. After that the claim becomes `failed`, its allocation is released, its slot is freed, and the person may claim again.
+  - **Reveal by rotation:** a claimer who didn't receive a secret, or lost it, can get a new one (the old secret stops working). At most 3 rotations per claim.
+  - **Revocation reaches the provider.** Revoked, expired and failed claims have their keys revoked at the provider; failures are retried by a job.
+  - **Spend sync:** a job reads each key's cumulative spend from the provider and records the increase in the ledger (`claim_allocated → claim_spent`). The ledger never records more than the cap. Anything the provider reports beyond the cap is recorded on the claim as **overshoot** and flagged for review; it's paid from Oruno's margin, not other drops. A claim whose spend reaches its cap becomes `exhausted`.
+  - **Provider selection by config:** `PROVIDER=fake` is refused in production.
+- **Trade-offs:** The one-claim-per-person rule now excludes failed claims (a person whose key could never be issued may try again).
+- **Consequences:** Migration 0004 extends claims; Surplus response shapes for spend are OPEN until 4b.

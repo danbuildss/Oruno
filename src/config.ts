@@ -12,6 +12,10 @@ const configSchema = z.object({
   GITHUB_CLIENT_ID: z.string().min(1).optional(),
   GITHUB_CLIENT_SECRET: z.string().min(1).optional(),
   GITHUB_CALLBACK_URL: z.url().optional(),
+  PROVIDER: z.enum(["none", "fake", "surplus"]).default("none"),
+  SURPLUS_ADMIN_KEY: z.string().min(1).optional(),
+  SURPLUS_WORKSPACE_ID: z.string().min(1).optional(),
+  SURPLUS_BASE_URL: z.url().optional(),
 });
 
 export interface Config {
@@ -22,6 +26,11 @@ export interface Config {
   databaseUrl: string;
   /** GitHub sign-in. Absent until a GitHub OAuth App is configured; sign-in routes then return 503. */
   github: { clientId: string; clientSecret: string; callbackUrl: string } | null;
+  /** Where keys come from. "none": claims can't be issued keys. "fake" is refused in production. */
+  provider:
+    | { kind: "none" }
+    | { kind: "fake" }
+    | { kind: "surplus"; adminKey: string; workspaceId: string; baseUrl: string | null };
 }
 
 export class ConfigError extends Error {
@@ -51,7 +60,25 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
       "GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET and GITHUB_CALLBACK_URL must be set together",
     ]);
   }
+  if (c.PROVIDER === "fake" && c.NODE_ENV === "production") {
+    throw new ConfigError(["PROVIDER=fake is not allowed in production"]);
+  }
+  if (c.PROVIDER === "surplus" && (!c.SURPLUS_ADMIN_KEY || !c.SURPLUS_WORKSPACE_ID)) {
+    throw new ConfigError(["PROVIDER=surplus requires SURPLUS_ADMIN_KEY and SURPLUS_WORKSPACE_ID"]);
+  }
+  const provider: Config["provider"] =
+    c.PROVIDER === "surplus" && c.SURPLUS_ADMIN_KEY && c.SURPLUS_WORKSPACE_ID
+      ? {
+          kind: "surplus",
+          adminKey: c.SURPLUS_ADMIN_KEY,
+          workspaceId: c.SURPLUS_WORKSPACE_ID,
+          baseUrl: c.SURPLUS_BASE_URL ?? null,
+        }
+      : c.PROVIDER === "fake"
+        ? { kind: "fake" }
+        : { kind: "none" };
   return {
+    provider,
     nodeEnv: c.NODE_ENV,
     host: c.HOST,
     port: c.PORT,

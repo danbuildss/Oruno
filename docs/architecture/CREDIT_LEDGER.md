@@ -1,6 +1,6 @@
 # Credit ledger
 
-**Status: VERIFIED for Phase 3** (commit `2f6d4db`). How Oruno accounts for every micro-dollar, and why it can't promise more credit than was funded.
+**Status: VERIFIED for Phase 3** (commit `2f6d4db`) **and Phase 4a spend recording** (commit `1edef71`, fake provider). How Oruno accounts for every micro-dollar, and why it can't promise more credit than was funded.
 
 ## Money units
 
@@ -23,7 +23,7 @@ All amounts are integer **micro-dollars** (`bigint`; 1 USD = 1,000,000). The API
 | `funding` | source −X, drop_unallocated +X | Operator records a confirmed USDC-on-Base deposit (`POST /v1/drops/:id/fundings`) |
 | `claim_allocation` | drop_unallocated −cap, claim_allocated +cap | Inside the claim transaction, under the drop row lock |
 | `claim_release` | claim_allocated −rest, drop_unallocated +rest | After a claim ends (revoked, expired, failed, exhausted), once the 1-hour grace period has passed |
-| `spend` | claim_allocated −x, claim_spent +x | Phase 4, from provider usage |
+| `spend` | claim_allocated −x, claim_spent +x | Spend sync (every 5 min, and before releases): the increase in the provider's cumulative spend, never beyond the cap |
 | `return` | drop_unallocated −X, drop_returned +X | Operator records funds sent back after the drop ended |
 
 Each transaction carries an **idempotency key** (`funding:<id>`, `claim_allocation:<claim>`, `claim_release:<claim>`, `return:<id>`), so retries never move money twice.
@@ -66,10 +66,14 @@ Any violation is logged as an error by the job.
 | Job | Schedule | What it does |
 | --- | --- | --- |
 | `drops.expire` | every minute | Ends finished drops; expires their open claims |
-| `claims.release` | every 5 minutes | Releases ended claims older than 1 hour |
+| `claims.release` | every 5 minutes | Syncs spend, then releases ended claims older than 1 hour |
+| `spend.sync` | every 5 minutes | Records provider spend for active claims and unreleased ended claims |
+| `keys.issue_pending` | every minute | Retries key issuance for pending claims (up to 5 attempts) |
+| `keys.revoke_ended` | every minute | Revokes provider keys of ended claims |
+| `spend.ceiling` | hourly (minute 23) | Sets the provider ceiling to funds held |
 | `ledger.check` | hourly (minute 17) | Runs the invariant checker |
 
 ## Known limits
 
 - Funding is **operator-attested**: the operator confirms the USDC transfer on Base and records the hash. Automatic on-chain verification is a later improvement.
-- If usage is reported after a claim's allocation has been released (Phase 4), the spend can't come from `claim_allocated`, and the database will refuse it. Phase 4 must handle this case explicitly.
+- **Overshoot (Phase 4a):** if the provider reports spend beyond the cap, or after the allocation was released, the ledger records only what the allocation covers. The excess is stored on the claim (`overshoot_micro`), audited (`claim.overshoot`) and logged as an error. It's never taken from other claims or drops; Oruno absorbs it.

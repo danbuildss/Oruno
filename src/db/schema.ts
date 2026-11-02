@@ -116,6 +116,26 @@ export interface ClaimsTable {
   ended_at: NullableTimestamp;
   end_reason: string | null;
   ended_by: ClaimEndedBy | null;
+  issue_attempts: ColumnType<number, number | undefined, number>;
+  last_issue_error: string | null;
+  secret_delivered: ColumnType<boolean, boolean | undefined, boolean>;
+  rotations: ColumnType<number, number | undefined, number>;
+  overshoot_micro: ColumnType<bigint, bigint | string | undefined, bigint | string>;
+}
+
+export interface ProviderKeysTable {
+  id: Generated<string>;
+  claim_id: string;
+  provider: "fake" | "surplus";
+  provider_key_id: string;
+  key_prefix: string;
+  created_at: Timestamp;
+  /** Replaced by rotation (no longer usable). */
+  retired_at: NullableTimestamp;
+  /** Confirmed revoked at the provider. */
+  revoked_at: NullableTimestamp;
+  last_spend_micro: ColumnType<bigint, bigint | string | undefined, bigint | string>;
+  last_synced_at: NullableTimestamp;
 }
 
 export interface FundingsTable {
@@ -197,4 +217,5 @@ export interface Database {
   ledger_accounts: LedgerAccountsTable;
   ledger_transactions: LedgerTransactionsTable;
   ledger_entries: LedgerEntriesTable;
+  provider_keys: ProviderKeysTable;
 }

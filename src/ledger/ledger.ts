@@ -292,36 +292,51 @@ export async function releaseClaim(
         "Only an ended claim's allocation can be released.",
       );
     }
-    const allocatedId = await accountId(trx, "claim_allocated", {
-      dropId: claim.drop_id,
+    return releaseAllocation(trx, {
       claimId: claim.id,
-    });
-    const remaining = await balanceOf(trx, allocatedId);
-    if (remaining === 0n) return { releasedMicro: 0n };
-    await postTransaction(trx, {
-      kind: "claim_release",
       dropId: claim.drop_id,
-      claimId: claim.id,
-      idempotencyKey: `claim_release:${claim.id}`,
       actor: params.actor,
-      entries: [
-        { accountId: allocatedId, amountMicro: -remaining },
-        {
-          accountId: await accountId(trx, "drop_unallocated", { dropId: claim.drop_id }),
-          amountMicro: remaining,
-        },
-      ],
     });
-    await recordAudit(trx, {
-      actorType: params.actor.type,
-      actorId: params.actor.id ?? null,
-      action: "claim.released",
-      subjectType: "claim",
-      subjectId: claim.id,
-      details: { releasedMicro: remaining.toString() },
-    });
-    return { releasedMicro: remaining };
   });
+}
+
+/**
+ * Moves whatever is left of a claim's allocation back to the drop. Caller must hold the drop
+ * row lock and have checked the claim is terminal. Idempotent per claim.
+ */
+export async function releaseAllocation(
+  trx: Transaction<Database>,
+  params: { claimId: string; dropId: string; actor: Actor },
+): Promise<{ releasedMicro: bigint }> {
+  const allocatedId = await accountId(trx, "claim_allocated", {
+    dropId: params.dropId,
+    claimId: params.claimId,
+  });
+  const remaining = await balanceOf(trx, allocatedId);
+  if (remaining === 0n) return { releasedMicro: 0n };
+  await postTransaction(trx, {
+    kind: "claim_release",
+    dropId: params.dropId,
+    claimId: params.claimId,
+    idempotencyKey: `claim_release:${params.claimId}`,
+    actor: params.actor,
+    entries: [
+      { accountId: allocatedId, amountMicro: -remaining },
+      {
+        accountId: await accountId(trx, "drop_unallocated", { dropId: params.dropId }),
+        amountMicro: remaining,
+      },
+    ],
+  });
+  await recordAudit(trx, {
+    actorType: params.actor.type,
+    actorId: params.actor.id ?? null,
+    action: "claim.released",
+    subjectType: "claim",
+    subjectId: params.claimId,
+    details: { releasedMicro: remaining.toString() },
+  });
+  return { releasedMicro: remaining };
 }
 
 /** Default wait after a claim ends before releasing its allocation (lets final usage arrive first). */

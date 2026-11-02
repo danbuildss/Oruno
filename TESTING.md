@@ -84,10 +84,37 @@ Run against a real Surplus key funded with about $20, **only after spending appr
 | AT-13 | Retrieve a key secret a second time | Impossible | OPEN |
 | AT-14 | Inspect our storage and reports | No prompt or output text | OPEN |
 | AT-15 | Rotate a key | Old key rejected; new key works under the same claim | OPEN |
+| AT-16 | Rotate a part-spent key, then spend | Total across both keys ≤ original cap | OPEN |
+| AT-17 | Read `GET /v1/budgets/spend` for a key with known spend | Shape matches the client; amount correct | OPEN |
+| AT-18 | Workspace ceiling below key caps | Spend stops at the ceiling | OPEN |
 
 Also record: the per-request fee actually charged, and cap behaviour across a month boundary.
 
 ## Results log
+
+### 2026-10-30 — Phase 4a (fake provider), commit `1edef71`
+
+- `pnpm lint`, `pnpm typecheck`, `pnpm build`: clean.
+- `pnpm test`: **158 passed, 0 failed** (17 files). Key and ledger suites re-run twice more: 37/37 each time.
+
+| Area | Tests |
+| --- | --- |
+| Fake provider (unit) | capped, expiring, model-scoped key, idempotent; hard stop at cap and deliberate overshoot; rotation retires old key and caps new; failure injection |
+| Surplus client (unit, simulated HTTP; **unverified against the real API**) | key mint body (scope, `trusted_only`, hard-stop monthly budget, expiry) with admin auth and idempotency header; rotate then cap successor; revoke treats 404 as done; 5xx/429 retryable, 400/403 not; admin key never in error messages; HTTP 200 with error body is a failure; spend parsing; workspace ceiling body |
+| Key issuance | claim → active with a working key; scope and expiry enforced; **secret absent from every database table and the logs**; 503 with no provider (no claim created) |
+| Outages and recovery | 2 provider failures → claim pending (202), retry job activates it, claimer fetches the key (first fetch isn't a rotation); permanent failure → claim failed, funds released, slot freed, **person can claim again**; gives up after 5 retryable failures; **crash after provider created the key → retry reuses it (one key)**; **5 simultaneous issuance attempts → one key, one activation** |
+| Rotation | old secret stops working, new works; **new key capped at what's left ($3 of $5); spending past it stops; claim exhausted at $5 total**; limit of 3 replacements (4th → 429); another person can't rotate it |
+| Revocation | reaches the provider; a failed provider revocation is completed by the job; idempotent; keys of claims expired at drop end revoked |
+| Spend | provider spend recorded in the ledger; **5 concurrent syncs record once**; idempotent; claimer sees spent and remaining; exhausted at cap, key revoked, nothing to release; **overshoot capped in the ledger, recorded and flagged**; final usage recorded before release; usage reported after release flagged, never taken from other funds |
+| Ceiling | provider ceiling follows funding ($100) and returns ($60 after a $40 return) |
+| **Randomized** | 200 random steps (claims with injected failures, spend incl. overshoot, sync, rotation, revocation, release, retries, funding); **ledger invariants checked after every step** |
+| Earlier suites | all passing (claim responses now include the key) |
+
+Manual smoke test: `PROVIDER=fake` with `NODE_ENV=production` refused at startup; with development: migration 0004 applied, funding 201, schedules `claims.release, drops.expire, keys.issue_pending, keys.revoke_ended, ledger.check, spend.ceiling, spend.sync` present, FAKE warning logged, operator key in log 0 times.
+
+Found and fixed during testing: after a permanent issuance failure the database allowed a new claim but the application's own duplicate check still counted the failed claim; it now ignores failed claims.
+
+Not verified: anything against the real Surplus API (Phase 4b).
 
 ### 2026-10-30 — Phase 3, commit `2f6d4db`
 

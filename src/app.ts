@@ -10,12 +10,15 @@ import { registerDropRoutes } from "./http/routes/drops.js";
 import { registerHealthRoutes } from "./http/routes/health.js";
 import { registerLedgerRoutes } from "./http/routes/ledger.js";
 import { registerOperatorRoutes } from "./http/routes/operator.js";
+import type { InferenceProvider } from "./providers/provider.js";
 
 export interface AppDeps {
   db: Db;
   logger: Logger;
   /** GitHub sign-in client; null when GitHub isn't configured. */
   github?: GitHubClient | null;
+  /** Where keys come from; null when no provider is configured. */
+  provider?: InferenceProvider | null;
   /** Source of "now"; injectable so tests can control time. */
   clock?: () => Date;
 }
@@ -25,6 +28,7 @@ export async function buildApp({
   db,
   logger,
   github = null,
+  provider = null,
   clock = () => new Date(),
 }: AppDeps): Promise<FastifyInstance> {
   const loggerInstance: FastifyBaseLogger = logger;
@@ -45,8 +49,8 @@ export async function buildApp({
   registerOperatorRoutes(app, db);
   registerAuthRoutes(app, { db, github, clock });
   registerDropRoutes(app, { db, clock });
-  registerClaimRoutes(app, { db, clock });
-  registerLedgerRoutes(app, { db, clock });
+  registerClaimRoutes(app, { db, clock, provider, logger });
+  registerLedgerRoutes(app, { db, clock, provider, logger });
 
   return app;
 }

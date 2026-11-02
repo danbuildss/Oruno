@@ -1,6 +1,6 @@
 # API
 
-**Status: VERIFIED through Phase 3** (commits `33466ef`, `2f6d4db`; see `TESTING.md`). Base path `/`. JSON in and out.
+**Status: VERIFIED through Phase 4a with the fake provider** (commits `33466ef`, `2f6d4db`, `1edef71`; see `TESTING.md`). Base path `/`. JSON in and out.
 
 ## Conventions
 
@@ -71,12 +71,13 @@ Returns `503 github_not_configured` until a GitHub OAuth App is configured (`GIT
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| POST | `/v1/drops/:slug/claims` | Body `{termsVersion, acceptTerms: true, confirmAdult: true, confirmNotSanctioned: true}`. `201` claim (`status: "pending"`, cap allocated from the drop's funding). Errors: `terms_outdated`, `drop_not_active`, `drop_not_started`, `drop_ended`, `drop_full`, `already_claimed`, `not_eligible` (with `details.reasons`), `insufficient_funding`. Rate-limited 10/min/IP |
-| GET | `/v1/me/claims` | The caller's claims |
+| POST | `/v1/drops/:slug/claims` | Body `{termsVersion, acceptTerms: true, confirmAdult: true, confirmNotSanctioned: true}`. **`201 {claim, key}`** — `key = {secret, prefix, setup: {ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN, ANTHROPIC_API_KEY}}`, shown **once**. `202 {claim, key: null}` if the provider is briefly unavailable (a job keeps trying; fetch the key later). Errors: `terms_outdated`, `drop_not_active`, `drop_not_started`, `drop_ended`, `drop_full`, `already_claimed`, `not_eligible` (with `details.reasons`), `insufficient_funding`, `key_issue_failed` (502; you may claim again), `provider_not_configured` (503). Rate-limited 10/min/IP |
+| POST | `/v1/me/claims/:id/key` | Get the key for an active claim (first time after a delayed issuance), or replace a lost one: `{key}`. The old secret stops working; the new key holds what's left of the cap. Max 3 replacements (`429 rotation_limit`). Rate-limited 5/min/IP |
+| GET | `/v1/me/claims` | The caller's claims, with `spentMicro`, `remainingMicro` and `keyPrefix` |
 | POST | `/v1/me/claims/:id/revoke` | Revoke one's own claim |
 
 Rate-limited requests return `429 rate_limited`.
 
 ## Not yet available
 
-Key issuance (claims becoming `active` with a usable key) and usage/spend recording are Phase 4.
+Real Surplus keys (Phase 4b). With `PROVIDER=fake`, keys are simulated and don't work in Claude Code.
