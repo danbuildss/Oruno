@@ -108,7 +108,7 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 | --- | --- | --- | --- |
 | T-601 | Record D-022 (Pool wording) and D-023 (website design) | VERIFIED | Decisions recorded |
 | T-602 | Cookie sessions after browser sign-in; CSRF header guard; Bearer still works | OPEN | Integration tests: cookie set HttpOnly/SameSite; state-changing cookie request without header refused |
-| T-603 | `GET /v1/me` and `GET /v1/pools/:slug/eligibility` for the website | OPEN | Integration tests |
+| T-603 | `GET /v1/me` and `GET /v1/drops/:slug/eligibility` for the website | OPEN | Integration tests |
 | T-604 | Serve `web/dist` with SPA fallback from Fastify | OPEN | Integration test |
 | T-605 | Website: pool page, sign-in, eligibility, attestations, claim, key shown once with Claude Code setup | OPEN | E2E test |
 | T-606 | Website: My credit (used/left, new key, revoke); full/ended/not started/pending states | OPEN | E2E test |

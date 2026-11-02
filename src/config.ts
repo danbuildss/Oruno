@@ -16,6 +16,7 @@ const configSchema = z.object({
   SURPLUS_ADMIN_KEY: z.string().min(1).optional(),
   SURPLUS_WORKSPACE_ID: z.string().min(1).optional(),
   SURPLUS_BASE_URL: z.url().optional(),
+  WEB_DIST_DIR: z.string().min(1).optional(),
 });
 
 export interface Config {
@@ -31,6 +32,8 @@ export interface Config {
     | { kind: "none" }
     | { kind: "fake" }
     | { kind: "surplus"; adminKey: string; workspaceId: string; baseUrl: string | null };
+  /** Built claim website directory; when unset, `web/dist` is used if it exists. */
+  webDistDir: string | null;
 }
 
 export class ConfigError extends Error {
@@ -92,5 +95,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
             callbackUrl: c.GITHUB_CALLBACK_URL,
           }
         : null,
+    webDistDir: c.WEB_DIST_DIR ?? null,
   };
 }

@@ -250,4 +250,4 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
   - **The key secret lives only in page memory** while shown, and is never written to storage. Leaving the page loses it; the claimer can get a new one by rotation (max 3).
   - **Design:** black and white, mobile first, no tracking, no third-party scripts or fonts.
   - **End-to-end tests** with Playwright against the real server, fake GitHub and the fake provider.
-- **Consequences:** New dependencies `@fastify/cookie`, `@fastify/static`; web dev dependencies `vite`, `react`, `react-dom`, `@vitejs/plugin-react`. New config `PUBLIC_BASE_URL`. Not a staging test: Phase 6 acceptance "end-to-end claim works in a staging environment" needs a deployment (Phase 7 approval).
+- **Consequences:** New dependencies `@fastify/cookie`, `@fastify/static`; web dev dependencies `vite`, `react`, `react-dom`, `@vitejs/plugin-react`. New optional config `WEB_DIST_DIR` (defaults to `web/dist` when built). Not a staging test: Phase 6 acceptance "end-to-end claim works in a staging environment" needs a deployment (Phase 7 approval).
