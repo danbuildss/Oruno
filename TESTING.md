@@ -229,3 +229,10 @@ Not verified: live GitHub sign-in (T-209); real Surplus keys in Claude Code (Pha
 ### 2026-11-02 — UI fixes (design plans 001, 002)
 
 - `pnpm lint`, `pnpm typecheck` clean; `pnpm test` **180 passed**; `pnpm e2e` **7 passed** (new screenshot of the stop-confirm step shows the black "Yes, stop it" button).
+
+### 2026-11-02 — Phase 7 preparation (D-025)
+
+- `pnpm lint`, `pnpm typecheck` clean.
+- New tests: `tests/integration/proxy.test.ts` (without TRUST_PROXY a forged `X-Forwarded-For` can't escape the sign-in limit; with one trusted hop each client behind the proxy has its own limit and a prepended fake address is ignored); `tests/unit/vercel-config.test.ts` (build/output, `/v1` rewrite first, SPA fallback last, headers identical to the server's, caching); config test for `TRUST_PROXY` parsing.
+- **Docker image** (built locally with a sandbox-only certificate/proxy shim that isn't committed; the committed Dockerfile is unchanged): builds, 380 MB; refuses to start with pending migrations; release step `node dist/db/migrate-cli.js` applies 0001–0004 on an empty database; container runs as user `node`; `/health` ok; Docker health check `healthy`; production headers (CSP, HSTS) present; `SIGTERM` → "shutting down", exit 0.
+- Not verified: the CI e2e job (runs on the PR); Vercel rewrites and headers live; client IP hops behind Vercel; any real host.

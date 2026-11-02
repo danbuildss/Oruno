@@ -10,7 +10,7 @@ Built by Somehow Internet. Licensed under [Apache-2.0](LICENSE).
 
 ## Status
 
-**Phase 6 — Claim website** (in review). Real Surplus (Phase 4b) not yet connected. Hosting: Vercel (D-024). See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
+**Phase 7 — Pilot preparation** (nothing deployed). Real Surplus (Phase 4b) not yet connected. Hosting plan: website on Vercel, API in one container (D-025, [`DEPLOYMENT.md`](docs/operations/DEPLOYMENT.md)). See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
 
 ## Run it locally
 

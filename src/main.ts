@@ -57,7 +57,13 @@ async function main(): Promise<void> {
     provider,
     secureCookies: config.nodeEnv === "production",
     webDistDir: hasWeb ? webDistDir : null,
+    trustProxy: config.trustProxy,
   });
+  if (config.nodeEnv === "production" && config.trustProxy === false) {
+    logger.warn(
+      "TRUST_PROXY is off: behind Vercel/a load balancer, every client shares one rate limit",
+    );
+  }
 
   await jobs.start();
   await jobs.register("drops.expire", async () => {

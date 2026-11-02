@@ -121,10 +121,10 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 
 | ID | Task | State | Completion condition |
 | --- | --- | --- | --- |
-| T-701 | Browser tests (`pnpm e2e`) in CI | OPEN | CI job runs them on every PR |
-| T-702 | `TRUST_PROXY` setting so rate limits use the real client IP | OPEN | Integration test: separate clients behind a proxy get separate limits |
-| T-703 | `vercel.json`: static site, `/v1` rewrite to the API host, security headers identical to the server's | OPEN | Unit test compares headers |
-| T-704 | Dockerfile for API + jobs; release step runs migrations | OPEN | Image builds; container starts and passes `/health` against Postgres |
-| T-705 | Deployment checklist and runbook update | OPEN | `docs/operations/DEPLOYMENT.md` |
+| T-701 | Browser tests (`pnpm e2e`) in CI | VERIFIED locally; CI run pending on the PR | CI job runs them on every PR |
+| T-702 | `TRUST_PROXY` setting so rate limits use the real client IP | VERIFIED | Integration test: separate clients behind a proxy get separate limits |
+| T-703 | `vercel.json`: static site, `/v1` rewrite to the API host, security headers identical to the server's | VERIFIED (config test); live behaviour UNVERIFIED until staging | Unit test compares headers |
+| T-704 | Dockerfile for API + jobs; release step runs migrations | VERIFIED (image built and run locally) | Image builds; container starts and passes `/health` against Postgres |
+| T-705 | Deployment checklist and runbook update | VERIFIED | `docs/operations/DEPLOYMENT.md` |
 | T-706 | Choose API host, managed Postgres, domain; approve spending | OPEN (Dan) | Recorded decision |
 | T-707 | Staging deployment and staging claim (closes T-609) | BLOCKED (T-706, T-209, deploy approval) | Claim works on staging |

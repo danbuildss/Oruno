@@ -26,6 +26,7 @@ export async function testApp(
     provider?: InferenceProvider | null;
     secureCookies?: boolean;
     webDistDir?: string | null;
+    trustProxy?: boolean | number | string[];
   } = {},
 ): Promise<{ app: FastifyInstance; logs: LogCapture }> {
   const logs = new LogCapture();
@@ -38,6 +39,7 @@ export async function testApp(
     ...(options.clock ? { clock: options.clock } : {}),
     ...(options.secureCookies === undefined ? {} : { secureCookies: options.secureCookies }),
     ...(options.webDistDir === undefined ? {} : { webDistDir: options.webDistDir }),
+    ...(options.trustProxy === undefined ? {} : { trustProxy: options.trustProxy }),
   });
   return { app, logs };
 }
