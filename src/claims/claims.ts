@@ -129,6 +129,8 @@ export async function createClaim(db: Db, params: CreateClaimParams): Promise<Cl
         cap_micro: drop.cap_micro,
         terms_version: params.termsVersion,
         attested_at: params.now,
+        created_at: params.now,
+        updated_at: params.now,
         ended_at: null,
         end_reason: null,
         ended_by: null,

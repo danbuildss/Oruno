@@ -6,15 +6,15 @@ _Last updated: 2026-10-30_
 
 ## 1. Current project status
 
-Phases 0–3 closed. Phase 4a (provider integration with a fake provider) built and tested. Phase 4b (real Surplus) blocked on T-003/T-004/T-006. No money spent. Nothing deployed.
+Phases 0–4a closed. Phase 5 (reliability) built and tested with the fake provider. Phase 4b (real Surplus) blocked on T-003/T-004/T-006. No money spent. Nothing deployed.
 
 ## 2. Current development phase
 
-**Phase 4a — Provider integration, fake provider** (IN REVIEW). Phase 4b blocked. See `PLAN.md`.
+**Phase 5 — Backend Reliability** (IN REVIEW). Phase 4b blocked. See `PLAN.md`.
 
 ## 3. Last completed task
 
-Phase 4a: T-401 to T-409 VERIFIED (commit `1edef71`); T-410 docs in review. Live GitHub sign-in (T-209) still needs a GitHub OAuth App.
+Phase 5: T-501 to T-508 VERIFIED (commit `9a892fe`); T-509 backend proof review in review. Live GitHub sign-in (T-209) still needs a GitHub OAuth App.
 
 ## 4. Current implementation state
 
@@ -41,7 +41,9 @@ Claims stay `pending` (no keys yet). API reference: `docs/architecture/API.md`; 
 
 Phase 3 adds (branch `phase3/credit-ledger`): double-entry ledger with database-enforced rules (`src/ledger/`, migration 0003), funding records, allocation on claim, funding check on activation, releases, returns, invariant checker, jobs `claims.release` and `ledger.check`. Design: `docs/architecture/CREDIT_LEDGER.md`.
 
-Phase 4a adds (branch `phase4/provider-integration`): provider adapter, fake provider, Surplus client (UNVERIFIED), key issuance with secret shown once, retries, reveal/rotate (remaining-cap successor), revocation at the provider, spend sync with overshoot flagging, spend ceiling, 4 new jobs, migration 0004. Config `PROVIDER=none|fake|surplus` (fake refused in production). 
+Phase 4a adds (branch `phase4/provider-integration`): provider adapter, fake provider, Surplus client (UNVERIFIED), key issuance with secret shown once, retries, reveal/rotate (remaining-cap successor), revocation at the provider, spend sync with overshoot flagging, spend ceiling, 4 new jobs, migration 0004. Config `PROVIDER=none|fake|surplus` (fake refused in production).
+
+Phase 5 adds (branch `phase5/reliability`): database statement/lock timeouts with retryable 503s, per-connection error listeners, job retries with backoff, startup refusal with pending migrations, HTTP timeouts, orphan provider key reconciliation (`keys.reconcile`), failure tests. Runbook draft: `docs/operations/RUNBOOK.md`. 
 
 ## 5. What is working
 
@@ -53,6 +55,8 @@ Verified on commit `33466ef` (108/108 tests): drops and state machine; GitHub si
 Verified on commit `2f6d4db` (127/127 tests): ledger rules in the database; funding; allocation under concurrency; activation funding check; releases; returns; invariant checker; randomized invariant test.
 
 Verified on commit `1edef71` (158/158 tests) **with the fake provider only**: key issuance, outages and retries, crash recovery, rotation, revocation, spend sync, overshoot, ceiling, randomized test with spend.
+
+Verified on commit `9a892fe` (171/171 tests): partial-transaction failures leave nothing behind; lock/statement timeouts and database outages return retryable 503s; killed connections recover without a crash; job retries and restarts; orphan key cleanup; `kill -9` restart.
 
 ## 6. What is broken
 
@@ -80,6 +84,7 @@ See `DECISIONS.md`. Summary:
 
 | Item | Where | Notes |
 | --- | --- | --- |
+| **Phase 5 exit → start Phase 6 (claim frontend)?** | T-509, `BACKEND_PROOF.md` | Backend proof is VERIFIED or PARTIAL; every PARTIAL item is a real-Surplus check (Phase 4b) or an operations item (Phase 7). Dan decides whether the frontend may start before 4b |
 | **Phase 4b (real Surplus)** | T-003, T-004, T-006, T-411 | Surplus answers; Surplus org + admin key + workspace id; **$20 USDC test deposit**; then AT-1 to AT-18 |
 | GitHub OAuth App | T-209 | Free; needed to test live sign-in |
 | Claimer terms draft | T-009, `docs/legal/CLAIMER_TERMS.md` | Then a lawyer review |
@@ -87,9 +92,9 @@ See `DECISIONS.md`. Summary:
 
 ## 11. Next recommended task
 
-1. Dan: merge PR #5 (Phase 3); review Phase 4a.
-2. Phase 4b: Surplus answers (T-004), Surplus org + admin key + workspace id (T-003), $20 USDC deposit approval (T-006).
-3. While waiting: Phase 5 (backend reliability: restarts, worker crashes, transaction failures) can start with the fake provider if Dan approves.
+1. Dan: merge PR #6 (Phase 4a); review Phase 5.
+2. Decide: start Phase 6 (claim frontend) now with the fake provider, or finish Phase 4b (real Surplus) first.
+3. Phase 4b: Surplus answers (T-004), Surplus org + admin key + workspace id (T-003), $20 USDC deposit approval (T-006).
 4. Dan: GitHub OAuth App (T-209) for live sign-in.
 3. Carried forward for Phase 4: Surplus answers (T-004, Dan asked), admin key (T-003), $20 spike (T-006), claimer terms legal review (T-009).
 
@@ -113,6 +118,9 @@ See `DECISIONS.md`. Summary:
 - `fa09579` Phase 3 evidence
 - `5921a17` D-019; Phase 4a tasks
 - `1edef71` **Phase 4a provider integration (fake provider)**
+- `fb8eb75` Phase 4a evidence
+- `d65cb26` D-020 research directions; D-021 Phase 5
+- `9a892fe` **Phase 5 reliability**
 
 ## 13. Important testing results
 
@@ -122,7 +130,13 @@ See `DECISIONS.md`. Summary:
 
 2026-10-30, `2f6d4db`: 127/127 tests; 100 concurrent claims on a drop funded for 10 → exactly 10, never negative; database refuses unbalanced, edited and overdrawn ledger records; tampering detected; invariants hold after every step of 3×250 randomized operations.
 
-2026-10-30, `1edef71`: 158/158 tests with the fake provider; secret never stored or logged; one key under crash recovery and concurrent attempts; rotation can't reset a cap; overshoot capped and flagged; invariants hold over 200 randomized steps with spend. Full log in `TESTING.md`.
+2026-10-30, `1edef71`: 158/158 tests with the fake provider; secret never stored or logged; one key under crash recovery and concurrent attempts; rotation can't reset a cap; overshoot capped and flagged; invariants hold over 200 randomized steps with spend.
+
+2026-11-02, `9a892fe`: 171/171 tests; found and fixed a crash on dropped database connections; restarts and crashes recover cleanly. Full log in `TESTING.md`.
+
+## 13b. Environment note
+
+The local Postgres stops when the cloud environment restarts. If tests fail at startup with a connection error, run `pg_ctlcluster 16 main start`.
 
 ## 14. Deployment status
 

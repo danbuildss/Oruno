@@ -92,6 +92,26 @@ Also record: the per-request fee actually charged, and cap behaviour across a mo
 
 ## Results log
 
+### 2026-11-02 — Phase 5 reliability, commit `9a892fe`
+
+- `pnpm lint`, `pnpm typecheck`, `pnpm build`: clean.
+- `pnpm test`: **171 passed, 0 failed** (18 files), run twice; reliability and key suites re-run twice more: 31/31 each time.
+
+| Area | Tests |
+| --- | --- |
+| Partial failures | failure while allocating a claim's funds → no claim, slot or money moved; works after; failure while auditing a funding → no funding or ledger entry; provider created a key but saving it failed → claim pending, retry reuses the key (one key); provider revoked but recording failed → job completes idempotently |
+| Database trouble | held row lock → `503 busy` with `Retry-After` after the lock timeout, then success once released; slow query → `503 timeout`; unreachable database → `503 database_unavailable` with no internals; **server-killed connections → requests recover without restart, no crash** |
+| Provider trouble | Surplus client times out as a retryable error; admin key never in the message |
+| Orphan keys | unknown Oruno keys revoked; tracked keys, in-flight issuance and non-Oruno keys untouched |
+| Restarts and jobs | pending migrations detected; job queued while workers were down runs after restart; crashing job retried and completes on attempt 3 |
+
+Manual: built server killed with `kill -9`, restarted → health 200, ledger check ok, 8 schedules intact, 0 errors in the restart log. Server with pending migrations refuses to start and names them.
+
+Found and fixed during Phase 5:
+- **A dropped database connection during a query could crash the process** (unhandled `error` event on an in-use connection). Every connection now has an error listener; the query still fails with a retryable 503. Regression covered by the killed-connections test.
+- Claims took timestamps from the database clock while everything else uses the app clock, which confused time-based checks; claims now use the app clock.
+- pg-boss rejects a maximum retry delay without backoff; test-only overrides now drop it.
+
 ### 2026-10-30 — Phase 4a (fake provider), commit `1edef71`
 
 - `pnpm lint`, `pnpm typecheck`, `pnpm build`: clean.

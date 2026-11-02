@@ -36,6 +36,8 @@ export interface InferenceProvider {
   getKeySpend(keyId: string): Promise<bigint>;
   /** Upper bound on total spend across all Oruno keys at the provider. */
   setSpendCeiling(params: { limitMicro: bigint; idempotencyKey: string }): Promise<void>;
+  /** Active (not revoked) keys at the provider, to find keys Oruno lost track of. */
+  listActiveKeys(): Promise<Array<{ keyId: string; name: string }>>;
 }
 
 export class ProviderError extends Error {

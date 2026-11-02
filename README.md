@@ -10,7 +10,7 @@ Built by Somehow Internet. Licensed under [Apache-2.0](LICENSE).
 
 ## Status
 
-**Phase 4a — Provider integration with a fake provider** (in review). Real Surplus (Phase 4b) not yet connected. See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
+**Phase 5 — Backend reliability** (in review). Real Surplus (Phase 4b) not yet connected. See [`NOTES.md`](NOTES.md) for the current state and [`PLAN.md`](PLAN.md) for the roadmap.
 
 ## Run it locally
 
@@ -42,6 +42,7 @@ Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test` (wipes the test database), `p
 | [`BACKEND_PROOF.md`](BACKEND_PROOF.md) | Evidence required before any frontend work |
 | `docs/research/` | Market research, competitors, validation plan |
 | `docs/architecture/` | API, drop engine, credit ledger, database, providers, threat model |
+| `docs/operations/` | Runbook (draft) |
 | `docs/project/` | Changelog, experiments, session log |
 | `docs/legal/` | Claimer terms (draft) |
 

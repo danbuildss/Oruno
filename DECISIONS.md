@@ -210,3 +210,24 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
   - **Provider selection by config:** `PROVIDER=fake` is refused in production.
 - **Trade-offs:** The one-claim-per-person rule now excludes failed claims (a person whose key could never be issued may try again).
 - **Consequences:** Migration 0004 extends claims; Surplus response shapes for spend are OPEN until 4b.
+
+## D-020 — Research recorded as proposed future directions
+
+- **Date:** 2026-11-02 · **Approval:** APPROVED (Dan: "yes" to recording)
+- **Problem:** Several research rounds suggested new features and a different business shape.
+- **Selected:** Record them in `docs/research/MARKET_RESEARCH.md` (future directions) and `docs/research/COMPETITORS.md` (OpenAI gifting, grey-market players) as **PROPOSED**, with nothing scheduled. Keep rejecting the supply marketplace and an Oruno-run router.
+- **Reasoning:** The research confirms demand and the drop model; the risky parts (reselling personal subscriptions, routing) conflict with lab terms and Surplus §8.
+- **Consequences:** No change to the build plan. Each idea needs its own decision after Drop #1.
+
+## D-021 — Phase 4a closed; Phase 5 reliability design
+
+- **Date:** 2026-11-02 · **Approval:** APPROVED (Dan: start Phase 5); design PROPOSED by Claude within that approval.
+- **Problem:** Prove the backend survives restarts, crashes, database failures and slow dependencies, with the fake provider (Phase 4b still blocked).
+- **Selected:**
+  - **Database timeouts:** every connection has a statement timeout (15 s) and lock timeout (5 s), so nothing hangs forever; a lock timeout returns `503 busy` (retry).
+  - **Job retries:** every queue retries a failed job with exponential backoff (up to 5 times); jobs are idempotent, so a retry after a crash is safe.
+  - **Startup schema check:** the server refuses to start if migrations are pending.
+  - **HTTP timeouts:** request and connection timeouts on the server.
+  - **Orphan key cleanup:** a job lists Oruno keys at the provider and revokes any it doesn't know (e.g. created just before a crash). The Surplus listing call is UNVERIFIED until Phase 4b.
+  - **Failure tests:** transaction failure mid-claim and mid-funding, database connections killed mid-run, provider timeouts, restart with queued jobs, worker crash with retry, lock contention.
+- **Consequences:** BACKEND_PROOF BP-9, BP-12, BP-13, BP-15 targeted (fake provider); real-provider items stay with Phase 4b.

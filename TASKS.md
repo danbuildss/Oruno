@@ -80,7 +80,7 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 | T-407 | Revocation reaches the provider, with retry | VERIFIED | Revoked/expired/failed keys revoked at provider even after transient failures |
 | T-408 | Spend sync into the ledger; exhausted at cap; overshoot flagged | VERIFIED | Idempotent; concurrent syncs record once; invariants hold |
 | T-409 | Workspace spend ceiling = funds held | VERIFIED | Ceiling follows funding and returns |
-| T-410 | Docs and evidence (PROVIDERS, API, CREDIT_LEDGER, BACKEND_PROOF BP-9/10/11/12 for fake) | IN REVIEW (awaiting Dan) | Docs written; evidence recorded |
+| T-410 | Docs and evidence (PROVIDERS, API, CREDIT_LEDGER, BACKEND_PROOF BP-9/10/11/12 for fake) | VERIFIED (Dan approved) | Docs written; evidence recorded |
 
 ## Phase 4b — Real Surplus (blocked)
 
@@ -88,6 +88,20 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 | --- | --- | --- | --- |
 | T-411 | Connect real Surplus; run AT-1 to AT-18 with $20 | BLOCKED (T-003, T-004, T-006) | Acceptance tests VERIFIED with evidence |
 
+## Phase 5 — Backend Reliability and Verification (fake provider)
+
+| ID | Task | State | Completion condition |
+| --- | --- | --- | --- |
+| T-501 | Database statement and lock timeouts; lock timeout → 503 | VERIFIED | A stuck lock can't hang a request; test |
+| T-502 | Job retry policy (backoff, 5 attempts) on every queue | VERIFIED | A crashed job is retried and completes; test |
+| T-503 | Refuse to start with pending migrations | VERIFIED | Clear error and exit; test |
+| T-504 | HTTP request and connection timeouts | VERIFIED | Configured; documented |
+| T-505 | Orphan provider key cleanup job | VERIFIED | Unknown Oruno keys at the provider are revoked; known ones untouched; test |
+| T-506 | Failure tests: transaction failure mid-claim / mid-funding leaves nothing partial | VERIFIED | No partial rows; invariants clean |
+| T-507 | Failure tests: database connections killed mid-run; recovery | VERIFIED | Requests fail cleanly, then succeed after reconnect |
+| T-508 | Failure tests: provider timeout; restart with queued jobs | VERIFIED | Retryable error; jobs processed after restart |
+| T-509 | Backend proof review: BP-9, BP-12, BP-13, BP-15; threat model review; runbook draft | IN REVIEW (awaiting Dan) | Evidence recorded |
+
 ## Later phases
 
-Tasks for Phases 5–7 are created when each phase is approved to start. See `PLAN.md`.
+Tasks for Phases 6–7 are created when each phase is approved to start. See `PLAN.md`.

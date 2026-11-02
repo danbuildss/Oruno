@@ -86,3 +86,22 @@ Checked 2026-10-30.
 Sources: [search: trademark results](https://www.indiafilings.com/search/orano-tm-1476951), [Orune](https://en.wikipedia.org/wiki/Orune), [app trademark classes](https://www.trademarkengine.com/blog/how-to-trademark-an-app-name/).
 
 Recommendation: register the domain and the npm package name early; they cost little and the name looks clear so far.
+
+## Future directions from research (PROPOSED, not planned)
+
+Recorded 2026-11-02 (D-020). None of these is built or scheduled; each needs its own decision after Drop #1.
+
+| Idea | Why | Main risk | Earliest |
+| --- | --- | --- | --- |
+| **Crowdfunded drops** — anyone can top up a drop's funding goal in USDC | "Strangers fund strangers" energy (the viral "bored billionaires pay my bills" idea, applied to AI access) using existing drops and ledger | Funding attribution and refunds to many funders | With "anyone can fund a drop" |
+| **Requests** — a person posts a need, funders choose to fund it | Strong viral loop | Scams, fake stories, begging dynamics; harder anti-abuse | After crowdfunded drops |
+| **"Request more" when credit runs out** | Gentle first version of requests | Spam | After Drop #1 |
+| **Chat page for non-developers** — "sponsor funds it, user just chats" | Much larger audience than developers | Oruno would carry prompts (privacy, hosting, moderation; check Surplus §8 "competing routing") | After Drop #1, with its own privacy review |
+| **Low-credit notifications** | Cheap, useful | — | Phase 6 backlog |
+| **Recurring funding** (monthly top-ups) | Organisations and grant programmes | — | With organisations |
+| **Second legitimate provider before organisations fund drops** | Oruno is only as clean as its supply; Surplus sellers may resell credits (lab terms; Surplus §5.2 puts provider terms on us) | Integration effort (small, via the adapter) | Before organisation funding |
+| **Partner with Surplus** rather than compete | Oruno is a Surplus customer and distribution channel; Surplus could add "sponsored keys" itself | Dependence | Any time |
+
+**Rejected (repeatedly suggested by research):** a supply marketplace where people list their unused ChatGPT/Claude subscriptions or API keys, and an Oruno-run router. Reasons: lab terms and ban risk; duplicates Surplus; may breach Surplus §8 "competing routing service". Revenue comes from visible drop/programme fees, not price spreads. Impact is reported as active users, requests, spend and shared outcomes — never "hours of AI".
+
+Positioning line (PROPOSED): **"Fund AI access for anyone. Set a cap, share a link, and people use it in their own tools — no subscription, no card. Built on Base."**

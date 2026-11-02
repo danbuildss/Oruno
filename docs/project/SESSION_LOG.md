@@ -2,6 +2,27 @@
 
 Newest first. Each entry: Completed · Verified · Not verified · Issues · Next.
 
+## 2026-11-02 — Research recorded; Phase 5 reliability
+
+**Completed**
+- Opened PR #6 (Phase 4a). Recorded research as proposed future directions (D-020) and Phase 5 design (D-021).
+- Built: database timeouts with retryable 503s, per-connection error listeners, job retries, startup migration check, HTTP timeouts, orphan key reconciliation. Commit `9a892fe`.
+- Docs: runbook draft; threat model review; backend proof updated.
+
+**Verified**
+- 171/171 tests (twice), including partial-failure, outage, killed-connection, restart and crashed-job tests. Manual `kill -9` restart.
+
+**Not verified**
+- Anything against the real Surplus API (Phase 4b).
+
+**Issues**
+- Found: a dropped database connection during a query could crash the server. Fixed.
+- Found: claims used the database clock for timestamps; now the app clock.
+- Local Postgres had stopped after an environment restart; restarted.
+
+**Next**
+- Dan: merge PR #6; decide Phase 6 now vs Phase 4b first.
+
 ## 2026-10-30 (7) — Phase 4a provider integration (fake provider)
 
 **Completed**

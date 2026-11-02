@@ -330,7 +330,7 @@ describe("claims", () => {
       const claims = await db
         .selectFrom("claims")
         .select(["status", "ended_by"])
-        .orderBy("created_at")
+        .orderBy("status")
         .execute();
       expect(claims).toEqual([
         { status: "expired", ended_by: "system" },

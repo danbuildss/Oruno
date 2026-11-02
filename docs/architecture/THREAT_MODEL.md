@@ -28,6 +28,24 @@ Funders' money · provider admin key · claimers' personal keys · claimer ident
 | TH-17 | Provider overshoot beyond cap | Medium | Ledger never records past the cap; overshoot stored and flagged; workspace ceiling | VERIFIED with fake (Phase 4a); AT-4, AT-18 in Phase 4b |
 | TH-15 | Provider outage during a drop | Low | Status communication; extend drop if needed | Runbook |
 
+## Review — 2026-11-02 (Phase 5)
+
+| # | Severity | Mitigation status |
+| --- | --- | --- |
+| TH-1 Farming | High | VERIFIED: eligibility thresholds, one claim per person (app + DB), rate limits |
+| TH-3 Overspend | High | VERIFIED in the ledger (DB refuses overdrafts; claims beyond funding refused under concurrency); provider caps with fake; real Surplus AT-3/4/8 in 4b |
+| TH-5 Concurrent allocation | High | VERIFIED (slots and funds) |
+| TH-7 Admin key leak | Critical | Partly: never in repo or logs (redaction tested). Secret storage, rotation and access control are Phase 7 operations |
+| TH-8 Key secret leak | High | VERIFIED with fake: never stored; absent from every table and log |
+| TH-9 Prompt exposure | High | By design: Oruno isn't in the request path; nothing stores prompts. Provider body capture to confirm off in 4b |
+| TH-10 OAuth forgery/replay | High | VERIFIED |
+| TH-11 Operator takeover | High | Partly: hashed keys, audit log, disable. MFA/IP limits for operators are Phase 7 |
+| TH-13 Surplus §8 terms | High | Open: claimer terms drafted; legal and wording review before launch |
+| TH-16 Rotation resets cap | High | VERIFIED with fake; AT-16 in 4b |
+| TH-18 Dropped DB connection crashes the server | High | **Found in Phase 5 and fixed**; VERIFIED (killed connections → retryable 503, recovery, no crash) |
+| TH-19 Hung queries or locks block the service | Medium | VERIFIED: 5 s lock timeout, 15 s statement timeout → retryable 503 |
+| TH-20 Orphaned provider keys after a crash | Medium | VERIFIED with fake: reconciliation job revokes unknown Oruno keys, spares in-flight issuance and non-Oruno keys |
+
 ## Out of scope for V1
 
 Card payment fraud (no card payments), smart contract risks (no contracts), multi-tenant isolation between funders (single funder).

@@ -575,3 +575,55 @@ export async function syncSpendCeiling(db: Db, provider: InferenceProvider): Pro
   });
   return held;
 }
+
+const CLAIM_KEY_NAME = /^oruno-claim-([0-9a-f-]{36})$/;
+/** How long a claim must have been quiet before an unknown key on it counts as orphaned. */
+export const ORPHAN_GRACE_MS = 10 * 60 * 1000;
+
+/**
+ * Finds Oruno keys at the provider that Oruno has no record of (for example, created just before
+ * a crash) and revokes them. Keys whose claim is still being issued are left alone.
+ * Only keys named `oruno-claim-<uuid>` are considered; nothing else in the account is touched.
+ */
+export async function revokeOrphanKeys(
+  db: Db,
+  provider: InferenceProvider,
+  params: { now: Date; logger?: Logger },
+): Promise<{ checked: number; revoked: number }> {
+  const listed = await provider.listActiveKeys();
+  let checked = 0;
+  let revoked = 0;
+  for (const key of listed) {
+    const match = CLAIM_KEY_NAME.exec(key.name);
+    if (!match?.[1]) continue;
+    checked += 1;
+    const known = await db
+      .selectFrom("provider_keys")
+      .select("id")
+      .where("provider", "=", provider.name)
+      .where("provider_key_id", "=", key.keyId)
+      .executeTakeFirst();
+    if (known) continue; // tracked keys are handled by revokeEndedKeys
+    const claim = await db
+      .selectFrom("claims")
+      .select(["status", "updated_at"])
+      .where("id", "=", match[1])
+      .executeTakeFirst();
+    const quietSince = claim
+      ? params.now.getTime() - claim.updated_at.getTime()
+      : Number.POSITIVE_INFINITY;
+    const issuing = claim?.status === "pending" || claim?.status === "active";
+    if (issuing && quietSince < ORPHAN_GRACE_MS) continue;
+    await provider.revokeKey({ keyId: key.keyId, idempotencyKey: `oruno:key:${key.keyId}:revoke` });
+    revoked += 1;
+    await recordAudit(db, {
+      actorType: "system",
+      action: "provider_key.orphan_revoked",
+      subjectType: "claim",
+      subjectId: match[1],
+      details: { provider: provider.name },
+    });
+    params.logger?.warn({ claimId: match[1] }, "revoked an orphaned provider key");
+  }
+  return { checked, revoked };
+}

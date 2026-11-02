@@ -166,4 +166,19 @@ export class SurplusProvider implements InferenceProvider {
       },
     });
   }
+
+  /** UNVERIFIED: `GET /v1/keys` listing shape (and paging) to be confirmed in Phase 4b. */
+  async listActiveKeys(): Promise<Array<{ keyId: string; name: string }>> {
+    const { body } = await this.request("GET", "/v1/keys");
+    const items = Array.isArray(body) ? body : (body as { data?: unknown } | null)?.data;
+    if (!Array.isArray(items)) throw new ProviderError("Surplus key list: unexpected shape", false);
+    return items
+      .filter((k: { id?: unknown; name?: unknown; revoked?: unknown; revoked_at?: unknown }) => {
+        return typeof k?.id === "string" && !k.revoked && !k.revoked_at;
+      })
+      .map((k: { id: string; name?: unknown }) => ({
+        keyId: k.id,
+        name: typeof k.name === "string" ? k.name : "",
+      }));
+  }
 }
