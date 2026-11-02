@@ -21,6 +21,18 @@ No product found where **anyone funds AI credit, sets a cap per person, and shar
 | x402 agent wallets | Agents pay per request in USDC | Self-pay, not sponsorship | [Alchemy](https://www.alchemy.com/blog/how-x402-brings-real-time-crypto-payments-to-the-web) |
 | Grant programmes (Codex Open Source Fund, Ona) | Credits for selected developers | Manual; for their own product | [Codex fund](https://codex.danielvaughan.com/2026/03/31/codex-open-source-fund), [Ona](https://ona.com/stories/ona-for-open-source) |
 
+## Added 2026-11-02 (research rounds after the first build phases)
+
+| Who | What they do | Difference from Oruno | Source |
+| --- | --- | --- | --- |
+| **OpenAI — Gifting credits in ChatGPT** | Plus/Pro users buy ChatGPT credits and send a **single-use claim link**; 30 days to redeem; same currency; non-refundable; rolling out gradually | **Closest official competitor.** One person → one person, ChatGPT/OpenAI only, no caps per person, no eligibility checks, no reporting, no coding-tool keys | [OpenAI help](https://help.openai.com/en/articles/20001417-gifting-credits-in-chatgpt), [RuntimeWire](https://runtimewire.com/article/scoop-openai-starts-rolling-out-giftable-chatgpt-credits) |
+| AI Token Exchange (ATE) | P2P: people sell unused subscription tokens via a browser extension; buyers access models from $1 | Resells personal subscriptions (against lab terms) | [Product Hunt](https://www.producthunt.com/p/ate-2) |
+| Secondhand Tokens | P2P resale of unused credits, mainly Claude | Grey market | [listing](https://aiindigo.com/tool/secondhand-tokens) |
+| TokenDos, Pairag | Share idle API keys / subscription quota | Grey market; early | [TokenDos](https://www.hunted.space/product/tokendos), [Pairag](https://www.producthunt.com/p/pairag) |
+| Account-sharing and group-buy services | Shared ChatGPT/Claude logins, $3–8 per person | Against lab terms; ban risk; mixed personal data | Research summary (not independently verified) |
+
+**What this means for positioning:** labs are moving into gifting, so Oruno's edge must be **programmes, not gifts**: one funder → many people, per-person caps, eligibility and anti-farming, reporting, provider-neutral, Base-native funding. Oruno never shares logins or resells personal subscriptions.
+
 ## Why the space is open (assessment)
 
 1. Public free-credit links get farmed.
