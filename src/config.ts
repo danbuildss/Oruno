@@ -17,7 +17,24 @@ const configSchema = z.object({
   SURPLUS_WORKSPACE_ID: z.string().min(1).optional(),
   SURPLUS_BASE_URL: z.url().optional(),
   WEB_DIST_DIR: z.string().min(1).optional(),
+  TRUST_PROXY: z.string().trim().min(1).optional(),
 });
+
+/**
+ * TRUST_PROXY: "false" (default), "true", a number of proxy hops ("2"), or a comma-separated
+ * list of proxy addresses or CIDRs ("10.0.0.0/8,127.0.0.1").
+ */
+function parseTrustProxy(value: string | undefined): boolean | number | string[] | null {
+  if (value === undefined || value === "false") return false;
+  if (value === "true") return true;
+  if (/^\d+$/.test(value)) {
+    const hops = Number(value);
+    return hops >= 1 && hops <= 10 ? hops : null;
+  }
+  const entries = value.split(",").map((v) => v.trim());
+  const ipOrCidr = /^[0-9a-fA-F:.]+(\/\d{1,3})?$/;
+  return entries.every((e) => ipOrCidr.test(e)) ? entries : null;
+}
 
 export interface Config {
   nodeEnv: "development" | "test" | "production";
@@ -34,6 +51,8 @@ export interface Config {
     | { kind: "surplus"; adminKey: string; workspaceId: string; baseUrl: string | null };
   /** Built claim website directory; when unset, `web/dist` is used if it exists. */
   webDistDir: string | null;
+  /** Proxies trusted for the client IP (see TRUST_PROXY). */
+  trustProxy: boolean | number | string[];
 }
 
 export class ConfigError extends Error {
@@ -61,6 +80,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   if (githubSet !== 0 && githubSet !== 3) {
     throw new ConfigError([
       "GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET and GITHUB_CALLBACK_URL must be set together",
+    ]);
+  }
+  const trustProxy = parseTrustProxy(c.TRUST_PROXY);
+  if (trustProxy === null) {
+    throw new ConfigError([
+      "TRUST_PROXY must be false, true, a hop count from 1 to 10, or a comma-separated list of addresses/CIDRs",
     ]);
   }
   if (c.PROVIDER === "fake" && c.NODE_ENV === "production") {
@@ -96,5 +121,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
           }
         : null,
     webDistDir: c.WEB_DIST_DIR ?? null,
+    trustProxy,
   };
 }

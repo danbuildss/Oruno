@@ -6,8 +6,8 @@
 
 | Task | How | Notes |
 | --- | --- | --- |
-| Apply migrations | `pnpm migrate` | The server **refuses to start** while migrations are pending and names them |
-| Start | `node dist/main.js` (after `pnpm build`) | Needs `DATABASE_URL`; `PROVIDER` is `none`, `fake` (not in production) or `surplus` |
+| Apply migrations | `pnpm migrate` (container: `node dist/db/migrate-cli.js`, as the host's release step) | The server **refuses to start** while migrations are pending and names them |
+| Start | `node dist/main.js` (after `pnpm build`), or the Docker image (see `DEPLOYMENT.md`) | Needs `DATABASE_URL`; `PROVIDER` is `none`, `fake` (not in production) or `surplus` |
 | Stop | `SIGTERM` | Graceful: finishes in-flight requests, stops jobs, closes the database |
 | Crash or `kill -9` | Just start again | Verified: health ok, ledger clean, schedules intact; jobs are idempotent and retried |
 | Create an operator | `pnpm operator:create "<name>"` | Key shown once; store it in a password manager |
@@ -42,6 +42,10 @@
 | A key is shared or abused | — | `POST /v1/claims/:id/revoke` with a reason; the key is revoked at the provider within a minute |
 | Operator key leaked | — | Create a new operator; disable the old one (`disableOperator`); audit log shows its actions |
 | Provider admin key leaked | — | Revoke it at the provider immediately, issue a new one, update `SURPLUS_ADMIN_KEY`, restart (Phase 4b detail) |
+
+## Deployment
+
+See `DEPLOYMENT.md` (website on Vercel, API + jobs in one container, managed Postgres). Run exactly one API instance.
 
 ## Never
 

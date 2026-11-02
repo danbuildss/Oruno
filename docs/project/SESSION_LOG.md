@@ -2,6 +2,23 @@
 
 Newest first. Each entry: Completed · Verified · Not verified · Issues · Next.
 
+## 2026-11-02 — Phase 7 preparation (no deploy)
+
+**Completed**
+- D-025: Vercel option B. `vercel.json` (site, `/v1` rewrite, headers), Dockerfile for API + jobs, `TRUST_PROXY`, CI e2e job, `docs/operations/DEPLOYMENT.md`, runbook and threat model updates.
+
+**Verified**
+- 187/187 tests, 7/7 browser tests, lint, typecheck, build. Docker image built and run locally: migrations release step, health check, non-root user, production headers, graceful stop.
+
+**Not verified**
+- CI e2e job (runs on the PR); Vercel live behaviour; client IP hops behind Vercel; any real host.
+
+**Issues**
+- The local Postgres and Docker daemon stop on environment restarts (`pg_ctlcluster 16 main start`; `dockerd &`).
+
+**Next**
+- Dan: pick API host, Postgres, domain; approve spending; GitHub OAuth App.
+
 ## 2026-11-02 — Phase 6 claim website
 
 **Completed**

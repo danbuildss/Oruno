@@ -56,6 +56,14 @@ Funders' money · provider admin key · claimers' personal keys · claimer ident
 | TH-24 Open redirect after sign-in | Medium | Mitigated: redirect targets built from a validated slug only. VERIFIED (tampered return cookie test) |
 | TH-25 Clickjacking | Medium | Mitigated: `frame-ancestors 'none'`, `X-Frame-Options: DENY`. VERIFIED (header tests) |
 
+## Review — 2026-11-02 (Phase 7 preparation)
+
+| Threat | Severity | Status |
+| --- | --- | --- |
+| TH-26 Rate limits bypassed with a forged `X-Forwarded-For`, or all users sharing one limit behind Vercel | Medium | Mitigated: `TRUST_PROXY` off by default (forged header ignored, VERIFIED); with N trusted hops each client is limited separately and a prepended fake address is ignored (VERIFIED). Correct hop count behind Vercel **UNVERIFIED** until staging |
+| TH-27 Secrets in the container image or host logs | High | Mitigated: `.dockerignore` excludes `.env*`; secrets only via host secret store; operator key creation in an interactive shell only (DEPLOYMENT.md) |
+| TH-28 Website deployed pointing at the wrong API | Medium | Mitigated: placeholder API origin uses `.invalid` (fails closed); header values tested against the server's |
+
 ## Out of scope for V1
 
 Card payment fraud (no card payments), smart contract risks (no contracts), multi-tenant isolation between funders (single funder).

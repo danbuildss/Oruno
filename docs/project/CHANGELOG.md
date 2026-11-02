@@ -3,6 +3,7 @@
 Significant changes to the repository, newest first.
 
 ## 2026-11-02
+- **Phase 7 preparation** (D-025): Vercel config, Dockerfile, `TRUST_PROXY`, CI browser tests, deployment checklist. Nothing deployed.
 - UI fixes from the improve-ui audit (approved by Dan): claimer-facing errors say "pool" (design plan 001); red removed, black and white only (design plan 002).
 - **Phase 6 claim website** (`965d04b`, `275c057`): cookie sessions with CSRF guard, browser sign-in, eligibility endpoint, website served by the API server; React site (pool page, claim, key shown once, My credit); Playwright end-to-end tests.
 - Decisions D-022 (user-facing word "pool"), D-023 (website design), D-024 (hosting on Vercel; backend option OPEN).

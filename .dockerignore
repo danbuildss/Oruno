@@ -1,0 +1,14 @@
+node_modules
+dist
+web
+e2e
+tests
+docs
+design-plans
+.claude
+.git
+.github
+.env
+.env.*
+*.log
+coverage

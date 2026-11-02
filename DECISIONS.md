@@ -261,3 +261,15 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
   - **B. Website on Vercel, API and worker on a small always-on host** (e.g. Railway, Fly.io or Render), with a Vercel rewrite of `/v1/*` to the API so the site stays same-origin (the cookie and CSP design is unchanged). Least code change; one extra service to pay for and run.
 - **Recommendation:** B for Drop #1 (no rewrite of the tested job system, same-origin kept by the rewrite). Revisit A later.
 - **Consequences:** Either option costs money (Vercel Pro or a second host, plus managed Postgres): needs Dan's spending approval. Vercel's plan limits must be confirmed against current docs before choosing.
+
+## D-025 — Vercel option B; Phase 7 preparation (no deploy, no spending)
+
+- **Date:** 2026-11-02 · **Approval:** APPROVED (Dan: "A and B approved, go with option B"); details PROPOSED by Claude within that approval. Resolves the open part of D-024.
+- **Selected:**
+  - **Website on Vercel** as static files (`web/dist`). Vercel **rewrites `/v1/*` to the API host**, so the browser only ever talks to the site's own origin and the cookie and CSP design (D-023) is unchanged. Security headers for the website are set in `vercel.json` from the same values the server uses (a test keeps them identical).
+  - **API and background jobs in one always-on container** (Dockerfile) on a small host. Single instance (rate limits are in memory). Migrations run as a separate release step before the new version starts.
+  - **Client IP behind proxies:** new `TRUST_PROXY` setting so rate limits see the real client IP, not Vercel's. Off by default. Whether Vercel forwards the client IP to an external rewrite, and how many hops to trust, is **UNVERIFIED** until staging.
+  - **Browser tests in CI** on every PR.
+  - **Staging first:** the first deployment is a staging environment with `PROVIDER=fake` not allowed (production refuses it), so staging uses `PROVIDER=none` until Phase 4b, or real Surplus once approved.
+- **OPEN (Dan):** which API host (Railway, Fly.io or Render) and which managed Postgres; the spending for them and for Vercel; the domain.
+- **Not done:** no account created, nothing deployed, no money spent.

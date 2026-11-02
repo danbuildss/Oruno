@@ -12,6 +12,7 @@ import { registerDropRoutes } from "./http/routes/drops.js";
 import { registerHealthRoutes } from "./http/routes/health.js";
 import { registerLedgerRoutes } from "./http/routes/ledger.js";
 import { registerOperatorRoutes } from "./http/routes/operator.js";
+import { HSTS, IMMUTABLE_ASSET_CACHE, SECURITY_HEADERS } from "./http/security-headers.js";
 import type { InferenceProvider } from "./providers/provider.js";
 
 export interface AppDeps {
@@ -27,24 +28,15 @@ export interface AppDeps {
   secureCookies?: boolean;
   /** Absolute path of the built claim website (`web/dist`); null to serve the API only. */
   webDistDir?: string | null;
+  /**
+   * Which proxies to trust for the client IP (`X-Forwarded-For`), so rate limits apply per
+   * person rather than per proxy. false = use the connection's address (default).
+   */
+  trustProxy?: TrustProxy;
 }
 
-/**
- * Content Security Policy for the claim website: only Oruno's own scripts, styles and API.
- * No inline scripts, no third-party code, and the site can't be framed.
- */
-const CSP = [
-  "default-src 'self'",
-  "script-src 'self'",
-  "style-src 'self'",
-  "img-src 'self' data:",
-  "connect-src 'self'",
-  "font-src 'self'",
-  "object-src 'none'",
-  "base-uri 'none'",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-].join("; ");
+/** false, true (trust all — only behind a proxy that overwrites the header), a hop count, or addresses/CIDRs. */
+export type TrustProxy = boolean | number | string[];
 
 /** Builds the HTTP app without listening, so tests can drive it with `app.inject`. */
 export async function buildApp({
@@ -55,6 +47,7 @@ export async function buildApp({
   clock = () => new Date(),
   secureCookies = false,
   webDistDir = null,
+  trustProxy = false,
 }: AppDeps): Promise<FastifyInstance> {
   const loggerInstance: FastifyBaseLogger = logger;
   const app = Fastify({
@@ -64,6 +57,11 @@ export async function buildApp({
     connectionTimeout: 30_000,
     requestTimeout: 30_000,
     keepAliveTimeout: 10_000,
+    // A hop count means "trust the nearest N proxies" (same rule Fastify applies to a number).
+    trustProxy:
+      typeof trustProxy === "number"
+        ? (_address: string, hop: number) => hop < trustProxy
+        : trustProxy,
   });
 
   registerErrorHandling(app, { spaFallback: webDistDir !== null });
@@ -71,12 +69,9 @@ export async function buildApp({
 
   // Security headers on every response. API responses may contain a key secret: never cache.
   app.addHook("onSend", async (request, reply, payload) => {
-    reply.header("x-content-type-options", "nosniff");
-    reply.header("referrer-policy", "no-referrer");
-    reply.header("x-frame-options", "DENY");
-    reply.header("content-security-policy", CSP);
+    for (const [name, value] of Object.entries(SECURITY_HEADERS)) reply.header(name, value);
     if (secureCookies) {
-      reply.header("strict-transport-security", "max-age=31536000; includeSubDomains");
+      reply.header("strict-transport-security", HSTS);
     }
     if (!request.url.startsWith("/assets/")) {
       reply.header("cache-control", "no-store");
@@ -93,7 +88,7 @@ export async function buildApp({
       // Vite puts hashed, immutable files in /assets.
       setHeaders: (reply, path) => {
         if (path.includes("/assets/")) {
-          reply.header("cache-control", "public, max-age=31536000, immutable");
+          reply.header("cache-control", IMMUTABLE_ASSET_CACHE);
         }
       },
     });

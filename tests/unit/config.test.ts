@@ -14,6 +14,7 @@ describe("loadConfig", () => {
       github: null,
       provider: { kind: "none" },
       webDistDir: null,
+      trustProxy: false,
     });
   });
 
@@ -97,6 +98,17 @@ describe("loadConfig", () => {
       expect.unreachable();
     } catch (error) {
       expect(String((error as Error).message)).not.toContain("SuperSecret123");
+    }
+  });
+
+  it("parses TRUST_PROXY", () => {
+    const parse = (TRUST_PROXY: string) => loadConfig({ ...valid, TRUST_PROXY }).trustProxy;
+    expect(parse("false")).toBe(false);
+    expect(parse("true")).toBe(true);
+    expect(parse("2")).toBe(2);
+    expect(parse("10.0.0.0/8, 127.0.0.1")).toEqual(["10.0.0.0/8", "127.0.0.1"]);
+    for (const bad of ["0", "11", "yes", "evil.example", "10.0.0.0/8,proxy"]) {
+      expect(() => parse(bad)).toThrow(/TRUST_PROXY/);
     }
   });
 });

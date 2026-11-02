@@ -6,17 +6,17 @@ _Last updated: 2026-11-02_
 
 ## 1. Current project status
 
-Phases 0–5 closed (5 for the fake provider). Phase 6 (claim website) built and tested locally, in review. Phase 4b (real Surplus) blocked on T-003/T-004/T-006. Hosting will be Vercel (D-024); how the backend runs there is OPEN. No money spent. Nothing deployed.
+Phases 0–5 closed (5 for the fake provider). Phase 6 merged (PR #8); its exit waits for a staging claim. Phase 7 preparation done on branch `phase7/deploy-prep` (D-025: website on Vercel, API + jobs in one container); nothing deployed. Phase 4b (real Surplus) blocked on T-003/T-004/T-006. Hosting: Vercel option B (D-025); API host, Postgres provider and domain OPEN. No money spent. Nothing deployed.
 
 Naming (D-022): people see **pool** and **credit**; code and engineering docs keep **drop**.
 
 ## 2. Current development phase
 
-**Phase 6 — Claim website** (IN REVIEW). Phase 4b blocked. See `PLAN.md`.
+**Phase 7 — Pilot, preparation only** (no deploy, no spending). Phase 4b blocked. See `PLAN.md`.
 
 ## 3. Last completed task
 
-Phase 6: T-601 to T-608 VERIFIED (commits `965d04b`, `275c057`). T-609 (staging) waits for Phase 7 and D-024. Live GitHub sign-in (T-209) still needs a GitHub OAuth App.
+Phase 7 prep: T-701 to T-705 (CI browser tests, TRUST_PROXY, vercel.json, Dockerfile, DEPLOYMENT.md). Phase 6: T-601 to T-608 VERIFIED (commits `965d04b`, `275c057`). T-609 (staging) waits for Phase 7 and D-024. Live GitHub sign-in (T-209) still needs a GitHub OAuth App.
 
 ## 4. Current implementation state
 
@@ -44,6 +44,8 @@ Claims stay `pending` (no keys yet). API reference: `docs/architecture/API.md`; 
 Phase 3 adds (branch `phase3/credit-ledger`): double-entry ledger with database-enforced rules (`src/ledger/`, migration 0003), funding records, allocation on claim, funding check on activation, releases, returns, invariant checker, jobs `claims.release` and `ledger.check`. Design: `docs/architecture/CREDIT_LEDGER.md`.
 
 Phase 4a adds (branch `phase4/provider-integration`): provider adapter, fake provider, Surplus client (UNVERIFIED), key issuance with secret shown once, retries, reveal/rotate (remaining-cap successor), revocation at the provider, spend sync with overshoot flagging, spend ceiling, 4 new jobs, migration 0004. Config `PROVIDER=none|fake|surplus` (fake refused in production).
+
+Phase 7 prep adds (branch `phase7/deploy-prep`): `TRUST_PROXY` for client IPs behind proxies; shared security headers (`src/http/security-headers.ts`); `vercel.json`; `Dockerfile` + `.dockerignore`; CI e2e job; `docs/operations/DEPLOYMENT.md`.
 
 Phase 6 adds (branch `phase6/claim-frontend`): cookie sessions with CSRF guard, browser sign-in redirects, `/v1/me`, `/v1/drops/:slug/eligibility`, website serving with security headers; the React site in `web/` (pool page, claim, key shown once, My credit); Playwright tests in `e2e/` (`pnpm e2e`).
 
@@ -90,8 +92,8 @@ See `DECISIONS.md`. Summary:
 
 | Item | Where | Notes |
 | --- | --- | --- |
-| **Vercel backend option (A all-Vercel with cron, or B website on Vercel + small always-on API host)** | D-024, T-610 | Recommended B. Either costs money (Vercel Pro or a second host + managed Postgres) |
-| Phase 6 review (website screenshots, wording) | PR for `phase6/claim-frontend` | Exit needs a staging run (Phase 7) |
+| **API host + managed Postgres + Vercel plan + domain; spending** | T-706, `docs/operations/DEPLOYMENT.md` | Option B approved (D-025); providers and costs not yet chosen |
+| Staging deployment | T-707 | After T-706, T-209 and deploy approval |
 | **Phase 4b (real Surplus)** | T-003, T-004, T-006, T-411 | Surplus answers; Surplus org + admin key + workspace id; **$20 USDC test deposit**; then AT-1 to AT-18 |
 | GitHub OAuth App | T-209 | Free; needed to test live sign-in |
 | Claimer terms draft | T-009, `docs/legal/CLAIMER_TERMS.md` | Then a lawyer review |
@@ -99,8 +101,8 @@ See `DECISIONS.md`. Summary:
 
 ## 11. Next recommended task
 
-1. Dan: choose the Vercel backend option (D-024); review the website.
-2. Dan: GitHub OAuth App (T-209) for live sign-in.
+1. Dan: review the Phase 7 prep PR; choose API host, Postgres, domain; approve spending (T-706).
+2. Dan: GitHub OAuth App(s) (T-209) — callback on the Vercel site, see DEPLOYMENT.md.
 3. Phase 4b: Surplus answers (T-004), Surplus org + admin key + workspace id (T-003), $20 USDC deposit approval (T-006).
 4. Claimer terms legal review (T-009); the website links the DRAFT terms.
 5. Then Phase 7 (deployment) with approval.
@@ -131,6 +133,8 @@ See `DECISIONS.md`. Summary:
 - `453bd98` D-022, D-023; Phase 6 tasks
 - `965d04b` **Website backend** (cookies, CSRF, eligibility, static)
 - `275c057` **Claim website and browser tests**
+- `7b9c6e3` Merge PR #8 (Phase 6)
+- `c4dcca3` D-025; Phase 7 prep tasks
 
 ## 13. Important testing results
 
@@ -152,7 +156,7 @@ The local Postgres stops when the cloud environment restarts. If tests fail at s
 
 ## 14. Deployment status
 
-Nothing deployed. No environments exist. Local development only. Host chosen: Vercel (D-024); backend arrangement OPEN.
+Nothing deployed. No environments exist. Local development only. Plan: Vercel + one API container + managed Postgres (D-025). Docker image built and run locally only.
 
 ## 15. Unresolved technical questions
 
@@ -167,7 +171,7 @@ Nothing deployed. No environments exist. Local development only. Host chosen: Ve
 **Ours:**
 - Confirm GitHub and X field names and pricing against the live official docs (blocked in this session) at Phase 2 start.
 - How we detect key sharing with only provider usage data (IPs may not be visible).
-- Running background jobs on Vercel (D-024): Vercel Functions aren't always-on; cron limits by plan to confirm in current Vercel docs.
+- How many proxy hops to trust behind Vercel's rewrite (TRUST_PROXY) — verify on staging.
 - Rate limits and the CSRF/cookie design assume one origin; keep `/v1` same-origin on Vercel (rewrite) or revisit.
 - Rate limits are in-memory (single instance); revisit if Oruno runs more than one instance.
 - Funding is operator-attested; add on-chain verification of the Base transaction hash later.
