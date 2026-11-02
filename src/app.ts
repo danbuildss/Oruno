@@ -35,6 +35,10 @@ export async function buildApp({
   const app = Fastify({
     loggerInstance,
     bodyLimit: 64 * 1024,
+    // A slow or stuck client can't hold a connection forever.
+    connectionTimeout: 30_000,
+    requestTimeout: 30_000,
+    keepAliveTimeout: 10_000,
   });
 
   registerErrorHandling(app);

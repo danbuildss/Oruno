@@ -52,3 +52,9 @@ export async function migrateAllDown(db: Db): Promise<string[]> {
     steps.push(...lines);
   }
 }
+
+/** Names of migrations not yet applied. The server refuses to start while any are pending. */
+export async function pendingMigrations(db: Db): Promise<string[]> {
+  const all = await migrator(db).getMigrations();
+  return all.filter((m) => !m.executedAt).map((m) => m.name);
+}

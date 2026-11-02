@@ -124,6 +124,12 @@ export class FakeProvider implements InferenceProvider {
     this.ceilingMicro = params.limitMicro;
   }
 
+  async listActiveKeys(): Promise<Array<{ keyId: string; name: string }>> {
+    return [...this.keys.values()]
+      .filter((k) => !k.revoked)
+      .map((k) => ({ keyId: k.keyId, name: k.name }));
+  }
+
   // --- Test helpers that simulate a claimer using their key ---
 
   /** Whether a secret would be accepted for `model` at `now`. */

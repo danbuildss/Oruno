@@ -19,6 +19,24 @@ export interface ErrorBody {
   requestId: string;
 }
 
+/**
+ * Database failures a caller can simply retry: lock or statement timeouts, a dropped
+ * connection, or the database being unreachable. Returned as 503 with Retry-After.
+ */
+export function databaseErrorResponse(error: unknown): { code: string; message: string } | null {
+  const code = (error as { code?: unknown } | null)?.code;
+  if (typeof code !== "string") return null;
+  if (code === "55P03") return { code: "busy", message: "Busy right now. Please retry." };
+  if (code === "57014") return { code: "timeout", message: "That took too long. Please retry." };
+  if (
+    code.startsWith("08") ||
+    ["57P01", "57P02", "57P03", "ECONNREFUSED", "ECONNRESET"].includes(code)
+  ) {
+    return { code: "database_unavailable", message: "Temporarily unavailable. Please retry." };
+  }
+  return null;
+}
+
 export function registerErrorHandling(app: FastifyInstance): void {
   app.setNotFoundHandler((request, reply) => {
     const body: ErrorBody = {
@@ -51,6 +69,16 @@ export function registerErrorHandling(app: FastifyInstance): void {
         requestId: request.id,
       };
       return reply.status(400).send(body);
+    }
+
+    const dbError = databaseErrorResponse(error);
+    if (dbError) {
+      request.log.warn({ err: error }, "database unavailable or busy");
+      const body: ErrorBody = {
+        error: { code: dbError.code, message: dbError.message },
+        requestId: request.id,
+      };
+      return reply.status(503).header("retry-after", "2").send(body);
     }
 
     // Fastify's own client errors (malformed JSON, body too large, unsupported media type).

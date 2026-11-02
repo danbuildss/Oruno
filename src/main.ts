@@ -2,11 +2,13 @@ import { buildApp } from "./app.js";
 import { expireFinishedDrops } from "./claims/claims.js";
 import { ConfigError, loadConfig } from "./config.js";
 import { createDb } from "./db/client.js";
+import { pendingMigrations } from "./db/migrate.js";
 import { HttpGitHubClient } from "./github/client.js";
 import { JobRunner } from "./jobs/runner.js";
 import {
   retryPendingIssuance,
   revokeEndedKeys,
+  revokeOrphanKeys,
   syncAllSpend,
   syncSpendCeiling,
 } from "./keys/keys.js";
@@ -20,6 +22,13 @@ async function main(): Promise<void> {
   const config = loadConfig();
   const logger = createLogger({ level: config.logLevel, pretty: config.nodeEnv === "development" });
   const db = createDb(config.databaseUrl);
+  const pending = await pendingMigrations(db);
+  if (pending.length > 0) {
+    await db.destroy();
+    throw new Error(
+      `Database migrations are pending (${pending.join(", ")}). Run \`pnpm migrate\` first.`,
+    );
+  }
   const jobs = new JobRunner(config.databaseUrl, logger);
   const github = config.github ? new HttpGitHubClient(config.github) : null;
   if (!github) logger.warn("GitHub sign-in is not configured; sign-in routes will return 503");
@@ -87,6 +96,11 @@ async function main(): Promise<void> {
       logger.info({ ceilingMicro: held.toString() }, "spend ceiling synced");
     });
     await jobs.schedule("spend.ceiling", "23 * * * *");
+    await jobs.register("keys.reconcile", async () => {
+      const r = await revokeOrphanKeys(db, provider, { now: new Date(), logger });
+      if (r.revoked > 0) logger.warn(r, "revoked orphaned provider keys");
+    });
+    await jobs.schedule("keys.reconcile", "*/15 * * * *");
   }
   await app.listen({ host: config.host, port: config.port });
 
