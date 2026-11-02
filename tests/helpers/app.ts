@@ -24,6 +24,8 @@ export async function testApp(
     github?: GitHubClient | null;
     clock?: () => Date;
     provider?: InferenceProvider | null;
+    secureCookies?: boolean;
+    webDistDir?: string | null;
   } = {},
 ): Promise<{ app: FastifyInstance; logs: LogCapture }> {
   const logs = new LogCapture();
@@ -34,6 +36,8 @@ export async function testApp(
     github: options.github ?? null,
     provider: options.provider ?? null,
     ...(options.clock ? { clock: options.clock } : {}),
+    ...(options.secureCookies === undefined ? {} : { secureCookies: options.secureCookies }),
+    ...(options.webDistDir === undefined ? {} : { webDistDir: options.webDistDir }),
   });
   return { app, logs };
 }

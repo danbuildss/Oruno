@@ -13,6 +13,7 @@ describe("loadConfig", () => {
       databaseUrl: valid.DATABASE_URL,
       github: null,
       provider: { kind: "none" },
+      webDistDir: null,
     });
   });
 

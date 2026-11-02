@@ -2,6 +2,26 @@
 
 Newest first. Each entry: Completed · Verified · Not verified · Issues · Next.
 
+## 2026-11-02 — Phase 6 claim website
+
+**Completed**
+- Recorded D-022 (pool wording), D-023 (website design), D-024 (Vercel hosting; backend option OPEN).
+- Backend for the website (`965d04b`): cookie sessions, CSRF guard, browser sign-in redirects, `/v1/me`, eligibility endpoint, static serving with SPA fallback, security headers.
+- Website in `web/` and browser tests in `e2e/` (`275c057`).
+
+**Verified**
+- 180/180 tests; 7/7 browser tests (mobile and desktop); lint, typecheck, build; manual start of the built server.
+
+**Not verified**
+- Live GitHub sign-in, real Surplus keys, a deployed site, non-Chromium browsers.
+
+**Issues**
+- Background jobs need an always-on process, which Vercel Functions don't provide (D-024).
+- Claimer terms link points at the DRAFT terms on GitHub (T-009).
+
+**Next**
+- Dan: choose the Vercel backend option (D-024); review the website screenshots; GitHub OAuth App (T-209).
+
 ## 2026-11-02 — Research recorded; Phase 5 reliability
 
 **Completed**

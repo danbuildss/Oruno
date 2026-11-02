@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import { buildApp } from "./app.js";
 import { expireFinishedDrops } from "./claims/claims.js";
 import { ConfigError, loadConfig } from "./config.js";
@@ -45,7 +47,17 @@ async function main(): Promise<void> {
   if (!provider) logger.warn("No provider configured; claims can't be issued keys");
   if (provider?.name === "fake")
     logger.warn("Using the FAKE provider: keys are not real (development only)");
-  const app = await buildApp({ db, logger, github, provider });
+  const webDistDir = resolve(config.webDistDir ?? "web/dist");
+  const hasWeb = existsSync(resolve(webDistDir, "index.html"));
+  if (!hasWeb) logger.warn("Claim website not built (web/dist missing); serving the API only");
+  const app = await buildApp({
+    db,
+    logger,
+    github,
+    provider,
+    secureCookies: config.nodeEnv === "production",
+    webDistDir: hasWeb ? webDistDir : null,
+  });
 
   await jobs.start();
   await jobs.register("drops.expire", async () => {

@@ -100,8 +100,23 @@ Phase 0 closed by D-015. T-003, T-004, T-006 and T-009 carry forward as Phase 4 
 | T-506 | Failure tests: transaction failure mid-claim / mid-funding leaves nothing partial | VERIFIED | No partial rows; invariants clean |
 | T-507 | Failure tests: database connections killed mid-run; recovery | VERIFIED | Requests fail cleanly, then succeed after reconnect |
 | T-508 | Failure tests: provider timeout; restart with queued jobs | VERIFIED | Retryable error; jobs processed after restart |
-| T-509 | Backend proof review: BP-9, BP-12, BP-13, BP-15; threat model review; runbook draft | IN REVIEW (awaiting Dan) | Evidence recorded |
+| T-509 | Backend proof review: BP-9, BP-12, BP-13, BP-15; threat model review; runbook draft | VERIFIED (Dan approved Phase 6 start) | Evidence recorded |
+
+## Phase 6 — Claim website (D-022, D-023)
+
+| ID | Task | State | Completion condition |
+| --- | --- | --- | --- |
+| T-601 | Record D-022 (Pool wording) and D-023 (website design) | VERIFIED | Decisions recorded |
+| T-602 | Cookie sessions after browser sign-in; CSRF header guard; Bearer still works | VERIFIED (`965d04b`) | Integration tests: cookie set HttpOnly/SameSite; state-changing cookie request without header refused |
+| T-603 | `GET /v1/me` and `GET /v1/drops/:slug/eligibility` for the website | VERIFIED (`965d04b`) | Integration tests |
+| T-604 | Serve `web/dist` with SPA fallback from Fastify | VERIFIED (`965d04b`) | Integration test |
+| T-605 | Website: pool page, sign-in, eligibility, attestations, claim, key shown once with Claude Code setup | VERIFIED (`275c057`) | E2E test |
+| T-606 | Website: My credit (used/left, new key, revoke); full/ended/not started/pending states | VERIFIED (`275c057`) | E2E test |
+| T-607 | Playwright end-to-end tests (mobile and desktop) with fake GitHub and fake provider | VERIFIED (`275c057`) | `pnpm e2e` passes; screenshots |
+| T-608 | Docs and evidence (API, NOTES, TESTING, session log, changelog) | VERIFIED | Docs updated |
+| T-609 | Staging end-to-end claim | BLOCKED (Phase 7 deployment approval; hosting plan D-024 OPEN) | Claim works on a deployed staging site |
+| T-610 | Hosting plan on Vercel (D-024) | OPEN (Dan to choose) | Option chosen and recorded |
 
 ## Later phases
 
-Tasks for Phases 6–7 are created when each phase is approved to start. See `PLAN.md`.
+Tasks for Phase 7 are created when it is approved to start. See `PLAN.md`.

@@ -46,6 +46,16 @@ Funders' money · provider admin key · claimers' personal keys · claimer ident
 | TH-19 Hung queries or locks block the service | Medium | VERIFIED: 5 s lock timeout, 15 s statement timeout → retryable 503 |
 | TH-20 Orphaned provider keys after a crash | Medium | VERIFIED with fake: reconciliation job revokes unknown Oruno keys, spares in-flight issuance and non-Oruno keys |
 
+## Review — 2026-11-02 (Phase 6, claim website)
+
+| Threat | Severity | Status |
+| --- | --- | --- |
+| TH-21 Session token stolen by page script (XSS) | High | Mitigated: HttpOnly cookie; strict CSP (`script-src 'self'`, no inline, no third parties); React escapes output. VERIFIED: e2e shows `document.cookie` has no token and no CSP violations |
+| TH-22 Cross-site request forgery on claim, rotate, revoke, sign-out | High | Mitigated: `X-Requested-With: oruno` required for cookie POSTs; SameSite=Lax. VERIFIED (integration tests) |
+| TH-23 Key secret left in the browser | High | Mitigated: shown from memory only; never stored or put in the URL; `no-store` on API responses. VERIFIED (e2e) |
+| TH-24 Open redirect after sign-in | Medium | Mitigated: redirect targets built from a validated slug only. VERIFIED (tampered return cookie test) |
+| TH-25 Clickjacking | Medium | Mitigated: `frame-ancestors 'none'`, `X-Frame-Options: DENY`. VERIFIED (header tests) |
+
 ## Out of scope for V1
 
 Card payment fraud (no card payments), smart contract risks (no contracts), multi-tenant isolation between funders (single funder).

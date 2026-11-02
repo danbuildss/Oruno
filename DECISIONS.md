@@ -231,3 +231,33 @@ Append-only. Never edit a past decision's substance; to change one, add a new en
   - **Orphan key cleanup:** a job lists Oruno keys at the provider and revokes any it doesn't know (e.g. created just before a crash). The Surplus listing call is UNVERIFIED until Phase 4b.
   - **Failure tests:** transaction failure mid-claim and mid-funding, database connections killed mid-run, provider timeouts, restart with queued jobs, worker crash with retry, lock contention.
 - **Consequences:** BACKEND_PROOF BP-9, BP-12, BP-13, BP-15 targeted (fake provider); real-provider items stay with Phase 4b.
+
+## D-022 — User-facing word is "Pool"; code names stay `drops`
+
+- **Date:** 2026-11-02 · **Approval:** APPROVED (Dan: "pool is good, keep code names")
+- **Problem:** "Drop" doesn't work well in marketing copy.
+- **Selected:** Everything people see says **pool** ("Dan's AI pool", "Claim your credit"). What a claimer gets is **credit**. Internal code, database tables and current API paths keep the name `drops`; public API paths may move to `/v1/pools` before any public API is published (not scheduled).
+- **Consequences:** No migration. A pool's display name comes from the existing `name` field (e.g. "Dan's AI pool"). Docs written for people (PRODUCT, website copy) use "pool"; engineering docs keep "drop".
+
+## D-023 — Phase 6 (claim website) design
+
+- **Date:** 2026-11-02 · **Approval:** APPROVED (Dan: "go with option A"); details PROPOSED by Claude within that approval.
+- **Problem:** Claimers need a website to sign in, claim, see their key once, and manage their credit. BACKEND_PROOF items that need real Surplus are still PARTIAL; Dan approved starting the frontend with the fake provider anyway.
+- **Selected:**
+  - **Vite + React + TypeScript** single-page app in `web/`, built to `web/dist` and **served by the same Fastify server** (one origin, one deploy).
+  - **Sessions in a cookie:** after GitHub sign-in the server sets an `HttpOnly; Secure (in production); SameSite=Lax; Path=/` cookie holding the session token and redirects back to the pool page. JavaScript never sees the token. Bearer tokens keep working for the API and tests.
+  - **CSRF guard:** a cookie-authenticated request that changes anything must carry `X-Requested-With: oruno`, which a cross-site form can't send; SameSite=Lax is the second layer.
+  - **The key secret lives only in page memory** while shown, and is never written to storage. Leaving the page loses it; the claimer can get a new one by rotation (max 3).
+  - **Design:** black and white, mobile first, no tracking, no third-party scripts or fonts.
+  - **End-to-end tests** with Playwright against the real server, fake GitHub and the fake provider.
+- **Consequences:** New dependencies `@fastify/cookie`, `@fastify/static`; web dev dependencies `vite`, `react`, `react-dom`, `@vitejs/plugin-react`. New optional config `WEB_DIST_DIR` (defaults to `web/dist` when built). Not a staging test: Phase 6 acceptance "end-to-end claim works in a staging environment" needs a deployment (Phase 7 approval).
+
+## D-024 — Hosting on Vercel
+
+- **Date:** 2026-11-02 · **Approval:** Vercel APPROVED as the host (Dan: "we are hosting with Vercel"); **how the backend runs there is OPEN**. Nothing deployed.
+- **Problem:** The website is static and fits Vercel as is. The backend has two parts: the HTTP API (fits Vercel Functions) and background jobs (pg-boss worker running every minute: key retries, spend sync, revocations, expiry, ledger checks, orphan key cleanup), which need an always-on process. Vercel Functions don't run continuously.
+- **Options (PROPOSED by Claude, for Dan to choose):**
+  - **A. All on Vercel.** Website as static files; API as a Vercel Function (Fastify is supported); jobs rewritten as protected endpoints called by **Vercel Cron**. Per-minute cron needs the **Vercel Pro plan** (Hobby allows daily only — to confirm against current Vercel docs). Postgres from a managed provider through the Vercel Marketplace (e.g. Neon) with a pooled connection string. Most work: replace pg-boss with cron-driven jobs and make each job finish within the function time limit.
+  - **B. Website on Vercel, API and worker on a small always-on host** (e.g. Railway, Fly.io or Render), with a Vercel rewrite of `/v1/*` to the API so the site stays same-origin (the cookie and CSP design is unchanged). Least code change; one extra service to pay for and run.
+- **Recommendation:** B for Drop #1 (no rewrite of the tested job system, same-origin kept by the rewrite). Revisit A later.
+- **Consequences:** Either option costs money (Vercel Pro or a second host, plus managed Postgres): needs Dan's spending approval. Vercel's plan limits must be confirmed against current docs before choosing.

@@ -3,6 +3,9 @@
 Significant changes to the repository, newest first.
 
 ## 2026-11-02
+- UI fixes from the improve-ui audit (approved by Dan): claimer-facing errors say "pool" (design plan 001); red removed, black and white only (design plan 002).
+- **Phase 6 claim website** (`965d04b`, `275c057`): cookie sessions with CSRF guard, browser sign-in, eligibility endpoint, website served by the API server; React site (pool page, claim, key shown once, My credit); Playwright end-to-end tests.
+- Decisions D-022 (user-facing word "pool"), D-023 (website design), D-024 (hosting on Vercel; backend option OPEN).
 - **Phase 5 reliability** (`9a892fe`): timeouts, crash-safe connections, job retries, startup migration check, orphan key cleanup, failure tests. Runbook draft.
 - Research recorded as proposed future directions (D-020).
 

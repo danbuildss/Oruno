@@ -37,13 +37,26 @@ export function databaseErrorResponse(error: unknown): { code: string; message: 
   return null;
 }
 
-export function registerErrorHandling(app: FastifyInstance): void {
+export function registerErrorHandling(
+  app: FastifyInstance,
+  options: { spaFallback?: boolean } = {},
+): void {
   app.setNotFoundHandler((request, reply) => {
+    // The claim website is a single-page app: its pages (/p/:slug, /credit, ...) all load
+    // index.html. API paths always get a JSON 404.
+    if (
+      options.spaFallback &&
+      (request.method === "GET" || request.method === "HEAD") &&
+      !request.url.startsWith("/v1/") &&
+      !request.url.startsWith("/health")
+    ) {
+      return reply.type("text/html; charset=utf-8").sendFile("index.html");
+    }
     const body: ErrorBody = {
       error: { code: "not_found", message: "Route not found." },
       requestId: request.id,
     };
-    void reply.status(404).send(body);
+    return reply.status(404).send(body);
   });
 
   app.setErrorHandler((error: FastifyError | Error, request, reply) => {

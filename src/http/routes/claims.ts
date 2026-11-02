@@ -4,14 +4,17 @@ import type { Logger } from "pino";
 import { z } from "zod";
 import { claimView, createClaim, revokeClaim } from "../../claims/claims.js";
 import type { Db } from "../../db/client.js";
+import { claimabilityProblem } from "../../drops/rules.js";
+import { evaluateEligibility } from "../../eligibility/eligibility.js";
 import {
   issueKey,
+  MAX_ROTATIONS,
   markSecretDelivered,
   revealOrRotateKey,
   revokeEndedKeys,
 } from "../../keys/keys.js";
 import type { InferenceProvider } from "../../providers/provider.js";
-import { claimerOf, requireClaimer } from "../claimer-auth.js";
+import { claimerOf, requireClaimer, type SessionCookieOptions } from "../claimer-auth.js";
 import { AppError } from "../errors.js";
 import { requireOperator } from "../operator-auth.js";
 
@@ -63,9 +66,15 @@ async function claimExtras(db: Db, claimIds: string[]) {
 
 export function registerClaimRoutes(
   app: FastifyInstance,
-  deps: { db: Db; clock: () => Date; provider: InferenceProvider | null; logger: Logger },
+  deps: {
+    db: Db;
+    clock: () => Date;
+    provider: InferenceProvider | null;
+    logger: Logger;
+    cookie: SessionCookieOptions;
+  },
 ): void {
-  const claimer = requireClaimer(deps.db, deps.clock);
+  const claimer = requireClaimer(deps.db, deps.clock, deps.cookie);
   const operator = requireOperator(deps.db);
   const providerOrUnavailable = (): InferenceProvider => {
     if (!deps.provider) {
@@ -132,7 +141,77 @@ export function registerClaimRoutes(
       deps.db,
       claims.map((c) => c.id),
     );
-    return { claims: claims.map((c) => claimView(c, extras.get(c.id) ?? {})) };
+    const dropIds = [...new Set(claims.map((c) => c.drop_id))];
+    const drops = dropIds.length
+      ? await deps.db
+          .selectFrom("drops")
+          .select(["id", "slug", "name", "ends_at"])
+          .where("id", "in", dropIds)
+          .execute()
+      : [];
+    const dropById = new Map(drops.map((d) => [d.id, d]));
+    return {
+      claims: claims.map((c) => {
+        const drop = dropById.get(c.drop_id);
+        return {
+          ...claimView(c, extras.get(c.id) ?? {}),
+          drop: drop
+            ? { slug: drop.slug, name: drop.name, endsAt: drop.ends_at.toISOString() }
+            : null,
+          // An active claim whose key was issued by the retry job has no secret delivered yet:
+          // getting it the first time doesn't use up a replacement.
+          secretDelivered: c.secret_delivered,
+          rotationsLeft: Math.max(0, MAX_ROTATIONS - c.rotations),
+        };
+      }),
+    };
+  });
+
+  // What the pool page shows a signed-in person: can they claim, and have they already?
+  app.get("/v1/drops/:slug/eligibility", { preHandler: claimer }, async (request) => {
+    const { slug } = slugParams.parse(request.params);
+    const session = claimerOf(request);
+    const now = deps.clock();
+    const drop = await deps.db
+      .selectFrom("drops")
+      .selectAll()
+      .where("slug", "=", slug)
+      .where("status", "<>", "draft")
+      .executeTakeFirst();
+    if (!drop) throw new AppError(404, "drop_not_found", "Drop not found.");
+    const identity = await deps.db
+      .selectFrom("identities")
+      .select(["account_created_at", "public_repos", "contributions_last_year"])
+      .where("id", "=", session.identityId)
+      .executeTakeFirstOrThrow();
+    const result = evaluateEligibility(
+      {
+        accountCreatedAt: identity.account_created_at,
+        publicRepos: identity.public_repos,
+        contributionsLastYear: identity.contributions_last_year,
+      },
+      {
+        minAccountAgeDays: drop.min_account_age_days,
+        minPublicRepos: drop.min_public_repos,
+        minContributions: drop.min_contributions,
+      },
+      now,
+    );
+    const existing = await deps.db
+      .selectFrom("claims")
+      .selectAll()
+      .where("drop_id", "=", drop.id)
+      .where("person_id", "=", session.personId)
+      .where("status", "<>", "failed")
+      .executeTakeFirst();
+    const extras = existing ? await claimExtras(deps.db, [existing.id]) : null;
+    return {
+      eligible: result.eligible,
+      reasons: result.reasons,
+      accountAgeDays: result.accountAgeDays,
+      problem: claimabilityProblem(drop, now),
+      claim: existing ? claimView(existing, extras?.get(existing.id) ?? {}) : null,
+    };
   });
 
   // Get the key for an active claim (first time after a delayed issuance), or replace a lost one.

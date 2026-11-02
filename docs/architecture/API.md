@@ -1,6 +1,6 @@
 # API
 
-**Status: VERIFIED through Phase 4a with the fake provider** (commits `33466ef`, `2f6d4db`, `1edef71`; see `TESTING.md`). Base path `/`. JSON in and out.
+**Status: VERIFIED through Phase 6 with the fake provider and fake GitHub** (commits `33466ef`, `2f6d4db`, `1edef71`, `965d04b`; see `TESTING.md`). Base path `/`. JSON in and out.
 
 ## Conventions
 
@@ -9,12 +9,14 @@
 - **Errors** share one shape:
 
 ```json
-{ "error": { "code": "drop_full", "message": "All slots in this drop have been claimed.", "details": {} }, "requestId": "req-1" }
+{ "error": { "code": "drop_full", "message": "All the credit in this pool has been claimed.", "details": {} }, "requestId": "req-1" }
 ```
 
 - **Auth:**
   - Operators: `Authorization: Bearer oru_op_…` (created with `pnpm operator:create`).
-  - Claimers: `Authorization: Bearer oru_cs_…` (returned by the GitHub sign-in callback; valid 24 hours).
+  - Claimers: `Authorization: Bearer oru_cs_…` (returned by the GitHub sign-in callback; valid 24 hours), **or** the website's session cookie (`oruno_session`; `__Host-oruno_session` in production), which is `HttpOnly; SameSite=Lax` (plus `Secure` in production) and can't be read by page scripts.
+  - **CSRF guard:** a cookie-authenticated `POST` must send `X-Requested-With: oruno`, or it gets `403 csrf_check_failed`. Bearer requests don't need it.
+- Every response has `Cache-Control: no-store` (except hashed website assets), a strict Content Security Policy, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer` and `nosniff`; production adds HSTS.
 
 ## Routes
 
@@ -61,9 +63,10 @@ Invalid transitions return `409 invalid_transition`. Activate and resume return 
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| GET | `/v1/auth/github/start?drop=<slug>` | Returns `{authorizeUrl}` (with single-use `state` and a PKCE S256 challenge). Rate-limited 20/min/IP |
-| GET | `/v1/auth/github/callback?code&state` | Completes sign-in. Returns `{sessionToken, expiresAt, login, drop}`. Errors: `invalid_state` (forged, expired after 10 min, or reused), `github_unavailable`, `person_blocked`. Rate-limited 20/min/IP |
-| POST | `/v1/auth/sign-out` | Revokes the current session. `204` |
+| GET | `/v1/auth/github/start?drop=<slug>` | Returns `{authorizeUrl}` (with single-use `state` and a PKCE S256 challenge). **Browsers** (`Accept: text/html`) are redirected (`303`) to GitHub instead. Rate-limited 20/min/IP |
+| GET | `/v1/auth/github/callback?code&state` | Completes sign-in. Returns `{sessionToken, expiresAt, login, drop}`. **Browsers** get the session cookie and a `303` to `/p/<slug>` (or `/credit`); on failure a `303` to the same page with `?error=<code>`. Errors: `invalid_state` (forged, expired after 10 min, or reused), `github_denied` (Cancel pressed on GitHub), `github_unavailable`, `person_blocked`. Rate-limited 20/min/IP |
+| POST | `/v1/auth/sign-out` | Revokes the current session and clears the cookie. `204` |
+| GET | `/v1/me` | Who is signed in: `{login, provider}` |
 
 Returns `503 github_not_configured` until a GitHub OAuth App is configured (`GITHUB_*` settings).
 
@@ -73,10 +76,15 @@ Returns `503 github_not_configured` until a GitHub OAuth App is configured (`GIT
 | --- | --- | --- |
 | POST | `/v1/drops/:slug/claims` | Body `{termsVersion, acceptTerms: true, confirmAdult: true, confirmNotSanctioned: true}`. **`201 {claim, key}`** — `key = {secret, prefix, setup: {ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN, ANTHROPIC_API_KEY}}`, shown **once**. `202 {claim, key: null}` if the provider is briefly unavailable (a job keeps trying; fetch the key later). Errors: `terms_outdated`, `drop_not_active`, `drop_not_started`, `drop_ended`, `drop_full`, `already_claimed`, `not_eligible` (with `details.reasons`), `insufficient_funding`, `key_issue_failed` (502; you may claim again), `provider_not_configured` (503). Rate-limited 10/min/IP |
 | POST | `/v1/me/claims/:id/key` | Get the key for an active claim (first time after a delayed issuance), or replace a lost one: `{key}`. The old secret stops working; the new key holds what's left of the cap. Max 3 replacements (`429 rotation_limit`). Rate-limited 5/min/IP |
-| GET | `/v1/me/claims` | The caller's claims, with `spentMicro`, `remainingMicro` and `keyPrefix` |
+| GET | `/v1/me/claims` | The caller's claims, with `spentMicro`, `remainingMicro`, `keyPrefix`, `drop {slug, name, endsAt}`, `secretDelivered` and `rotationsLeft` |
+| GET | `/v1/drops/:slug/eligibility` | For the pool page: `{eligible, reasons, accountAgeDays, problem, claim}`. `problem` is `drop_full`, `drop_ended`, `drop_not_started`, `drop_not_active` or null; `claim` is the caller's existing claim (never the secret) |
 | POST | `/v1/me/claims/:id/revoke` | Revoke one's own claim |
 
 Rate-limited requests return `429 rate_limited`.
+
+## Website
+
+When `web/dist` is built, the same server serves the claim website: `/` (home), `/p/:slug` (a pool), `/credit` (My credit). Unknown non-API `GET` paths return the app's `index.html`; `/v1/*` paths always return JSON.
 
 ## Not yet available
 

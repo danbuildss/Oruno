@@ -35,10 +35,10 @@ export function claimView(
 }
 
 const PROBLEM_MESSAGES = {
-  drop_not_active: "This drop isn't open for claims.",
-  drop_not_started: "This drop hasn't started yet.",
-  drop_ended: "This drop has ended.",
-  drop_full: "All slots in this drop have been claimed.",
+  drop_not_active: "This pool isn't open for claims.",
+  drop_not_started: "This pool hasn't opened yet.",
+  drop_ended: "This pool has ended.",
+  drop_full: "All the credit in this pool has been claimed.",
 } as const;
 
 export interface CreateClaimParams {
@@ -69,7 +69,7 @@ export async function createClaim(db: Db, params: CreateClaimParams): Promise<Cl
     if (!drop) throw new AppError(404, "drop_not_found", "Drop not found.");
 
     if (params.termsVersion !== drop.terms_version) {
-      throw new AppError(409, "terms_outdated", "Please accept the current terms for this drop.", {
+      throw new AppError(409, "terms_outdated", "Please accept the current terms for this pool.", {
         termsVersion: drop.terms_version,
       });
     }
@@ -86,7 +86,7 @@ export async function createClaim(db: Db, params: CreateClaimParams): Promise<Cl
       .where("status", "<>", "failed")
       .executeTakeFirst();
     if (existing)
-      throw new AppError(409, "already_claimed", "You've already claimed from this drop.");
+      throw new AppError(409, "already_claimed", "You've already claimed from this pool.");
 
     const identity = await trx
       .selectFrom("identities")
@@ -113,7 +113,7 @@ export async function createClaim(db: Db, params: CreateClaimParams): Promise<Cl
       throw new AppError(
         403,
         "not_eligible",
-        "This account doesn't meet the drop's requirements.",
+        "This account doesn't meet this pool's requirements.",
         {
           reasons: eligibility.reasons,
         },

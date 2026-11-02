@@ -9,8 +9,8 @@ Backend first. Each phase needs Dan's approval to start and to exit. All phases 
 | 2 | Drop and Claim Engine | CLOSED (approved 2026-10-30) |
 | 3 | Credit Ledger and Funding | CLOSED (approved 2026-10-30) |
 | 4 | Provider Integration (key issuance) | 4a CLOSED (approved 2026-11-02); 4b waiting on T-003/T-004/T-006 |
-| 5 | Backend Reliability and Verification | IN REVIEW (fake provider done; real-provider items wait for 4b) |
-| 6 | Claim Frontend | Not started |
+| 5 | Backend Reliability and Verification | CLOSED for the fake provider (approved 2026-11-02); real-provider items wait for 4b |
+| 6 | Claim Frontend (claim website) | IN REVIEW (built and tested locally; staging needs Phase 7) |
 | 7 | Controlled Pilot — Drop #1 | Not started |
 
 ---
@@ -83,7 +83,7 @@ Backend first. Each phase needs Dan's approval to start and to exit. All phases 
 ## Phase 6 — Claim Frontend
 
 - **Objective:** the smallest UI that exposes verified backend capabilities.
-- **Scope:** claim page (sign in, eligibility result, claim, show key once, setup steps); "my key" page (balance, setup, self-revoke); minimal operator view. Nothing the backend doesn't support.
+- **Scope:** pool page (sign in, eligibility result, claim, show key once, setup steps); "My credit" page (used and left, new key, self-revoke). Nothing the backend doesn't support. User-facing word is "pool" (D-022). Operator view deferred: operators use the API. Design: D-023.
 - **Dependencies:** approved `BACKEND_PROOF.md`.
 - **Acceptance criteria:** end-to-end claim works in a staging environment.
 - **Testing:** end-to-end tests.
